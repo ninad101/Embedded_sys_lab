@@ -80,6 +80,7 @@ int main(void)
 
 	while (!demo_done)
 	{
+		//This is where incoming data comes from
 		if (rx_queue.count) process_key( dequeue(&rx_queue) );
 
 		if (check_timer_flag()) 
