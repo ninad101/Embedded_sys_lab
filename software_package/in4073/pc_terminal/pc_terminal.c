@@ -40,7 +40,9 @@ void	term_exitio()
 
 void	term_puts(char *s)
 {
+	//stderr is the default destination for error messages and other diagnosics
 	fprintf(stderr,"%s",s);
+	
 }
 
 void	term_putchar(char c)
@@ -90,7 +92,10 @@ void rs232_open(void)
   	int 		result;
   	struct termios	tty;
 
-       	fd_RS232 = open("/dev/ttyUSB0", O_RDWR | O_NOCTTY);  // Hardcode your serial port here, or request it as an argument at runtime
+
+	// O_NOCTTY flag tells UNIX that this program doesn't want to be the "controlling terminal" for that port.
+	// O_RDWR flag is a Read Write flag
+   	fd_RS232 = open("/dev/ttyUSB0", O_RDWR | O_NOCTTY);  // Hardcode your serial port here, or request it as an argument at runtime
 
 	assert(fd_RS232>=0);
 
@@ -110,6 +115,7 @@ void rs232_open(void)
 	tty.c_cflag = (tty.c_cflag & ~CSIZE) | CS8; /* 8 bits-per-character */
 	tty.c_cflag |= CLOCAL | CREAD; /* Ignore model status + read input */
 
+	// Setting the baud rate to 115,200 for input and output
 	cfsetospeed(&tty, B115200);
 	cfsetispeed(&tty, B115200);
 
@@ -157,17 +163,38 @@ int 	rs232_getchar()
 
 	while ((c = rs232_getchar_nb()) == -1)
 		;
+
 	return c;
 }
 
+
+// Function written by Yuup
+// 5/5/2018
+#define KEYBOARD 0b11010000
+int rs232_putchar_with_header(char c)
+{
+
+	char packet[3] = {KEYBOARD, c, 0b00000001};
+	int result;
+
+	do {
+		result = (int) write(fd_RS232, &packet, 3);
+	} while (result == 0);
+
+	assert(result==3);
+	return result;
+
+}
 
 int 	rs232_putchar(char c)
 {
 	int result;
 
 	do {
+		//write function returns the number of bytes sent or -1 if an error occurred.
 		result = (int) write(fd_RS232, &c, 1);
 	} while (result == 0);
+
 
 	assert(result == 1);
 	return result;
@@ -198,9 +225,13 @@ int main(int argc, char **argv)
 	 */
 	for (;;)
 	{
-		if ((c = term_getchar_nb()) != -1)
-			rs232_putchar(c);
+		//Terminal get char, c = input from terminal
+		if ((c = term_getchar_nb()) != -1){
+			fprintf(stderr, "%s %d\n", "Sending a char over the line", c);
+			rs232_putchar_with_header(c);
+		}
 
+		//rs232 get char, c - input from the rs232 connection
 		if ((c = rs232_getchar_nb()) != -1)
 			term_putchar(c);
 

@@ -22,6 +22,7 @@ void enqueue(queue *q,char x){
 	q->last = (q->last + 1) % QUEUE_SIZE;
 	q->Data[ q->last ] = x;
 	q->count += 1;
+
 }
 
 char dequeue(queue *q){
