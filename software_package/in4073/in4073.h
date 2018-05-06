@@ -21,7 +21,8 @@
 #include "app_util_platform.h"
 #include <math.h>
 
-#define RED		22
+
+#define RED			22
 #define YELLOW		24
 #define GREEN		28
 #define BLUE		30
@@ -62,6 +63,14 @@ queue tx_queue;
 uint32_t last_correct_checksum_time;
 void uart_init(void);
 void uart_put(uint8_t);
+
+// Packet Protocol
+#define PC_PACKET_LENGTH 3
+void readPacket(void);
+bool check_for_header(uint8_t);
+
+
+
 
 // TWI
 #define TWI_SCL	4

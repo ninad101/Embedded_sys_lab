@@ -49,6 +49,7 @@ $(abspath ./drivers/twi.c) \
 $(abspath ./drivers/adc.c) \
 $(abspath ./drivers/baro.c) \
 $(abspath ./drivers/ble.c) \
+$(abspath ./drivers/packet_protocol.c) \
 $(abspath ./drivers/spi_flash.c) \
 $(abspath ./invensense/inv_mpu.c) \
 $(abspath ./invensense/inv_mpu_dmp_motion_driver.c) \
