@@ -28,6 +28,17 @@
 #define BLUE		30
 #define INT_PIN		5
 
+// Incoming Packet Structure
+struct packet{
+	uint8_t header;
+	uint8_t dataType;
+	uint8_t roll;
+	uint8_t pitch;
+	uint8_t yaw;
+	uint8_t lift;
+	uint16_t CRC;
+};
+
 bool demo_done;
 
 // Control

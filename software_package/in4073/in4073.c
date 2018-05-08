@@ -25,8 +25,6 @@
 void process_key(uint8_t c)
 {
 
-
-
 	switch (c)
 	{
 		case 'q':
@@ -88,18 +86,9 @@ int main(void)
 	while (!demo_done)
 	{
 		//This is where incoming data comes from
-		int rx_count = rx_queue.count;
-		if (rx_queue.count) {
-			printf("%s %d \n", "length of rx_queue before readPacket :" , rx_count);
+		//int rx_count = rx_queue.count;
+		if (rx_queue.count > 7) {
 			readPacket();
-			printf("%s %d \n", "length of rx_queue after readPacket :" , rx_queue.count);
-
-
-			// Too many messages queued
-			// Flushing everything
-			if(rx_queue.count > 21) {
-				init_queue(&rx_queue);
-			}
 
 			//process_key( dequeue(&rx_queue) );
 		}
