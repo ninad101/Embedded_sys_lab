@@ -1,13 +1,19 @@
 
+
+/*modified by Ninad Joshi*/
+
+
 #include <sys/ioctl.h>
 #include <sys/time.h>
 #include <sys/types.h>
-#include <stdlib.h>
 #include <fcntl.h>
+#include <stdlib.h>
 #include <unistd.h>
 #include <stdio.h>
 #include <errno.h>
 #include <string.h>
+#include <stdint.h>
+
 
 #include "joystick.h"
 
@@ -17,6 +23,7 @@
 int	axis[6];
 int	button[12];
 
+uint8_t  axis_val[6];
 
 /* time
  */
@@ -50,8 +57,8 @@ int main (int argc, char **argv)
 {
 	int 		fd;
 	struct js_event js;
-	unsigned int	t, i;
-
+	uint8_t 	t, i;
+	
 	if ((fd = open(JS_DEV, O_RDONLY)) < 0) {
 		perror("jstest");
 		exit(1);
@@ -86,15 +93,21 @@ int main (int argc, char **argv)
 					break;
 			}
 		}
+		
+		
+		
+		
 		if (errno != EAGAIN) {
-			perror("\njs: error reading (EAGAIN)");
+			perror("\njs: error reading (EAGAIN)"); //EAGAIN is returned when the queue is empty
 			exit (1);
 		}
 
 		printf("\n");
 		printf("%5d   ",t);
 		for (i = 0; i < 6; i++) {
-			printf("%6d ",axis[i]);
+		
+		axis_val[i] = (uint8_t)(axis[i]*=0.00390625);
+			printf("%6d ",axis_val[i]);
 		}
 		printf(" |  ");
 		for (i = 0; i < 12; i++) {
@@ -106,3 +119,4 @@ int main (int argc, char **argv)
 	printf("\n<exit>\n");
 
 }
+

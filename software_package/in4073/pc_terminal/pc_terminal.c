@@ -312,6 +312,17 @@ const char *byte_to_binary(int x)
 }
 
 /*------------------------------------------------------------------
+ * crcMessage -- Is the start function to sending a packet
+ * https://www.youtube.com/watch?v=VAnsc4aaYOs
+ * Create by Yuup
+ * 8/5/2018
+ *------------------------------------------------------------------
+ */
+ void crcMessage(){
+
+ }
+
+/*------------------------------------------------------------------
  * setHeader -- Is the start function to sending a packet
  * Create by Yuup
  * 8/5/2018
