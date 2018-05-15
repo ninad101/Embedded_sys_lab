@@ -21,11 +21,23 @@
 #include "app_util_platform.h"
 #include <math.h>
 
-#define RED		22
+
+#define RED			22
 #define YELLOW		24
 #define GREEN		28
 #define BLUE		30
 #define INT_PIN		5
+
+// Incoming Packet Structure
+struct packet{
+	uint8_t header;
+	uint8_t dataType;
+	uint8_t roll;
+	uint8_t pitch;
+	uint8_t yaw;
+	uint8_t lift;
+	uint16_t CRC;
+} values_Packet;
 
 bool demo_done;
 
@@ -62,6 +74,14 @@ queue tx_queue;
 uint32_t last_correct_checksum_time;
 void uart_init(void);
 void uart_put(uint8_t);
+
+// Packet Protocol
+#define PC_PACKET_LENGTH 3
+void readPacket(void);
+bool check_for_header(uint8_t);
+
+
+
 
 // TWI
 #define TWI_SCL	4
@@ -106,5 +126,21 @@ queue ble_tx_queue;
 volatile bool radio_active;
 void ble_init(void);
 void ble_send(void);
+
+// crc16
+/**@brief Function for calculating CRC-16 in blocks.
+ *
+ * Feed each consecutive data block into this function, along with the current value of p_crc as 
+ * returned by the previous call of this function. The first call of this function should pass NULL 
+ * as the initial value of the crc in p_crc.
+ *
+ * @param[in] p_data The input data block for computation.
+ * @param[in] size   The size of the input data block in bytes.
+ * @param[in] p_crc  The previous calculated CRC-16 value or NULL if first call.  
+ *
+ * @return The updated CRC-16 value, based on the input supplied.
+ */
+uint16_t crc16_compute(const uint8_t * p_data, uint32_t size, const uint16_t * p_crc);
+
 
 #endif // IN4073_H__

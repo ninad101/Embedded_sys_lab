@@ -12,7 +12,8 @@
 #include <unistd.h>
 #include <string.h>
 #include <inttypes.h>
-//#include "logData.h"
+#include <time.h>
+
 
 /*------------------------------------------------------------
  * console I/O
@@ -41,7 +42,9 @@ void	term_exitio()
 
 void	term_puts(char *s)
 {
+	//stderr is the default destination for error messages and other diagnosics
 	fprintf(stderr,"%s",s);
+	
 }
 
 void	term_putchar(char c)
@@ -85,13 +88,28 @@ int	term_getchar()
 int serial_device = 0;
 int fd_RS232;
 
+struct packet{
+	uint8_t header;
+	uint8_t dataType;
+	uint8_t roll;
+	uint8_t pitch;
+	uint8_t yaw;
+	uint8_t lift;
+	uint16_t crc;
+};
+
 void rs232_open(void)
 {
   	char 		*name;
   	int 		result;
   	struct termios	tty;
 
-    fd_RS232 = open("/dev/ttyUSB0", O_RDWR | O_NOCTTY);  // Hardcode your serial port here, or request it as an argument at runtime
+
+
+	// O_NOCTTY flag tells UNIX that this program doesn't want to be the "controlling terminal" for that port.
+	// O_RDWR flag is a Read Write flag
+   	fd_RS232 = open("/dev/ttyUSB0", O_RDWR | O_NOCTTY);  // Hardcode your serial port here, or request it as an argument at runtime
+
 
 	assert(fd_RS232>=0);
 
@@ -111,6 +129,7 @@ void rs232_open(void)
 	tty.c_cflag = (tty.c_cflag & ~CSIZE) | CS8; /* 8 bits-per-character */
 	tty.c_cflag |= CLOCAL | CREAD; /* Ignore model status + read input */
 
+	// Setting the baud rate to 115,200 for input and output
 	cfsetospeed(&tty, B115200);
 	cfsetispeed(&tty, B115200);
 
@@ -158,22 +177,290 @@ int 	rs232_getchar()
 
 	while ((c = rs232_getchar_nb()) == -1)
 		;
+
 	return c;
 }
 
+//TODO 
+//  Map keyboard inputs to values
+int keyboardToValue(char c) {
+
+} 
+
+// Function written by Yuup
+// 5/5/2018
+#define HEADER 0b11010000
+int rs232_putchar_with_header(uint32_t c)
+{
+
+	char roll, pitch, yaw, lift;
+	roll 	= (c 	   & 0xFF);
+	pitch 	= ((c>>8)  & 0xFF);
+	yaw 	= ((c>>16) & 0xFF);
+	lift	= ((c>>24) & 0xFF);
+
+	char packet[7] = {HEADER, roll, pitch, yaw, lift, 0b00000001, 0b00000001};
+
+	int result;
+
+	do {
+		result = (int) write(fd_RS232, &packet, 7);
+	} while (result == 0);
+
+	assert(result==7);
+	return result;
+
+}
+#define CRC16_DNP	0x3D65
+unsigned int crc16(unsigned int crcValue, unsigned char newByte) 
+{
+	unsigned char i;
+
+	for (i = 0; i < 8; i++) {
+
+		if (((crcValue & 0x8000) >> 8) ^ (newByte & 0x80)){
+			crcValue = (crcValue << 1)  ^ CRC16_DNP;
+		}else{
+			crcValue = (crcValue << 1);
+		}
+
+		newByte <<= 1;
+	}
+  
+	return crcValue;
+}
+
+// Function written by Yuup
+// 8/5/2018
+// Returns the data for the drone
+// Byte 1 = Roll 
+// Byte 2 = Pitch
+// Byte 3 = Yaw
+// Byte 4 = lift
+struct packet map_char_to_binary(char c) {
+
+	struct packet result = {};
+
+	uint32_t value = 0;
+
+	// Roll
+	if(c == "g") {
+		value = 10;
+		value = value << 8;
+	} else if(c == "b")
+
+	// Yaw Values
+	if(c == "q") {
+		//Add yaw values
+	} else if(c == "w") {
+		//remove some yaw values
+	} else if(c == "a") {
+		//Add some life up
+	} else if(c == "z") {
+		//Add some lift down
+	}
+	// TODO write code for arrows
+
+	return result;
+
+}
+
+
+// Function written by Yuup
+// 8/5/2018
+int check_mode_selection(char c) {
+
+	if(c > 47 && c < 58) {
+		return 1;
+	} else {
+		return 0;
+	}
+
+}
+
+// Function written by Yuup 
+//	7/5/2018
+// TODO
+//  implement timer
+void periodicSignal(clock_t *startTime)
+{
+	char c = ' ';
+
+	c = term_getchar_nb();
+
+	if(!check_mode_selection(c)) {
+		//rs232_putchar_with_header(map_char_to_binary(c));
+	} else {
+		//Change mode
+	}
+
+
+	//rs232_putchar_with_header(c);
+
+	//}
+
+}
 
 int 	rs232_putchar(char c)
 {
 	int result;
 
 	do {
+		//write function returns the number of bytes sent or -1 if an error occurred.
 		result = (int) write(fd_RS232, &c, 1);
 	} while (result == 0);
+
 
 	assert(result == 1);
 	return result;
 }
 
+const char *byte_to_binary(int x)
+{
+    static char b[9];
+    b[0] = '\0';
+
+    int z;
+    for (z = 128; z > 0; z >>= 1)
+    {
+        strcat(b, ((x & z) == z) ? "1" : "0");
+    }
+
+    return b;
+}
+
+/*------------------------------------------------------------------
+ * setHeader -- Is the start function to sending a packet
+ * Create by Yuup
+ * 8/5/2018
+ *------------------------------------------------------------------
+ */
+void setHeader(struct packet *data) 
+{
+	data->header = (uint8_t) 208;
+	//data->header = HEADER;
+}
+
+/*------------------------------------------------------------------
+ * setData --sets the data that needs to be sent
+ * Create by Yuup
+ * 8/5/2018
+ *------------------------------------------------------------------
+ */
+void setData(struct packet *data)
+{
+	data->dataType = (uint8_t) "P";
+	data->roll 	= (uint8_t) 55;
+	data->pitch = (uint8_t) 64;
+	data->yaw   = (uint8_t) 72;
+	data->lift  = (uint8_t) 22;
+}
+
+void setCRC(struct packet *data)
+{
+	data->crc 	= 888;	
+}
+
+/*------------------------------------------------------------------
+ * appendCRC --sets the crc data in the packet
+ * Create by Yuup
+ * 12/5/2018
+ *------------------------------------------------------------------
+ */
+
+// struct packet{
+// 	uint8_t header;
+// 	uint8_t dataType;
+// 	uint8_t roll;
+// 	uint8_t pitch;
+// 	uint8_t yaw;
+// 	uint8_t lift;
+// 	uint16_t CRC;
+// };
+
+void appendCRC(struct packet *data)
+{
+	
+	uint64_t encodedMessage = 0;
+
+	//Encode message with the data
+	encodedMessage = (encodedMessage | data->header) << 8;
+	encodedMessage = (encodedMessage | data->dataType) << 8;
+	encodedMessage = (encodedMessage | data->roll) << 8;
+	encodedMessage = (encodedMessage | data->pitch) << 8;
+	encodedMessage = (encodedMessage | data->yaw) << 8;
+	encodedMessage = (encodedMessage | data->lift) << 8;
+	fprintf(stderr, "%s %lld\n", "Message is: ", (long long) encodedMessage);
+	encodedMessage = encodedMessage << 8;
+	fprintf(stderr, "%s %lld\n", "Message is with padding: ", (long long unsigned) encodedMessage);
+	
+}
+
+
+/*------------------------------------------------------------------
+ * printPacket --Prints the packet that wants to be sent as binary
+ *   used for debuging
+ * Create by Yuup
+ * 8/5/2018
+ *------------------------------------------------------------------
+ */
+
+void printPacket(struct packet *da)
+{
+
+	fprintf(stderr, "%s %d %d %d %d %d %d %d\n", "Packet sent: ",
+												da->header, 
+												da->dataType,
+												da->roll,
+												da->pitch,
+												da->yaw,
+												da->lift,
+												da->crc);
+
+}
+
+void convertStructToChar(unsigned char * data[] , struct packet *da)
+{
+	data[0] = da->header;
+	data[1] = da->dataType;
+	data[2] = da->roll;
+	data[3] = da->pitch;
+	data[4] = da->yaw;
+	data[5] = da->lift;
+
+}
+
+
+/*------------------------------------------------------------------
+ * sendPacket -- Is the start function to sending a packet
+ * Create by Yuup
+ * 8/5/2018
+ *------------------------------------------------------------------
+ */
+int sendPacket() 
+{
+	struct packet data = {0, 0, 0, 0, 0, 0, 0};
+	setHeader(&data);
+	setData(&data);
+	setCRC(&data);
+
+
+	//appendCRC(&data);
+
+	printPacket(&data);
+
+	int result;
+
+	do {
+		result = (int) write(fd_RS232, &data, 8);
+	} while (result == 0);
+
+
+	assert(result==8);
+	return result;
+
+
+}
 
 /*----------------------------------------------------------------
  * main -- execute terminal
@@ -182,6 +469,10 @@ int 	rs232_putchar(char c)
 int main(int argc, char **argv)
 {
 	char	c;
+
+	clock_t before = clock();
+
+
 	// Creates the log file at the host pc to be written.
 	FILE *fp;
 	fp=fopen("log.txt","w");
@@ -202,13 +493,23 @@ int main(int argc, char **argv)
 	while ((c = rs232_getchar_nb()) != -1)
 		fputc(c,stderr);
 
+	int msec = 0, trigger = 10; /* 10ms */
+	clock_t startTime = clock();
+
+
+	int counter = 0;
 	/* send & receive
 	 */
 	for (;;)
 	{
-		if ((c = term_getchar_nb()) != -1)
-			rs232_putchar(c);
+		//Added by Yuu[]
+		if(counter > 30) {
+			counter = 0;
+			sendPacket();			
+		}
+		counter++;
 
+		//rs232 get char, c - input from the rs232 connection
 		if ((c = rs232_getchar_nb()) != -1)
 		{
 			term_putchar(c);

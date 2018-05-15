@@ -14,6 +14,7 @@ bool txd_available = true;
 
 void uart_put(uint8_t byte)
 {
+	// Disable intterrupts
 	NVIC_DisableIRQ(UART0_IRQn);
 
 	if (txd_available) {txd_available = false; NRF_UART0->TXD = byte;}
@@ -36,12 +37,14 @@ int _write(int file, const char * p_char, int len)
 
 void UART0_IRQHandler(void)
 {
+	// This is where communication is received
 	if (NRF_UART0->EVENTS_RXDRDY != 0)
 	{
 		NRF_UART0->EVENTS_RXDRDY  = 0;
 		enqueue( &rx_queue, NRF_UART0->RXD);
 	}
 
+	//If wanting to send information that is handled here
 	if (NRF_UART0->EVENTS_TXDRDY != 0)
 	{
 		NRF_UART0->EVENTS_TXDRDY = 0;
@@ -49,6 +52,7 @@ void UART0_IRQHandler(void)
 		else txd_available = true;
 	}
 
+	//Error handling
 	if (NRF_UART0->EVENTS_ERROR != 0)
 	{
 		NRF_UART0->EVENTS_ERROR = 0;

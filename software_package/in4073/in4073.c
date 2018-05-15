@@ -14,7 +14,11 @@
  */
 
 #include "in4073.h"
+
+#include <stdio.h>
+#include <string.h>
 #include "logData.h"
+
 
 /*------------------------------------------------------------------
  * process_key -- process command keys
@@ -22,6 +26,7 @@
  */
 void process_key(uint8_t c)
 {
+
 	switch (c)
 	{
 		case 'q':
@@ -60,6 +65,7 @@ void process_key(uint8_t c)
 	}
 }
 
+
 /*------------------------------------------------------------------
  * main -- everything you need is here :)
  *------------------------------------------------------------------
@@ -81,8 +87,13 @@ int main(void)
 
 	while (!demo_done)
 	{
+		//This is where incoming data comes from
+		//int rx_count = rx_queue.count;
+		if (rx_queue.count > 7) {
+			readPacket();
 
-		if (rx_queue.count) process_key( dequeue(&rx_queue) );
+			//process_key( dequeue(&rx_queue) );
+		}
 
 		if (check_timer_flag()) 
 		{
@@ -90,7 +101,6 @@ int main(void)
 
 			adc_request_sample();
 			read_baro();
-
 			logData();
 			//readLoggedData();
 
