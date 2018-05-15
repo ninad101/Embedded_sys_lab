@@ -36,10 +36,10 @@ struct packet{
 	uint8_t pitch;
 	uint8_t yaw;
 	uint8_t lift;
-	uint16_t CRC;
+	uint16_t crc;
 } values_Packet;
 
-unint8_t mode;
+uint8_t mode;
 
 bool demo_done;
 

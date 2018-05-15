@@ -28,7 +28,7 @@ struct packet{
 	uint8_t pitch;
 	uint8_t yaw;
 	uint8_t lift;
-	uint16_t CRC;
+	uint16_t crc;
 } send_packet;
 
 void	term_initio()
@@ -97,16 +97,6 @@ int	term_getchar()
 
 int serial_device = 0;
 int fd_RS232;
-
-struct packet{
-	uint8_t header;
-	uint8_t dataType;
-	uint8_t roll;
-	uint8_t pitch;
-	uint8_t yaw;
-	uint8_t lift;
-	uint16_t crc;
-};
 
 void rs232_open(void)
 {
@@ -323,6 +313,12 @@ int 	rs232_putchar(char c)
 	return result;
 }
 
+
+
+/*------------------------------------------------------------------
+ * stolen from internet to see the bits of an int
+ *------------------------------------------------------------------
+ */
 const char *byte_to_binary(int x)
 {
     static char b[9];
@@ -338,6 +334,27 @@ const char *byte_to_binary(int x)
 }
 
 /*------------------------------------------------------------------
+ * stolen function from crc16.c
+ *------------------------------------------------------------------
+ */
+uint16_t crc16_compute(const uint8_t * p_data, uint32_t size, const uint16_t * p_crc)
+{
+    uint32_t i;
+    uint16_t crc = (p_crc == NULL) ? 0xffff : *p_crc;
+
+    for (i = 0; i < size; i++)
+    {
+        crc  = (unsigned char)(crc >> 8) | (crc << 8);
+        crc ^= p_data[i];
+        crc ^= (unsigned char)(crc & 0xff) >> 4;
+        crc ^= (crc << 8) << 4;
+        crc ^= ((crc & 0xff) << 4) << 1;
+    }
+
+    return crc;
+}
+
+/*------------------------------------------------------------------
  * setHeader -- Is the start function to sending a packet
  * Create by Yuup
  * 8/5/2018
@@ -345,7 +362,7 @@ const char *byte_to_binary(int x)
  */
 void setHeader(struct packet *data) 
 {
-	data->header = (uint8_t) 208;
+	send_packet.header = (uint8_t) 208;
 	//data->header = HEADER;
 }
 
@@ -357,46 +374,30 @@ void setHeader(struct packet *data)
  */
 void setData(struct packet *data)
 {
-	//send_packet.dataType = 
-	data->dataType = (uint8_t) "P";
-	data->roll 	= (uint8_t) 55;
-	data->pitch = (uint8_t) 64;
-	data->yaw   = (uint8_t) 72;
-	data->lift  = (uint8_t) 22;
+	send_packet.dataType = (uint8_t) "P";
+	send_packet.roll 	= (uint8_t) 55;
+	send_packet.pitch = (uint8_t) 64;
+	send_packet.yaw   = (uint8_t) 72;
+	send_packet.lift  = (uint8_t) 22;
 }
 
 void setCRC(struct packet *data)
 {
-	data->crc 	= (uint16_t) "SB";	
+
+	uint16_t crc1 = NULL;
+
+	uint8_t packet[6] = {send_packet.header, 
+						send_packet.dataType,
+						send_packet.roll,
+						send_packet.pitch,
+						send_packet.yaw,
+						send_packet.lift};
+	uint8_t * packet_p = packet;
+
+	crc1 = crc16_compute(packet_p, 6, NULL);
+
+	send_packet.crc 	= (uint16_t) crc1;	
 }
-
-/*------------------------------------------------------------------
- * appendCRC --sets the crc data in the packet
- * Create by Yuup
- * 12/5/2018
- *------------------------------------------------------------------
- */
-
-
-
-void appendCRC(struct packet *data)
-{
-	
-	uint64_t encodedMessage = 0;
-
-	//Encode message with the data
-	encodedMessage = (encodedMessage | data->header) << 8;
-	encodedMessage = (encodedMessage | data->dataType) << 8;
-	encodedMessage = (encodedMessage | data->roll) << 8;
-	encodedMessage = (encodedMessage | data->pitch) << 8;
-	encodedMessage = (encodedMessage | data->yaw) << 8;
-	encodedMessage = (encodedMessage | data->lift) << 8;
-	fprintf(stderr, "%s %lld\n", "Message is: ", (long long) encodedMessage);
-	encodedMessage = encodedMessage << 8;
-	fprintf(stderr, "%s %lld\n", "Message is with padding: ", (long long unsigned) encodedMessage);
-	
-}
-
 
 /*------------------------------------------------------------------
  * printPacket --Prints the packet that wants to be sent as binary
@@ -405,7 +406,6 @@ void appendCRC(struct packet *data)
  * 8/5/2018
  *------------------------------------------------------------------
  */
-
 void printPacket(struct packet *da)
 {
 
@@ -420,18 +420,6 @@ void printPacket(struct packet *da)
 
 }
 
-void convertStructToChar(unsigned char * data[] , struct packet *da)
-{
-	data[0] = da->header;
-	data[1] = da->dataType;
-	data[2] = da->roll;
-	data[3] = da->pitch;
-	data[4] = da->yaw;
-	data[5] = da->lift;
-
-}
-
-
 /*------------------------------------------------------------------
  * sendPacket -- Is the start function to sending a packet
  * Create by Yuup
@@ -445,15 +433,12 @@ int sendPacket()
 	setData(&data);
 	setCRC(&data);
 
-
-	//appendCRC(&data);
-
-	printPacket(&data);
+	//printPacket(&data);
 
 	int result;
 
 	do {
-		result = (int) write(fd_RS232, &data, 8);
+		result = (int) write(fd_RS232, &send_packet, 8);
 	} while (result == 0);
 
 
@@ -495,7 +480,7 @@ int main(int argc, char **argv)
 	for (;;)
 	{
 		//Added by Yuu[]
-		if(counter > 30) {
+		if(counter > 15) {
 			counter = 0;
 			sendPacket();			
 		}

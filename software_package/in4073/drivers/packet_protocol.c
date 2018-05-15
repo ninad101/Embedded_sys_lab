@@ -70,6 +70,59 @@ bool check_for_header(uint8_t h)
 }
 
 /*------------------------------------------------------------------
+ * find_next_packet
+ * Create by Yuup
+ * 15/5/2018
+ * TODO Make this function more efficient
+ *------------------------------------------------------------------
+ */
+void find_next_packet()
+{
+	uint8_t packet[8] = {values_Packet.header, 
+					values_Packet.dataType,
+					values_Packet.roll,
+					values_Packet.pitch,
+					values_Packet.yaw,
+					values_Packet.lift,
+					((values_Packet.crc&0xFF00)>>8),
+					( values_Packet.crc &0x00FF)};
+
+	//Loop through to find header
+	//If header is not found in this function maybe better to just restart(?)
+	
+
+
+	bool headerFound = false;
+	do {
+		values_Packet.header = dequeue(&rx_queue);
+		headerFound = check_for_header( values_Packet.header);
+	} while( !headerFound && (rx_queue.count > 0) );
+}
+
+
+/*------------------------------------------------------------------
+ * crc_check -- processes the header of the packet
+ * Create by Yuup
+ * 5/5/2018
+ *------------------------------------------------------------------
+ */
+bool crc_check()
+{
+	uint8_t packet[6] = {values_Packet.header, 
+							values_Packet.dataType,
+							values_Packet.roll,
+							values_Packet.pitch,
+							values_Packet.yaw,
+							values_Packet.lift};
+
+	uint8_t * packet_p = packet;
+
+	uint16_t crc_ = crc16_compute(packet_p, 6, NULL);
+
+	return (crc_ == values_Packet.crc);
+}
+
+/*------------------------------------------------------------------
  * printPacket -- prints the packet values
  * Create by Yuup
  * 5/5/2018
@@ -86,7 +139,7 @@ void printPacket(struct packet *da)
 												da->pitch,
 												da->yaw,
 												da->lift,
-												da->CRC);
+												da->crc);
 
 }
 
@@ -115,20 +168,17 @@ void readPacket()
 	values_Packet.pitch = dequeue(&rx_queue);
 	values_Packet.yaw = dequeue(&rx_queue);
 	values_Packet.lift = dequeue(&rx_queue);
+
 	char crc1 = dequeue(&rx_queue);
 	char crc2 = dequeue(&rx_queue);
-	values_Packet.CRC = (uint16_t) ((crc2<<8) | crc1);
+	values_Packet.crc = (uint16_t) ((crc2<<8) | crc1);
 
-	printPacket(&values_Packet);
+	//printPacket(&values_Packet);
 
-	// //If nothing is left in the rx_queue then no messages are pending
-	// char dataByte, endByte;
-	// if(rx_queue.count > 1) {
-	// 	dataByte = dequeue(&rx_queue);
-	// 	endByte = dequeue(&rx_queue);
+	if(crc_check()){
+		printf("%s %d\n", "Packet was good", rx_queue.count);
+	} else {
 
-	// 	printf("%s ", byte_to_binary(headerByte));
-	// 	printf("%d ", (dataByte));
-	// 	printf("%s\n", byte_to_binary(endByte));
-	// }	
+		printf("%s\n", "Packet was dropped");
+	}
 }
