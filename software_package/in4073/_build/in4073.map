@@ -192,6 +192,7 @@ tx_queue            0x106             _build/in4073.o
 sax                 0x2               _build/in4073.o
 sq                  0x2               _build/in4073.o
 D2                  0x4               _build/baro.o
+Address             0x4               _build/in4073.o
 global_time         0x4               _build/timers.o
 bat_volt            0x2               _build/in4073.o
 values_Packet       0x8               _build/in4073.o
@@ -1744,7 +1745,7 @@ END GROUP
 .igot.plt       0x200020b4        0x0 load address 0x000227c0
  .igot.plt      0x200020b4        0x0 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/armv6-m/crtbegin.o
 
-.bss            0x200020b4      0x9a8 load address 0x000227c0
+.bss            0x200020b4      0x9b0 load address 0x000227c0
                 0x200020b4                . = ALIGN (0x4)
                 0x200020b4                __bss_start__ = .
  *(.bss*)
@@ -1881,7 +1882,7 @@ END GROUP
  .bss.heap_end.4167
                 0x200025e8        0x4 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv6-m/libnosys.a(sbrk.o)
  *(COMMON)
- COMMON         0x200025ec      0x45b _build/in4073.o
+ COMMON         0x200025ec      0x463 _build/in4073.o
                 0x200025ec                say
                 0x200025ee                psi
                 0x200025f0                sensor_fifo_count
@@ -1894,41 +1895,42 @@ END GROUP
                 0x20002708                tx_queue
                 0x2000280e                sax
                 0x20002810                sq
-                0x20002812                bat_volt
-                0x20002814                values_Packet
-                0x2000281c                ble_rx_queue
-                0x20002922                sp
-                0x20002924                radio_active
-                0x20002928                motor
-                0x20002930                last_correct_checksum_time
-                0x20002934                ble_tx_queue
-                0x20002a3c                ae
-                0x20002a44                sr
-                0x20002a46                demo_done
- *fill*         0x20002a47        0x1 
- COMMON         0x20002a48        0x5 _build/timers.o
-                0x20002a48                global_time
-                0x20002a4c                timer_flag
- *fill*         0x20002a4d        0x3 
- COMMON         0x20002a50        0x8 _build/baro.o
-                0x20002a50                D2
-                0x20002a54                D1
- COMMON         0x20002a58        0x4 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv6-m/libc_nano.a(lib_a-reent.o)
-                0x20002a58                errno
-                0x20002a5c                . = ALIGN (0x4)
-                0x20002a5c                __bss_end__ = .
+                0x20002814                Address
+                0x20002818                bat_volt
+                0x2000281c                values_Packet
+                0x20002824                ble_rx_queue
+                0x2000292a                sp
+                0x2000292c                radio_active
+                0x20002930                motor
+                0x20002938                last_correct_checksum_time
+                0x2000293c                ble_tx_queue
+                0x20002a44                ae
+                0x20002a4c                sr
+                0x20002a4e                demo_done
+ *fill*         0x20002a4f        0x1 
+ COMMON         0x20002a50        0x5 _build/timers.o
+                0x20002a50                global_time
+                0x20002a54                timer_flag
+ *fill*         0x20002a55        0x3 
+ COMMON         0x20002a58        0x8 _build/baro.o
+                0x20002a58                D2
+                0x20002a5c                D1
+ COMMON         0x20002a60        0x4 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv6-m/libc_nano.a(lib_a-reent.o)
+                0x20002a60                errno
+                0x20002a64                . = ALIGN (0x4)
+                0x20002a64                __bss_end__ = .
 
-.heap           0x20002a60      0x800
-                0x20002a60                __end__ = .
-                0x20002a60                end = __end__
+.heap           0x20002a68      0x800
+                0x20002a68                __end__ = .
+                0x20002a68                end = __end__
  *(.heap*)
- .heap          0x20002a60      0x800 _build/gcc_startup_nrf51.o
-                0x20002a60                __HeapBase
-                0x20003260                __HeapLimit = .
+ .heap          0x20002a68      0x800 _build/gcc_startup_nrf51.o
+                0x20002a68                __HeapBase
+                0x20003268                __HeapLimit = .
 
-.stack_dummy    0x20002a60      0x800
+.stack_dummy    0x20002a68      0x800
  *(.stack*)
- .stack         0x20002a60      0x800 _build/gcc_startup_nrf51.o
+ .stack         0x20002a68      0x800 _build/gcc_startup_nrf51.o
                 0x20004000                __StackTop = (ORIGIN (RAM) + LENGTH (RAM))
                 0x20003800                __StackLimit = (__StackTop - SIZEOF (.stack_dummy))
                 0x20004000                PROVIDE (__stack, __StackTop)

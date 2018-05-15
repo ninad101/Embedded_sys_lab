@@ -39,6 +39,8 @@ struct packet{
 	uint16_t CRC;
 } values_Packet;
 
+unint8_t mode;
+
 bool demo_done;
 
 // Control
