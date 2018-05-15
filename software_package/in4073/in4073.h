@@ -37,7 +37,7 @@ struct packet{
 	uint8_t yaw;
 	uint8_t lift;
 	uint16_t CRC;
-};
+} values_Packet;
 
 bool demo_done;
 

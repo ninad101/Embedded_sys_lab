@@ -102,25 +102,24 @@ void printPacket(struct packet *da)
 
 void readPacket()
 {
-	struct packet data;
-
-
 	//Packet is 8 bytes
 	bool headerFound = false;
 	do {
-		data.header = dequeue(&rx_queue);
-		headerFound = check_for_header( data.header);
+		values_Packet.header = dequeue(&rx_queue);
+		headerFound = check_for_header( values_Packet.header);
 	} while( !headerFound && (rx_queue.count > 0) );
 
 	//Now I need to make sure the whole packet is complete
-	data.dataType = dequeue(&rx_queue);
-	data.roll = dequeue(&rx_queue);
-	data.pitch = dequeue(&rx_queue);
-	data.yaw = dequeue(&rx_queue);
-	data.lift = dequeue(&rx_queue);
-	data.CRC = (uint16_t) (dequeue(&rx_queue)<< 8 & dequeue(&rx_queue));
+	values_Packet.dataType = dequeue(&rx_queue);
+	values_Packet.roll = dequeue(&rx_queue);
+	values_Packet.pitch = dequeue(&rx_queue);
+	values_Packet.yaw = dequeue(&rx_queue);
+	values_Packet.lift = dequeue(&rx_queue);
+	char crc1 = dequeue(&rx_queue);
+	char crc2 = dequeue(&rx_queue);
+	values_Packet.CRC = (uint16_t) ((crc2<<8) | crc1);
 
-	printPacket(&data);
+	printPacket(&values_Packet);
 
 	// //If nothing is left in the rx_queue then no messages are pending
 	// char dataByte, endByte;

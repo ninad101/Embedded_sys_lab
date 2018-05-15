@@ -355,7 +355,7 @@ void setData(struct packet *data)
 
 void setCRC(struct packet *data)
 {
-	data->crc 	= (uint16_t) "SB";	
+	data->crc 	= 888;	
 }
 
 /*------------------------------------------------------------------
