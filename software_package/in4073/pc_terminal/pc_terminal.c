@@ -14,12 +14,22 @@
 #include <inttypes.h>
 #include <time.h>
 
-
 /*------------------------------------------------------------
  * console I/O
  *------------------------------------------------------------
  */
 struct termios 	savetty;
+
+
+struct packet{
+	uint8_t header;
+	uint8_t dataType;
+	uint8_t roll;
+	uint8_t pitch;
+	uint8_t yaw;
+	uint8_t lift;
+	uint16_t CRC;
+} send_packet;
 
 void	term_initio()
 {
@@ -105,11 +115,9 @@ void rs232_open(void)
   	struct termios	tty;
 
 
-
 	// O_NOCTTY flag tells UNIX that this program doesn't want to be the "controlling terminal" for that port.
 	// O_RDWR flag is a Read Write flag
    	fd_RS232 = open("/dev/ttyUSB0", O_RDWR | O_NOCTTY);  // Hardcode your serial port here, or request it as an argument at runtime
-
 
 	assert(fd_RS232>=0);
 
@@ -349,6 +357,7 @@ void setHeader(struct packet *data)
  */
 void setData(struct packet *data)
 {
+	//send_packet.dataType = 
 	data->dataType = (uint8_t) "P";
 	data->roll 	= (uint8_t) 55;
 	data->pitch = (uint8_t) 64;
@@ -358,7 +367,7 @@ void setData(struct packet *data)
 
 void setCRC(struct packet *data)
 {
-	data->crc 	= 888;	
+	data->crc 	= (uint16_t) "SB";	
 }
 
 /*------------------------------------------------------------------
@@ -368,15 +377,7 @@ void setCRC(struct packet *data)
  *------------------------------------------------------------------
  */
 
-// struct packet{
-// 	uint8_t header;
-// 	uint8_t dataType;
-// 	uint8_t roll;
-// 	uint8_t pitch;
-// 	uint8_t yaw;
-// 	uint8_t lift;
-// 	uint16_t CRC;
-// };
+
 
 void appendCRC(struct packet *data)
 {
@@ -469,17 +470,8 @@ int sendPacket()
 int main(int argc, char **argv)
 {
 	char	c;
-
 	clock_t before = clock();
 
-
-	// Creates the log file at the host pc to be written.
-	FILE *fp;
-	fp=fopen("log.txt","w");
-	if (fp ==NULL)
-	{
-		printf("ERROR opening file to log");
-	}
 
 	term_puts("\nTerminal program - Embedded Real-Time Systems\n");
 
@@ -511,17 +503,10 @@ int main(int argc, char **argv)
 
 		//rs232 get char, c - input from the rs232 connection
 		if ((c = rs232_getchar_nb()) != -1)
-		{
 			term_putchar(c);
-			// Write the incoming data to log file only when special logging byte received
-			// if(check for byte)
-			//putc(c,fp);
-		}
+
 	}
-	//Closes the log file
-	fclose(fp);
-	// Resets the flash
-	//logReset();
+
 	term_exitio();
 	rs232_close();
 	term_puts("\n<exit>\n");
