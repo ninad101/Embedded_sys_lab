@@ -10,7 +10,7 @@
  *
  */
 
-#include "crc16.h"
+//#include "crc16.h"
 #include <stdio.h>
 
 uint16_t crc16_compute(const uint8_t * p_data, uint32_t size, const uint16_t * p_crc)
@@ -30,36 +30,4 @@ uint16_t crc16_compute(const uint8_t * p_data, uint32_t size, const uint16_t * p
     return crc;
 }
 
-struct packet{
- uint8_t header;
- uint8_t dataType;
- uint8_t roll;
- uint8_t pitch;
- uint8_t yaw;
- uint8_t lift;
- uint16_t CRC;
-};
 
-int main()
-{
-
-    struct packet p = {211, 112, 212, 021, 55, 57, 0};
-    uint8_t pckt[6] = {211, 112, 212, 21, 55, 57};
-
-    uint16_t p_crc = NULL;
-
-    p_crc = crc16_compute(pckt, 6, p_crc);
-
-
-    printf("%s %d\n", "p_crc: ", p_crc);
-
-    uint8_t rpckt[8] = {211, 112, 212, 21, 55, 57};
-    rpckt[6] = p_crc; 
-    rpckt[7] = p_crc >> 8;
-
-    uint16_t r_crc = crc16_compute(rpckt, 8, NULL);
-
-    printf("%s %d\n","r_crc: ", r_crc );
-
-    return 0;
-}
