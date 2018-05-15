@@ -14,6 +14,7 @@
 #include <inttypes.h>
 #include <time.h>
 
+
 /*------------------------------------------------------------
  * console I/O
  *------------------------------------------------------------
@@ -104,9 +105,11 @@ void rs232_open(void)
   	struct termios	tty;
 
 
+
 	// O_NOCTTY flag tells UNIX that this program doesn't want to be the "controlling terminal" for that port.
 	// O_RDWR flag is a Read Write flag
    	fd_RS232 = open("/dev/ttyUSB0", O_RDWR | O_NOCTTY);  // Hardcode your serial port here, or request it as an argument at runtime
+
 
 	assert(fd_RS232>=0);
 
@@ -466,8 +469,17 @@ int sendPacket()
 int main(int argc, char **argv)
 {
 	char	c;
+
 	clock_t before = clock();
 
+
+	// Creates the log file at the host pc to be written.
+	FILE *fp;
+	fp=fopen("log.txt","w");
+	if (fp ==NULL)
+	{
+		printf("ERROR opening file to log");
+	}
 
 	term_puts("\nTerminal program - Embedded Real-Time Systems\n");
 
@@ -499,10 +511,17 @@ int main(int argc, char **argv)
 
 		//rs232 get char, c - input from the rs232 connection
 		if ((c = rs232_getchar_nb()) != -1)
+		{
 			term_putchar(c);
-
+			// Write the incoming data to log file only when special logging byte received
+			// if(check for byte)
+			//putc(c,fp);
+		}
 	}
-
+	//Closes the log file
+	fclose(fp);
+	// Resets the flash
+	//logReset();
 	term_exitio();
 	rs232_close();
 	term_puts("\n<exit>\n");
