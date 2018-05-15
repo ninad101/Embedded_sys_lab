@@ -6,7 +6,6 @@
  * read more: http://mirror.datenwolf.net/serial/
  *------------------------------------------------------------
  */
-
 #include <stdio.h>
 #include <termios.h>
 #include <unistd.h>
@@ -14,6 +13,45 @@
 #include <inttypes.h>
 #include <time.h>
 
+//joystick lib :
+
+#include <sys/ioctl.h>
+#include <sys/time.h>
+#include <sys/types.h>
+#include <fcntl.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <stdint.h>
+#include "joystick.h"
+#define DT	0.0004
+#define JS_DEV		"/dev/input/js1"
+#define JS_SENSITIVITY	10000.0
+
+
+
+/*time*/
+#include <time.h>
+#include <assert.h>
+unsigned int    mon_time_ms(void)
+{
+        unsigned int    ms;
+        struct timeval  tv;
+        struct timezone tz;
+
+        gettimeofday(&tv, &tz);
+        ms = 1000 * (tv.tv_sec % 65); // 65 sec wrap around
+        ms = ms + tv.tv_usec / 1000;
+        return ms;
+}
+
+void    mon_delay_ms(unsigned int ms)
+{
+        struct timespec req, rem;
+
+        req.tv_sec = ms / 1000;
+        req.tv_nsec = 1000000 * (ms % 1000);
+        assert(nanosleep(&req,&rem) == 0);
+}
 /*------------------------------------------------------------
  * console I/O
  *------------------------------------------------------------
@@ -432,6 +470,8 @@ void convertStructToChar(unsigned char * data[] , struct packet *da)
 }
 
 
+
+
 /*------------------------------------------------------------------
  * sendPacket -- Is the start function to sending a packet
  * Create by Yuup
@@ -471,7 +511,21 @@ int main(int argc, char **argv)
 {
 	char	c;
 	clock_t before = clock();
+	struct js_event js;
+	uint8_t 	t, i;
+	double			js_roll, js_pitch, js_yaw, js_lift;
+	int 			fd,errno,EAGAIN;
+    int			axis[6];
+    int			button[12];
 
+	if ((fd = open(JS_DEV, O_RDONLY)) < 0) {
+		perror("jstest");
+		exit(1);
+	}
+
+	/* non-blocking mode
+	 */
+	fcntl(fd, F_SETFL, O_NONBLOCK);
 
 	term_puts("\nTerminal program - Embedded Real-Time Systems\n");
 
@@ -494,6 +548,50 @@ int main(int argc, char **argv)
 	 */
 	for (;;)
 	{
+		//while (1) 
+		//{
+
+
+		/* simulate work
+		 */
+		mon_delay_ms(300);
+		t = mon_time_ms();
+
+		/* check up on JS
+		 */
+		while (read(fd, &js, sizeof(struct js_event)) == 
+		       			sizeof(struct js_event))  {
+
+			/* register data
+			 */
+			
+			switch(js.type & ~JS_EVENT_INIT) {
+				case JS_EVENT_BUTTON:
+					button[js.number] = js.value;
+					break;
+				case JS_EVENT_AXIS:
+					axis[js.number] = js.value;
+					break;
+			}
+		}
+	if (errno != EAGAIN) {
+			perror("\njs: error reading (EAGAIN)"); //EAGAIN is returned when the queue is empty
+			exit (1);
+		}
+
+		js_roll = axis[0] / JS_SENSITIVITY;
+		js_pitch = axis[1] / JS_SENSITIVITY;
+		js_yaw += (axis[2] / JS_SENSITIVITY) * DT;
+		js_lift = -(axis[3] - 32767) / JS_SENSITIVITY;
+
+		/* integrate keyboard(later) and joystick : added by Ninad
+		 */
+
+		send_packet.roll = (uint8_t)(js_roll *= 0.00390625);
+		send_packet.pitch = (uint8_t)(js_pitch *= 0.00390625);
+		send_packet.yaw = (uint8_t)(js_yaw*=0.00390625);
+		send_packet.lift = (uint8_t)(js_lift*=0.00390625);
+		}
 		//Added by Yuu[]
 		if(counter > 30) {
 			counter = 0;
@@ -505,7 +603,7 @@ int main(int argc, char **argv)
 		if ((c = rs232_getchar_nb()) != -1)
 			term_putchar(c);
 
-	}
+	//}
 
 	term_exitio();
 	rs232_close();
