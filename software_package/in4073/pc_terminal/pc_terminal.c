@@ -12,6 +12,7 @@
 #include <unistd.h>
 #include <string.h>
 #include <inttypes.h>
+//#include "logData.h"
 
 /*------------------------------------------------------------
  * console I/O
@@ -90,7 +91,7 @@ void rs232_open(void)
   	int 		result;
   	struct termios	tty;
 
-       	fd_RS232 = open("/dev/ttyUSB0", O_RDWR | O_NOCTTY);  // Hardcode your serial port here, or request it as an argument at runtime
+    fd_RS232 = open("/dev/ttyUSB0", O_RDWR | O_NOCTTY);  // Hardcode your serial port here, or request it as an argument at runtime
 
 	assert(fd_RS232>=0);
 
@@ -181,6 +182,13 @@ int 	rs232_putchar(char c)
 int main(int argc, char **argv)
 {
 	char	c;
+	// Creates the log file at the host pc to be written.
+	FILE *fp;
+	fp=fopen("log.txt","w");
+	if (fp ==NULL)
+	{
+		printf("ERROR opening file to log");
+	}
 
 	term_puts("\nTerminal program - Embedded Real-Time Systems\n");
 
@@ -202,10 +210,17 @@ int main(int argc, char **argv)
 			rs232_putchar(c);
 
 		if ((c = rs232_getchar_nb()) != -1)
+		{
 			term_putchar(c);
-
+			// Write the incoming data to log file only when special logging byte received
+			// if(check for byte)
+			//putc(c,fp);
+		}
 	}
-
+	//Closes the log file
+	fclose(fp);
+	// Resets the flash
+	//logReset();
 	term_exitio();
 	rs232_close();
 	term_puts("\n<exit>\n");
