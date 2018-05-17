@@ -106,10 +106,7 @@ int	button[12];
 int serial_device = 0;
 int fd_RS232;
 
-<<<<<<< HEAD
-=======
 
->>>>>>> master
 void rs232_open(void)
 {
   	char 		*name;
