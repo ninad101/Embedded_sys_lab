@@ -69,6 +69,63 @@ bool check_for_header(uint8_t h)
 	return header;
 }
 
+void fillBroken_Packet()
+{
+	broken_Packet[0] = values_Packet.header;
+	broken_Packet[1] = values_Packet.dataType;
+	broken_Packet[2] = values_Packet.roll;
+	broken_Packet[3] = values_Packet.pitch;
+	broken_Packet[4] = values_Packet.yaw;
+	broken_Packet[5] = values_Packet.lift;
+	broken_Packet[6] = ((values_Packet.crc & 0xFF00) >> 8);
+	broken_Packet[7] = (values_Packet.crc & 0x00FF);
+}
+
+void find_header_in_broken_Packet()
+{
+	// Do not need to search the values_Packet.header
+	// 	that is why i = 1;
+	for(int i = 1; i < 8; i++)
+	{
+		if(check_for_header(broken_Packet[i]))
+		{
+			for(int j = 0; j < 8; j++)
+			{
+				if( (i+j) < 8)
+				{
+					broken_Packet[j] = broken_Packet[(j+i)];
+				} else {
+					broken_Packet[j] = dequeue(&rx_queue);
+				}
+			}
+			break;
+		}
+	}
+
+
+}
+
+bool check_Broken_Packet()
+{
+	uint8_t * packet_p = broken_Packet;
+	uint16_t crc_ = crc16_compute(packet_p, 6 ,NULL);
+
+	uint16_t crc_broken_Packet = ((broken_Packet[6] << 8) | broken_Packet[7]);
+
+	return (crc_ == crc_broken_Packet);
+}
+
+void fill_values_Packet()
+{
+	values_Packet.header 	= broken_Packet[0];
+	values_Packet.dataType 	= broken_Packet[1];
+	values_Packet.roll 		= broken_Packet[2];
+	values_Packet.pitch 	= broken_Packet[3];
+	values_Packet.yaw 		= broken_Packet[4];
+	values_Packet.lift		= broken_Packet[5];
+	values_Packet.crc 		= ((broken_Packet[6]<<8) | broken_Packet[7]);
+}
+
 /*------------------------------------------------------------------
  * find_next_packet
  * Create by Yuup
@@ -76,27 +133,16 @@ bool check_for_header(uint8_t h)
  * TODO Make this function more efficient
  *------------------------------------------------------------------
  */
-void find_next_packet()
+bool find_next_packet()
 {
-	uint8_t packet[8] = {values_Packet.header, 
-					values_Packet.dataType,
-					values_Packet.roll,
-					values_Packet.pitch,
-					values_Packet.yaw,
-					values_Packet.lift,
-					((values_Packet.crc&0xFF00)>>8),
-					( values_Packet.crc &0x00FF)};
-
-	//Loop through to find header
-	//If header is not found in this function maybe better to just restart(?)
-	
-
-
-	bool headerFound = false;
-	do {
-		values_Packet.header = dequeue(&rx_queue);
-		headerFound = check_for_header( values_Packet.header);
-	} while( !headerFound && (rx_queue.count > 0) );
+	fillBroken_Packet();
+	find_header_in_broken_Packet();
+	if(check_Broken_Packet()) {
+		fill_values_Packet();
+		return true;
+	} else {
+		return false;
+	}
 }
 
 
@@ -152,6 +198,7 @@ void printPacket(struct packet *da)
  * 3 check how crc and partey bit work
  *------------------------------------------------------------------
  */
+uint8_t broken_packet_counter2 = 0;
 
 void readPacket()
 {
@@ -175,10 +222,19 @@ void readPacket()
 
 	//printPacket(&values_Packet);
 
+	broken_packet_counter2++;
+	if(broken_packet_counter2 > 10) {
+		values_Packet.crc = 0;
+		broken_packet_counter2 = 0;
+	}
+
 	if(crc_check()){
 		printf("%s %d\n", "Packet was good", rx_queue.count);
+	} else if(find_next_packet() ){
+		printf("%s\n", "Packet was dropped, new packet found");
 	} else {
-
-		printf("%s\n", "Packet was dropped");
+		if(rx_queue.count > 7) {
+			readPacket();
+		}
 	}
 }

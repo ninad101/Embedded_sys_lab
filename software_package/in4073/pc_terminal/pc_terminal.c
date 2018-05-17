@@ -480,7 +480,7 @@ int main(int argc, char **argv)
 	for (;;)
 	{
 		//Added by Yuu[]
-		if(counter > 15) {
+		if(counter > 30) {
 			counter = 0;
 			sendPacket();			
 		}
