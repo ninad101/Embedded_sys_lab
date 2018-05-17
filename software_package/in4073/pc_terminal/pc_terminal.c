@@ -21,6 +21,7 @@
 
 #define HEADER 0b11010000
 //#define JOYSTICK_CONNECTED 1
+//#define JOYSTICK_DEBUG 2
 
 
 uint8_t mode = 0;
@@ -276,6 +277,9 @@ uint16_t crc16_compute(const uint8_t * p_data, uint32_t size, const uint16_t * p
 void setHeader(struct packet *data) 
 {
 	send_packet.header = (uint8_t) HEADER;
+	send_packet.header = send_packet.header | mode;
+
+
 	//data->header = HEADER;
 }
 
@@ -405,6 +409,7 @@ int main(int argc, char **argv)
 	 */
 		for (;;)
 		{	//from JS.c 
+
 			#ifdef JOYSTICK_CONNECTED
 			while (read(fd, &js, sizeof(struct js_event)) == 
 							sizeof(struct js_event))  {
@@ -429,12 +434,13 @@ int main(int argc, char **argv)
 			#endif
 
 			//Added by Yuup
-			if(counter > 30) {
+			if(counter > 5) {
 				counter = 0;
 				sendPacket();			
 			}
 			counter++;
 
+			#ifdef JOYSTICK_DEBUG
 			printf("\n");
 			for (int i = 0; i < 6; i++) {
 				printf("%6d ",axis[i]);
@@ -443,6 +449,7 @@ int main(int argc, char **argv)
 			for (int i = 0; i < 12; i++) {
 				printf("%d ",button[i]);
 			}
+			#endif
 			if (button[0])
 				break;
 
