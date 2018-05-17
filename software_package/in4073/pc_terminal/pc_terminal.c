@@ -190,7 +190,34 @@ int 	rs232_getchar()
 //TODO 
 //  Map keyboard inputs to values
 int keyboardToValue(char c) {
+ switch(c)
+ {
+	 case '0' :
+	 
+	 ;
+	 break;
+	 case '1' :
+	 ;
+	 break;
+	 case '2' :
+	 ;
+	 break;
+	 case 'a' :
+	 ;
+	 break;
+	 case 'z' :
+	 ;
+	 break;
+	 case 'q' :
+	 ;
+	 break;
+	 case 'w' :
+	 ;
+	 break;
 
+	default :
+	;
+ }
 } 
 
 // Function written by Yuup
@@ -508,7 +535,12 @@ int main(int argc, char **argv)
 	/* send & receive
 	 */
 		for (;;)
-		{	//from JS.c 
+		{	
+			//input from Keyboard
+			char keyboardInput = term_getchar();
+			//keyboardToValue(keyboardInput);
+			
+			//from JS.c 
 			while (read(fd, &js, sizeof(struct js_event)) == 
 							sizeof(struct js_event))  {
 
@@ -552,10 +584,10 @@ int main(int argc, char **argv)
 			// for (int i = 0; i < 12; i++) {
 			// 	printf("%d ",button[i]);
 			// }
-			if (button[0])
-				break;
+			// if (button[0])
+			// 	break;
 
-			//rs232 get char, c - input from the rs232 connection
+			rs232 get char, c - input from the rs232 connection
 			if ((c = rs232_getchar_nb()) != -1)
 				term_putchar(c);
 		}
