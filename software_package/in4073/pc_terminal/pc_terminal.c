@@ -15,12 +15,16 @@
 #include <time.h>
 
 /*------------------------------------------------------------
- * console I/O
+ * Global Variables
  *------------------------------------------------------------
  */
-struct termios 	savetty;
+
+#define HEADER 0b11010000
+//#define JOYSTICK_CONNECTED 1
+//#define JOYSTICK_DEBUG 2
 
 
+uint8_t mode = 0;
 struct packet{
 	uint8_t header;
 	uint8_t dataType;
@@ -30,6 +34,12 @@ struct packet{
 	uint8_t lift;
 	uint16_t crc;
 } send_packet;
+
+/*------------------------------------------------------------
+ * console I/O
+ *------------------------------------------------------------
+ */
+struct termios 	savetty;
 
 void	term_initio()
 {
@@ -97,7 +107,7 @@ int	term_getchar()
 #include <stdlib.h>
 #include "joystick.h"
 #include <errno.h>
-#define JS_DEV	"/dev/input/js1"
+#define JS_DEV	"/dev/input/js0"
 
 
 int	axis[6];
@@ -106,10 +116,6 @@ int	button[12];
 int serial_device = 0;
 int fd_RS232;
 
-<<<<<<< HEAD
-=======
-
->>>>>>> master
 void rs232_open(void)
 {
   	char 		*name;
@@ -191,89 +197,6 @@ int 	rs232_getchar()
 	return c;
 }
 
-//TODO 
-//  Map keyboard inputs to values
-int keyboardToValue(char c) {
-
-} 
-
-// Function written by Yuup
-// 5/5/2018
-#define HEADER 0b11010000
-int rs232_putchar_with_header(uint32_t c)
-{
-
-	char roll, pitch, yaw, lift;
-	roll 	= (c 	   & 0xFF);
-	pitch 	= ((c>>8)  & 0xFF);
-	yaw 	= ((c>>16) & 0xFF);
-	lift	= ((c>>24) & 0xFF);
-
-	char packet[7] = {HEADER, roll, pitch, yaw, lift, 0b00000001, 0b00000001};
-
-	int result;
-
-	do {
-		result = (int) write(fd_RS232, &packet, 7);
-	} while (result == 0);
-
-	assert(result==7);
-	return result;
-
-}
-#define CRC16_DNP	0x3D65
-unsigned int crc16(unsigned int crcValue, unsigned char newByte) 
-{
-	unsigned char i;
-
-	for (i = 0; i < 8; i++) {
-
-		if (((crcValue & 0x8000) >> 8) ^ (newByte & 0x80)){
-			crcValue = (crcValue << 1)  ^ CRC16_DNP;
-		}else{
-			crcValue = (crcValue << 1);
-		}
-
-		newByte <<= 1;
-	}
-  
-	return crcValue;
-}
-
-// Function written by Yuup
-// 8/5/2018
-// Returns the data for the drone
-// Byte 1 = Roll 
-// Byte 2 = Pitch
-// Byte 3 = Yaw
-// Byte 4 = lift
-struct packet map_char_to_binary(char c) {
-
-	struct packet result = {};
-
-	uint32_t value = 0;
-
-	// Roll
-	if(c == 'g') {
-		value = 10;
-		value = value << 8;
-	} else if(c == 'b')
-
-	// Yaw Values
-	if(c == 'q') {
-		//Add yaw values
-	} else if(c == 'w') {
-		//remove some yaw values
-	} else if(c == 'a') {
-		//Add some life up
-	} else if(c == 'z') {
-		//Add some lift down
-	}
-	// TODO write code for arrows
-
-	return result;
-
-}
 
 
 // Function written by Yuup
@@ -288,28 +211,7 @@ int check_mode_selection(char c) {
 
 }
 
-// Function written by Yuup 
-//	7/5/2018
-// TODO
-//  implement timer
-void periodicSignal(clock_t *startTime)
-{
-	char c = ' ';
 
-	c = term_getchar_nb();
-
-	if(!check_mode_selection(c)) {
-		//rs232_putchar_with_header(map_char_to_binary(c));
-	} else {
-		//Change mode
-	}
-
-
-	//rs232_putchar_with_header(c);
-
-	//}
-
-}
 
 int 	rs232_putchar(char c)
 {
@@ -374,7 +276,10 @@ uint16_t crc16_compute(const uint8_t * p_data, uint32_t size, const uint16_t * p
  */
 void setHeader(struct packet *data) 
 {
-	send_packet.header = (uint8_t) 208;
+	send_packet.header = (uint8_t) HEADER;
+	send_packet.header = send_packet.header | mode;
+
+
 	//data->header = HEADER;
 }
 
@@ -445,8 +350,6 @@ int sendPacket()
 	setData(&data);
 	setCRC(&data);
 
-	//printPacket(&data);
-
 	int result;
 
 	do {
@@ -467,13 +370,15 @@ int sendPacket()
 int main(int argc, char **argv)
 {
 	int 		fd;
+
+#ifdef JOYSTICK_CONNECTED	
 	struct js_event js;
 	
 	if ((fd = open(JS_DEV, O_RDONLY)) < 0) {
 		perror("jstest");
 		exit(1);
 	}
-
+#endif
 	/* non-blocking mode
 	 */
 	fcntl(fd, F_SETFL, O_NONBLOCK);
@@ -504,6 +409,8 @@ int main(int argc, char **argv)
 	 */
 		for (;;)
 		{	//from JS.c 
+
+			#ifdef JOYSTICK_CONNECTED
 			while (read(fd, &js, sizeof(struct js_event)) == 
 							sizeof(struct js_event))  {
 
@@ -524,19 +431,16 @@ int main(int argc, char **argv)
 				perror("\njs: error reading (EAGAIN)"); //EAGAIN is returned when the queue is empty
 				exit (1);
 			}
-
-			// send_packet.pitch=axis[0];
-			// send_packet.roll=axis[1];
-			// send_packet.yaw=axis[2];
-			// send_packet.lift=axis[3];
+			#endif
 
 			//Added by Yuup
-			if(counter > 30) {
+			if(counter > 5) {
 				counter = 0;
 				sendPacket();			
 			}
 			counter++;
 
+			#ifdef JOYSTICK_DEBUG
 			printf("\n");
 			for (int i = 0; i < 6; i++) {
 				printf("%6d ",axis[i]);
@@ -545,6 +449,7 @@ int main(int argc, char **argv)
 			for (int i = 0; i < 12; i++) {
 				printf("%d ",button[i]);
 			}
+			#endif
 			if (button[0])
 				break;
 

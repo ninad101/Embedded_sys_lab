@@ -222,17 +222,12 @@ void readPacket()
 
 	//printPacket(&values_Packet);
 
-	broken_packet_counter2++;
-	if(broken_packet_counter2 > 10) {
-		values_Packet.crc = 0;
-		broken_packet_counter2 = 0;
-	}
-
 	if(crc_check()){
 		printf("%s %d\n", "Packet was good", rx_queue.count);
 	} else if(find_next_packet() ){
 		printf("%s\n", "Packet was dropped, new packet found");
 	} else {
+		printf("%s\n", "Packet was dropped, algorithm will continue looking as normal");
 		if(rx_queue.count > 7) {
 			readPacket();
 		}

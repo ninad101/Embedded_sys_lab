@@ -9,6 +9,7 @@
  */
 
 #include "in4073.h"
+#include "string.h"
 
 void init_queue(queue *q){
 	
@@ -29,6 +30,17 @@ char dequeue(queue *q){
 
 	char x = q->Data[ q->first ];
 	q->first = (q->first + 1) % QUEUE_SIZE;
-	q->count -= 1;
+	if(q->count < 1) {
+		printf("%s\n", "counter is going below 0");
+		flushQueue(q);
+	} else {
+		q->count -= 1;
+	}
+
 	return x;
+}
+
+void flushQueue(queue *q){
+	memset(q->Data, 0, QUEUE_SIZE);
+	init_queue(q);
 }
