@@ -113,7 +113,6 @@ void rs232_open(void)
   	int 		result;
   	struct termios	tty;
 
-
 	// O_NOCTTY flag tells UNIX that this program doesn't want to be the "controlling terminal" for that port.
 	// O_RDWR flag is a Read Write flag
    	fd_RS232 = open("/dev/ttyUSB0", O_RDWR | O_NOCTTY);  // Hardcode your serial port here, or request it as an argument at runtime
@@ -369,7 +368,7 @@ uint16_t crc16_compute(const uint8_t * p_data, uint32_t size, const uint16_t * p
  * 8/5/2018
  *------------------------------------------------------------------
  */
-void setHeader(struct packet *data) 
+void setHeader() 
 {
 	send_packet.header = (uint8_t) 208;
 	//data->header = HEADER;
@@ -381,16 +380,19 @@ void setHeader(struct packet *data)
  * 8/5/2018
  *------------------------------------------------------------------
  */
-void setData(struct packet *data)
+void setData(int *value,int size)
 {
 	send_packet.dataType = (uint8_t) "P";
-	send_packet.roll 	= (uint8_t) 55;
-	send_packet.pitch = (uint8_t) 64;
-	send_packet.yaw   = (uint8_t) 72;
-	send_packet.lift  = (uint8_t) 22;
+	send_packet.roll 	= (uint8_t) *value;
+	value++;
+	send_packet.pitch = (uint8_t) *value;
+	value++;
+	send_packet.yaw   = (uint8_t) *value;
+	value++;
+	send_packet.lift  = (uint8_t) *value;
 }
 
-void setCRC(struct packet *data)
+void setCRC()
 {
 
 	uint16_t crc1 = NULL;
@@ -415,17 +417,24 @@ void setCRC(struct packet *data)
  * 8/5/2018
  *------------------------------------------------------------------
  */
-void printPacket(struct packet *da)
+void printPacket() //struct packet *da
 {
 
-	fprintf(stderr, "%s %d %d %d %d %d %d %d\n", "Packet sent: ",
-												da->header, 
-												da->dataType,
-												da->roll,
-												da->pitch,
-												da->yaw,
-												da->lift,
-												da->crc);
+	// fprintf(stderr, "%s %d %d %d %d %d %d %d\n", "Packet sent: ",
+	// 											da->header, 
+	// 											da->dataType,
+	// 											da->roll,
+	// 											da->pitch,
+	// 											da->yaw,
+	// 											da->lift,
+	// 											da->crc);
+	printf("%d\n",send_packet.header);
+	printf("%d\n",send_packet.roll);
+	printf("%d\n",send_packet.lift);
+	printf("%d\n",send_packet.pitch);
+	printf("%d\n",send_packet.yaw);
+	printf("%d\n",send_packet.lift);
+	printf("%d\n",send_packet.crc);
 
 }
 
@@ -437,12 +446,12 @@ void printPacket(struct packet *da)
  */
 int sendPacket() 
 {
-	struct packet data = {0, 0, 0, 0, 0, 0, 0};
-	setHeader(&data);
-	setData(&data);
-	setCRC(&data);
+	// struct packet data = {0, 0, 0, 0, 0, 0, 0};
+	// setHeader(&data);
+	// setData(&data);
+	// setCRC(&data);
 
-	//printPacket(&data);
+	printPacket();
 
 	int result;
 
@@ -453,7 +462,6 @@ int sendPacket()
 
 	assert(result==8);
 	return result;
-
 
 }
 
@@ -522,26 +530,28 @@ int main(int argc, char **argv)
 				exit (1);
 			}
 
-			// send_packet.pitch=axis[0];
-			// send_packet.roll=axis[1];
-			// send_packet.yaw=axis[2];
-			// send_packet.lift=axis[3];
-
+				setHeader();
+				setData(axis,6);
+				setCRC();
+			
 			//Added by Yuup
-			if(counter > 30) {
+			if(counter > 15) {
 				counter = 0;
+				// setHeader();
+				// setData(axis,6);
+				// setCRC();
 				sendPacket();			
 			}
 			counter++;
 
-			printf("\n");
-			for (int i = 0; i < 6; i++) {
-				printf("%6d ",axis[i]);
-			}
-			printf(" |  ");
-			for (int i = 0; i < 12; i++) {
-				printf("%d ",button[i]);
-			}
+			// printf("\n");
+			// for (int i = 0; i < 6; i++) {
+			// 	printf("%6d ",axis[i]);
+			// }
+			// printf(" |  ");
+			// for (int i = 0; i < 12; i++) {
+			// 	printf("%d ",button[i]);
+			// }
 			if (button[0])
 				break;
 
