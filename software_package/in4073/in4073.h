@@ -29,6 +29,7 @@
 #define INT_PIN		5
 
 // Incoming Packet Structure
+#define PACKET_SIZE	8
 struct packet{
 	uint8_t header;
 	uint8_t dataType;
@@ -36,8 +37,9 @@ struct packet{
 	uint8_t pitch;
 	uint8_t yaw;
 	uint8_t lift;
-	uint16_t CRC;
+	uint16_t crc;
 } values_Packet;
+uint8_t broken_Packet[PACKET_SIZE];
 
 uint8_t mode;
 

@@ -36,7 +36,7 @@ void process_key(uint8_t c)
 			ae[0] -= 10;
 			if (ae[0] < 0) ae[0] = 0;
 			break;
-		case 'w':
+		case 'w':	
 			ae[1] += 10;
 			break;
 		case 's':
