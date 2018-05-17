@@ -94,10 +94,22 @@ int	term_getchar()
 #include <stdio.h>
 #include <assert.h>
 #include <time.h>
+#include <stdlib.h>
+#include "joystick.h"
+#include <errno.h>
+#define JS_DEV	"/dev/input/js1"
+
+
+int	axis[6];
+int	button[12];
 
 int serial_device = 0;
 int fd_RS232;
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> master
 void rs232_open(void)
 {
   	char 		*name;
@@ -242,19 +254,19 @@ struct packet map_char_to_binary(char c) {
 	uint32_t value = 0;
 
 	// Roll
-	if(c == "g") {
+	if(c == 'g') {
 		value = 10;
 		value = value << 8;
-	} else if(c == "b")
+	} else if(c == 'b')
 
 	// Yaw Values
-	if(c == "q") {
+	if(c == 'q') {
 		//Add yaw values
-	} else if(c == "w") {
+	} else if(c == 'w') {
 		//remove some yaw values
-	} else if(c == "a") {
+	} else if(c == 'a') {
 		//Add some life up
-	} else if(c == "z") {
+	} else if(c == 'z') {
 		//Add some lift down
 	}
 	// TODO write code for arrows
@@ -454,6 +466,19 @@ int sendPacket()
  */
 int main(int argc, char **argv)
 {
+	int 		fd;
+	struct js_event js;
+	
+	if ((fd = open(JS_DEV, O_RDONLY)) < 0) {
+		perror("jstest");
+		exit(1);
+	}
+
+	/* non-blocking mode
+	 */
+	fcntl(fd, F_SETFL, O_NONBLOCK);
+
+
 	char	c;
 	clock_t before = clock();
 
@@ -477,21 +502,56 @@ int main(int argc, char **argv)
 	int counter = 0;
 	/* send & receive
 	 */
-	for (;;)
-	{
-		//Added by Yuu[]
-		if(counter > 30) {
-			counter = 0;
-			sendPacket();			
+		for (;;)
+		{	//from JS.c 
+			while (read(fd, &js, sizeof(struct js_event)) == 
+							sizeof(struct js_event))  {
+
+				/* register data
+				*/
+				fprintf(stderr,".");
+				switch(js.type & ~JS_EVENT_INIT) {
+					case JS_EVENT_BUTTON:
+						button[js.number] = js.value;
+						break;
+					case JS_EVENT_AXIS:
+						axis[js.number] = js.value/256;
+						break;
+				}
+			}
+
+			if (errno != EAGAIN) {
+				perror("\njs: error reading (EAGAIN)"); //EAGAIN is returned when the queue is empty
+				exit (1);
+			}
+
+			// send_packet.pitch=axis[0];
+			// send_packet.roll=axis[1];
+			// send_packet.yaw=axis[2];
+			// send_packet.lift=axis[3];
+
+			//Added by Yuup
+			if(counter > 30) {
+				counter = 0;
+				sendPacket();			
+			}
+			counter++;
+
+			printf("\n");
+			for (int i = 0; i < 6; i++) {
+				printf("%6d ",axis[i]);
+			}
+			printf(" |  ");
+			for (int i = 0; i < 12; i++) {
+				printf("%d ",button[i]);
+			}
+			if (button[0])
+				break;
+
+			//rs232 get char, c - input from the rs232 connection
+			if ((c = rs232_getchar_nb()) != -1)
+				term_putchar(c);
 		}
-		counter++;
-
-		//rs232 get char, c - input from the rs232 connection
-		if ((c = rs232_getchar_nb()) != -1)
-			term_putchar(c);
-
-	}
-
 	term_exitio();
 	rs232_close();
 	term_puts("\n<exit>\n");
