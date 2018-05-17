@@ -15,12 +15,16 @@
 #include <time.h>
 
 /*------------------------------------------------------------
- * console I/O
+ * Global Variables
  *------------------------------------------------------------
  */
-struct termios 	savetty;
+
+#define HEADER 0b11010000
+//#define JOYSTICK_CONNECTED 1
+//#define JOYSTICK_DEBUG 2
 
 
+uint8_t mode = 0;
 struct packet{
 	uint8_t header;
 	uint8_t dataType;
@@ -30,6 +34,12 @@ struct packet{
 	uint8_t lift;
 	uint16_t crc;
 } send_packet;
+
+/*------------------------------------------------------------
+ * console I/O
+ *------------------------------------------------------------
+ */
+struct termios 	savetty;
 
 void	term_initio()
 {
@@ -97,7 +107,7 @@ int	term_getchar()
 #include <stdlib.h>
 #include "joystick.h"
 #include <errno.h>
-#define JS_DEV	"/dev/input/js1"
+#define JS_DEV	"/dev/input/js0"
 
 
 int	axis[6];
@@ -105,7 +115,6 @@ int	button[12];
 
 int serial_device = 0;
 int fd_RS232;
-
 
 void rs232_open(void)
 {
@@ -311,28 +320,7 @@ int check_mode_selection(char c) {
 
 }
 
-// Function written by Yuup 
-//	7/5/2018
-// TODO
-//  implement timer
-void periodicSignal(clock_t *startTime)
-{
-	char c = ' ';
 
-	c = term_getchar_nb();
-
-	if(!check_mode_selection(c)) {
-		//rs232_putchar_with_header(map_char_to_binary(c));
-	} else {
-		//Change mode
-	}
-
-
-	//rs232_putchar_with_header(c);
-
-	//}
-
-}
 
 int 	rs232_putchar(char c)
 {
@@ -397,7 +385,10 @@ uint16_t crc16_compute(const uint8_t * p_data, uint32_t size, const uint16_t * p
  */
 void setHeader() 
 {
-	send_packet.header = (uint8_t) 208;
+	send_packet.header = (uint8_t) HEADER;
+	send_packet.header = send_packet.header | mode;
+
+
 	//data->header = HEADER;
 }
 
@@ -499,13 +490,15 @@ int sendPacket()
 int main(int argc, char **argv)
 {
 	int 		fd;
+
+#ifdef JOYSTICK_CONNECTED	
 	struct js_event js;
 	
 	if ((fd = open(JS_DEV, O_RDONLY)) < 0) {
 		perror("jstest");
 		exit(1);
 	}
-
+#endif
 	/* non-blocking mode
 	 */
 	fcntl(fd, F_SETFL, O_NONBLOCK);
@@ -539,8 +532,10 @@ int main(int argc, char **argv)
 			//input from Keyboard
 			//char keyboardInput = term_getchar();
 			//keyboardToValue(keyboardInput);
-			
+	
 			//from JS.c 
+
+			#ifdef JOYSTICK_CONNECTED
 			while (read(fd, &js, sizeof(struct js_event)) == 
 							sizeof(struct js_event))  {
 
@@ -556,18 +551,19 @@ int main(int argc, char **argv)
 						break;
 				}
 			}
+			
 
 			if (errno != EAGAIN) {
 				perror("\njs: error reading (EAGAIN)"); //EAGAIN is returned when the queue is empty
 				exit (1);
 			}
-
+			#endif
 				setHeader();
 				setData(axis,6);
 				setCRC();
 			
 			//Added by Yuup
-			if(counter > 15) {
+			if(counter > 10) {
 				counter = 0;
 				// setHeader();
 				// setData(axis,6);
@@ -576,16 +572,19 @@ int main(int argc, char **argv)
 			}
 			counter++;
 
-			// printf("\n");
-			// for (int i = 0; i < 6; i++) {
-			// 	printf("%6d ",axis[i]);
-			// }
-			// printf(" |  ");
-			// for (int i = 0; i < 12; i++) {
-			// 	printf("%d ",button[i]);
-			// }
-			// if (button[0])
-			// 	break;
+			#ifdef JOYSTICK_DEBUG
+			printf("\n");
+			for (int i = 0; i < 6; i++) {
+				printf("%6d ",axis[i]);
+			}
+			printf(" |  ");
+			for (int i = 0; i < 12; i++) {
+				printf("%d ",button[i]);
+			}
+			#endif
+
+			if (button[0])
+				break;
 
 			//rs232 get char, c - input from the rs232 connection
 			if ((c = rs232_getchar_nb()) != -1)

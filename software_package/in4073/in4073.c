@@ -85,6 +85,8 @@ int main(void)
 	uint32_t counter = 0;
 	demo_done = false;
 
+	flushQueue(&rx_queue);
+
 	while (!demo_done)
 	{
 		//This is where incoming data comes from
