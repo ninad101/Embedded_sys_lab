@@ -537,7 +537,7 @@ int main(int argc, char **argv)
 		for (;;)
 		{	
 			//input from Keyboard
-			char keyboardInput = term_getchar();
+			//char keyboardInput = term_getchar();
 			//keyboardToValue(keyboardInput);
 			
 			//from JS.c 
@@ -587,7 +587,7 @@ int main(int argc, char **argv)
 			// if (button[0])
 			// 	break;
 
-			rs232 get char, c - input from the rs232 connection
+			//rs232 get char, c - input from the rs232 connection
 			if ((c = rs232_getchar_nb()) != -1)
 				term_putchar(c);
 		}
