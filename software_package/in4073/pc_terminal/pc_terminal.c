@@ -20,7 +20,7 @@
  */
 
 #define HEADER 0b11010000
-//#define JOYSTICK_CONNECTED 1
+#define JOYSTICK_CONNECTED 1
 //#define JOYSTICK_DEBUG 2
 
 
@@ -28,10 +28,10 @@ uint8_t mode = 0;
 struct packet{
 	uint8_t header;
 	uint8_t dataType;
-	uint8_t roll;
-	uint8_t pitch;
-	uint8_t yaw;
-	uint8_t lift;
+	int8_t roll;
+	int8_t pitch;
+	int8_t yaw;
+	int8_t lift;
 	uint16_t crc;
 } send_packet;
 
@@ -107,8 +107,7 @@ int	term_getchar()
 #include <stdlib.h>
 #include "joystick.h"
 #include <errno.h>
-#define JS_DEV	"/dev/input/js0"
-
+#define JS_DEV	"/dev/input/js1"
 
 int	axis[6];
 int	button[12];
@@ -202,14 +201,16 @@ int keyboardToValue(char c) {
  switch(c)
  {
 	 case '0' :
-	 
-	 ;
+	 	mode=0;
+		printf("\tSafe Mode");
 	 break;
 	 case '1' :
-	 ;
+	 	mode=1;
+		printf("\tPanic Mode");
 	 break;
 	 case '2' :
-	 ;
+	 	mode=2;
+		printf("\tManual Mode");
 	 break;
 	 case 'a' :
 	 ;
@@ -401,13 +402,13 @@ void setHeader()
 void setData(int *value,int size)
 {
 	send_packet.dataType = (uint8_t) "P";
-	send_packet.roll 	= (uint8_t) *value;
+	send_packet.roll 	= (int8_t) *value;
 	value++;
-	send_packet.pitch = (uint8_t) *value;
+	send_packet.pitch = (int8_t) *value;
 	value++;
-	send_packet.yaw   = (uint8_t) *value;
+	send_packet.yaw   = (int8_t) *value;
 	value++;
-	send_packet.lift  = (uint8_t) *value;
+	send_packet.lift  = (int8_t) *value;
 }
 
 void setCRC()
@@ -530,8 +531,8 @@ int main(int argc, char **argv)
 		for (;;)
 		{	
 			//input from Keyboard
-			//char keyboardInput = term_getchar();
-			//keyboardToValue(keyboardInput);
+			char keyboardInput = term_getchar_nb();
+			keyboardToValue(keyboardInput);
 	
 			//from JS.c 
 
@@ -563,7 +564,7 @@ int main(int argc, char **argv)
 				setCRC();
 			
 			//Added by Yuup
-			if(counter > 10) {
+			if(counter > 15) {
 				counter = 0;
 				// setHeader();
 				// setData(axis,6);

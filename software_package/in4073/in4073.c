@@ -92,7 +92,7 @@ int main(void)
 		//This is where incoming data comes from
 		//int rx_count = rx_queue.count;
 		if (rx_queue.count > 7) {
-			readPacket();
+			//readPacket();
 
 			//process_key( dequeue(&rx_queue) );
 		}
