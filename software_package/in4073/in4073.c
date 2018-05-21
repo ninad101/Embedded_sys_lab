@@ -102,7 +102,7 @@ int main(void)
 			adc_request_sample();
 			read_baro();
 
-			mode=values_Packet.header ^ 0b11010000;
+
 			switch(mode)
 			{
 				case 0: 

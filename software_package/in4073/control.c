@@ -12,21 +12,26 @@
 #include <stdio.h>
 #include <math.h>
 #include <stdlib.h>
-
 #include "in4073.h"
+
+
+void printMotorValues(void)
+{
+	printf("motor[%d]: %d\n",0,motor[0]);
+	printf("motor[%d]: %d\n",1,motor[1]);
+	printf("motor[%d]: %d\n",2,motor[2]);
+	printf("motor[%d]: %d\n",3,motor[3]);
+}
 
 void update_motors(void) 
 {					
 	motor[0] = ae[0];
-	//printf("motor[%d]: %d\n",0,motor[0]);
 	motor[1] = ae[1];
-	//printf("motor[%d]: %d\n",1,motor[1]);
 	motor[2] = ae[2];
-	//printf("motor[%d]: %d\n",2,motor[2]);
 	motor[3] = ae[3];
-	//printf("motor[%d]: %d\n",3,motor[3]);
+	//printMotorValues();
 }
-   	          
+     
 /*--------------------------------------------------------------------------
  * quad rotor controller
  *--------------------------------------------------------------------------
@@ -53,7 +58,7 @@ void panicMode()
 void safeMode()
 {	
 	panicFlag=0;
-	printf("SAFE MODE\n");
+	//printf("SAFE MODE\n");
 	ae[0] = 0;
 	ae[1] = 0;
 	ae[2] = 0;

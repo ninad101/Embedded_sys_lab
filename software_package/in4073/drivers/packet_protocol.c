@@ -126,6 +126,20 @@ void fill_values_Packet()
 	values_Packet.crc 		= ((broken_Packet[6]<<8) | broken_Packet[7]);
 }
 
+void setMode(void)
+{
+	char incomingMode = values_Packet.header & 0b00001111;
+
+	if(incomingMode == 1) {
+		panicFlag = 1;
+		mode = 1;
+	} else {
+		mode = incomingMode;
+	}
+
+	printf("%s %d\n", "Mode is:", mode);
+}
+
 /*------------------------------------------------------------------
  * find_next_packet
  * Create by Yuup
@@ -222,12 +236,13 @@ void readPacket()
 
 	printPacket(&values_Packet);
 
+	// A little sloppy... My bad - Yuup
 	if(crc_check()){
-		printf("%s %d\n", "Packet was good", rx_queue.count);
+		setMode();
 	} else if(find_next_packet() ){
-		printf("%s\n", "Packet was dropped, new packet found");
+		setMode();
 	} else {
-		printf("%s\n", "Packet was dropped, algorithm will continue looking as normal");
+		//printf("%s\n", "Packet was dropped, algorithm will continue looking as normal");
 		if(rx_queue.count > 7) {
 			readPacket();
 		}
