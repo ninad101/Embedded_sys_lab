@@ -227,6 +227,7 @@ int keyboardToValue(char c) {
 
 	default :
 	;
+	break;
  }
 } 
 
@@ -470,7 +471,7 @@ int sendPacket()
 	// setData(&data);
 	// setCRC(&data);
 
-	printPacket();
+	//printPacket();
 
 	int result;
 
@@ -564,7 +565,7 @@ int main(int argc, char **argv)
 				setCRC();
 			
 			//Added by Yuup
-			if(counter > 15) {
+			if(counter > 200) {
 				counter = 0;
 				// setHeader();
 				// setData(axis,6);
@@ -586,10 +587,12 @@ int main(int argc, char **argv)
 
 			if (button[0])
 				break;
-
+				
 			//rs232 get char, c - input from the rs232 connection
 			if ((c = rs232_getchar_nb()) != -1)
+			{
 				term_putchar(c);
+			}
 		}
 	term_exitio();
 	rs232_close();

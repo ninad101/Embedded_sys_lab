@@ -14,12 +14,11 @@
  */
 
 #include "in4073.h"
-
 #include <stdio.h>
 #include <string.h>
 #include "logData.h"
 
-
+uint8_t mode=0;
 /*------------------------------------------------------------------
  * process_key -- process command keys
  *------------------------------------------------------------------
@@ -36,7 +35,7 @@ void process_key(uint8_t c)
 			ae[0] -= 10;
 			if (ae[0] < 0) ae[0] = 0;
 			break;
-		case 'w':	
+		case 'w':
 			ae[1] += 10;
 			break;
 		case 's':
@@ -92,8 +91,7 @@ int main(void)
 		//This is where incoming data comes from
 		//int rx_count = rx_queue.count;
 		if (rx_queue.count > 7) {
-			//readPacket();
-
+			readPacket();
 			//process_key( dequeue(&rx_queue) );
 		}
 
@@ -103,6 +101,23 @@ int main(void)
 
 			adc_request_sample();
 			read_baro();
+			
+			mode=values_Packet.header;
+			switch(mode)
+			{
+				case 208: 
+				safeMode();
+				update_motors();
+				break;
+				case 209:
+				//Panic Mode
+				break;
+				case 210:
+				calculateMotorRPM();
+				update_motors();
+				break;
+			}
+			
 			//logData();
 			//readLoggedData();
 
@@ -118,7 +133,6 @@ int main(void)
 		if (check_sensor_int_flag()) 
 		{
 			get_dmp_data();
-			run_filters_and_control();
 		}
 	}	
 
