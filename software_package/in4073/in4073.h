@@ -42,12 +42,15 @@ struct packet{
 uint8_t broken_Packet[PACKET_SIZE];
 
 uint8_t mode;
+int panicFlag;
 
 bool demo_done;
 
 // Control
 int16_t motor[4],ae[4];
 void update_motors(void);
+void panicMode(void);
+void escapeMode(void);
 void safeMode(void);
 void calculateMotorRPM(void);
 void run_filters_and_control(void);

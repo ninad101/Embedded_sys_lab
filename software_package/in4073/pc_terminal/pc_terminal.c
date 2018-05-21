@@ -20,11 +20,12 @@
  */
 
 #define HEADER 0b11010000
-#define JOYSTICK_CONNECTED 1
+//#define JOYSTICK_CONNECTED 1
 //#define JOYSTICK_DEBUG 2
 
 
 uint8_t mode = 0;
+int panicFlag =0;
 struct packet{
 	uint8_t header;
 	uint8_t dataType;
@@ -200,17 +201,18 @@ int 	rs232_getchar()
 int keyboardToValue(char c) {
  switch(c)
  {
+	 case 27:
+	 	mode=9;
+		break;
 	 case '0' :
 	 	mode=0;
-		printf("\tSafe Mode");
 	 break;
 	 case '1' :
 	 	mode=1;
-		printf("\tPanic Mode");
+		while(panicFlag!=0);
 	 break;
 	 case '2' :
 	 	mode=2;
-		printf("\tManual Mode");
 	 break;
 	 case 'a' :
 	 ;
@@ -389,8 +391,6 @@ void setHeader()
 {
 	send_packet.header = (uint8_t) HEADER;
 	send_packet.header = send_packet.header | mode;
-
-
 	//data->header = HEADER;
 }
 
@@ -553,7 +553,6 @@ int main(int argc, char **argv)
 						break;
 				}
 			}
-			
 
 			if (errno != EAGAIN) {
 				perror("\njs: error reading (EAGAIN)"); //EAGAIN is returned when the queue is empty
@@ -565,12 +564,10 @@ int main(int argc, char **argv)
 				setCRC();
 			
 			//Added by Yuup
-			if(counter > 200) {
+			if(counter > 50) {
 				counter = 0;
-				// setHeader();
-				// setData(axis,6);
-				// setCRC();
-				sendPacket();			
+				if(!panicFlag)
+				sendPacket();	
 			}
 			counter++;
 
@@ -600,4 +597,3 @@ int main(int argc, char **argv)
 
 	return 0;
 }
-

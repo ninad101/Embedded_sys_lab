@@ -101,20 +101,23 @@ int main(void)
 
 			adc_request_sample();
 			read_baro();
-			
-			mode=values_Packet.header;
+
+			mode=values_Packet.header ^ 0b11010000;
 			switch(mode)
 			{
-				case 208: 
+				case 0: 
 				safeMode();
-				update_motors();
 				break;
-				case 209:
-				//Panic Mode
+				case 1:
+				while(panicFlag!=0);
+				panicMode();
 				break;
-				case 210:
+				case 2:
 				calculateMotorRPM();
 				update_motors();
+				break;
+				case 9:
+				escapeMode();
 				break;
 			}
 			

@@ -18,13 +18,13 @@
 void update_motors(void) 
 {					
 	motor[0] = ae[0];
-	printf("motor[%d]: %d\n",0,motor[0]);
+	//printf("motor[%d]: %d\n",0,motor[0]);
 	motor[1] = ae[1];
-	printf("motor[%d]: %d\n",1,motor[1]);
+	//printf("motor[%d]: %d\n",1,motor[1]);
 	motor[2] = ae[2];
-	printf("motor[%d]: %d\n",2,motor[2]);
+	//printf("motor[%d]: %d\n",2,motor[2]);
 	motor[3] = ae[3];
-	printf("motor[%d]: %d\n",3,motor[3]);
+	//printf("motor[%d]: %d\n",3,motor[3]);
 }
    	          
 /*--------------------------------------------------------------------------
@@ -32,13 +32,33 @@ void update_motors(void)
  *--------------------------------------------------------------------------
  */
 
+void escapeMode()
+{
+	printf("ESCAPE MODE\n");
+	panicMode();
+	exit(0);
+}
+void panicMode()
+{	
+	panicFlag=1;
+	printf("PANIC MODE\n");
+	ae[0]=200; ae[1]=200; ae[2]=200; ae[3]=200;
+	update_motors();
+	for(int i=0;i<200;i++) printf("Waiting\t");
+	mode=208;
+	safeMode();
+}
+
 //Written By Saumil
 void safeMode()
-{
+{	
+	panicFlag=0;
+	printf("SAFE MODE\n");
 	ae[0] = 0;
 	ae[1] = 0;
 	ae[2] = 0;
 	ae[3] = 0;
+	update_motors();
 }
 /*Manual Mode : Authored by Ninad */
 void calculateMotorRPM()

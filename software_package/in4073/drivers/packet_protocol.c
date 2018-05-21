@@ -220,7 +220,7 @@ void readPacket()
 	char crc2 = dequeue(&rx_queue);
 	values_Packet.crc = (uint16_t) ((crc2<<8) | crc1);
 
-	//printPacket(&values_Packet);
+	printPacket(&values_Packet);
 
 	if(crc_check()){
 		printf("%s %d\n", "Packet was good", rx_queue.count);
