@@ -40,7 +40,7 @@ void safeMode()
 	ae[2] = 0;
 	ae[3] = 0;
 }
-/*Manual Mode : Authored by Ninad */
+/*Manual Mode : written by Ninad */
 void calculateMotorRPM()
 {	
 	int16_t 	lift, roll, pitch, yaw;
