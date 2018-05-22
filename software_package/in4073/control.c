@@ -45,12 +45,15 @@ void escapeMode()
 }
 void panicMode()
 {	
-	panicFlag=1;
 	printf("PANIC MODE\n");
 	ae[0]=200; ae[1]=200; ae[2]=200; ae[3]=200;
 	update_motors();
-	for(int i=0;i<200;i++) printf("Waiting\t");
-	mode=208;
+	for(int i=0;i<20000;i++) printf("Waiting\t");
+
+	char endPanic = 'x';
+	for(int i = 0; i < 100; i++) printf("%c", endPanic);
+
+	mode=0;
 	safeMode();
 }
 
@@ -58,7 +61,7 @@ void panicMode()
 void safeMode()
 {	
 	panicFlag=0;
-	//printf("SAFE MODE\n");
+	printf("SAFE MODE\n");
 	ae[0] = 0;
 	ae[1] = 0;
 	ae[2] = 0;

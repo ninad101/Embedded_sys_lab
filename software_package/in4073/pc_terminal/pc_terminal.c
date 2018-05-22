@@ -22,6 +22,9 @@
 #define HEADER 0b11010000
 #define JOYSTICK_CONNECTED 1
 //#define JOYSTICK_DEBUG 2
+#define CRC16_DNP	0x3D65
+#define HEADER 0b11010000
+
 
 
 uint8_t mode = 0;
@@ -70,6 +73,11 @@ void	term_puts(char *s)
 
 void	term_putchar(char c)
 {
+	if(c == 'x') {
+		panicFlag = 0;
+		mode = 0;
+		fprintf(stderr, "%s\n", "Leaving panic mode");
+	}
 	putc(c,stderr);
 }
 
@@ -237,7 +245,6 @@ int keyboardToValue(char c) {
 
 // Function written by Yuup
 // 5/5/2018
-#define HEADER 0b11010000
 int rs232_putchar_with_header(uint32_t c)
 {
 
@@ -260,7 +267,7 @@ int rs232_putchar_with_header(uint32_t c)
 
 }
 
-#define CRC16_DNP	0x3D65
+
 unsigned int crc16(unsigned int crcValue, unsigned char newByte) 
 {
 	unsigned char i;
@@ -543,8 +550,6 @@ int main(int argc, char **argv)
 			exit (1);
 		}
 		#endif
-
-
 
 		if(panicFlag) {
 			send_Panic_Packet();

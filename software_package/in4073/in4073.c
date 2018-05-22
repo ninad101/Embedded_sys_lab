@@ -64,6 +64,14 @@ void process_key(uint8_t c)
 	}
 }
 
+void printInputValues(void)
+{
+	printf("%10ld | ", get_time_us());
+	printf("%3d %3d %3d %3d | ",ae[0],ae[1],ae[2],ae[3]);
+	printf("%6d %6d %6d | ", phi, theta, psi);
+	printf("%6d %6d %6d | ", sp, sq, sr);
+	printf("%4d | %4ld | %6ld \n", bat_volt, temperature, pressure);
+}
 
 /*------------------------------------------------------------------
  * main -- everything you need is here :)
@@ -88,6 +96,8 @@ int main(void)
 
 	while (!demo_done)
 	{
+		if(panicFlag) panicMode();
+
 		//This is where incoming data comes from
 		//int rx_count = rx_queue.count;
 		if (rx_queue.count > 7) {
@@ -106,29 +116,23 @@ int main(void)
 			switch(mode)
 			{
 				case 0: 
-				safeMode();
-				break;
+					safeMode();
+					break;
 				case 1:
-				while(panicFlag!=0);
-				panicMode();
-				break;
+					panicMode();
+					break;
 				case 2:
-				calculateMotorRPM();
-				update_motors();
-				break;
+					calculateMotorRPM();
+					update_motors();
+					break;
 				case 9:
-				escapeMode();
-				break;
+					escapeMode();
+					break;
 			}
 			
 			//logData();
 			//readLoggedData();
-
-			// printf("%10ld | ", get_time_us());
-			// printf("%3d %3d %3d %3d | ",ae[0],ae[1],ae[2],ae[3]);
-			// printf("%6d %6d %6d | ", phi, theta, psi);
-			// printf("%6d %6d %6d | ", sp, sq, sr);
-			// printf("%4d | %4ld | %6ld \n", bat_volt, temperature, pressure);
+			//printInputValues();
 
 			clear_timer_flag();
 		}
