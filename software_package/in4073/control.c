@@ -78,7 +78,7 @@ void calculateMotorRPM()
 	lift = roll = pitch = yaw = 0; // default
 	
 	/* manual mode */
-	lift = (int16_t)values_Packet.lift*256;
+	lift = (int16_t) -1 * values_Packet.lift*256;
 	roll = (int16_t)values_Packet.roll*256;
 	pitch = (int16_t)values_Packet.pitch*256;
 	yaw = (int16_t)values_Packet.yaw*256;
