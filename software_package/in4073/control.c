@@ -71,7 +71,10 @@ void calculateMotorRPM()
 	int16_t 	lift, roll, pitch, yaw;
 	int16_t 	w0, w1, w2, w3; //rpm
 
-	lift = roll = pitch = yaw = 0; // safe default
+	int16_t b = 1;
+	int16_t d = 1;
+
+	lift = roll = pitch = yaw = 0; // default
 	
 	/* manual mode */
 	lift = (int16_t)values_Packet.lift*256;
@@ -79,7 +82,7 @@ void calculateMotorRPM()
 	pitch = (int16_t)values_Packet.pitch*256;
 	yaw = (int16_t)values_Packet.yaw*256;
 			  	          
-	/* we only want positive lift
+	/* only want positive lift
 	 */
 	if (lift < 0) lift = 0;
 
@@ -116,10 +119,10 @@ x3Sol = lift/(4*b) - pitch/(2*b) - yaw/(4*d)
 x4Sol = lift/(4*b) + roll/(2*b) + yaw/(4*d)
 */
 
-	w0 = (lift + 2 * pitch - yaw / 10) / 4;
-	w1 = (lift - 2 * roll + yaw / 10) / 4;
-	w2 = (lift - 2 * pitch - yaw / 10) / 4;
-	w3 = (lift + 2 * roll + yaw / 10) / 4;
+	w0 = (lift / b + 2 * pitch / b - yaw / d) / 4;
+	w1 = (lift / b - 2 * roll / b + yaw / d) / 4;
+	w2 = (lift / b - 2 * pitch / b - yaw / d) / 4;
+	w3 = (lift / b + 2 * roll / b + yaw / d) / 4;
 
 	/* clip w(x) as rotor thrust should only be positive
 	 */
@@ -128,10 +131,11 @@ x4Sol = lift/(4*b) + roll/(2*b) + yaw/(4*d)
 	if (w2 < 0) w2 = 0;
 	if (w3 < 0) w3 = 0;
 
-	ae[0] = sqrt(w0);
-	ae[1] = sqrt(w1);
-	ae[2] = sqrt(w2);
-	ae[3] = sqrt(w3);
+	ae[0] = 4*sqrt(w0);
+	ae[1] = 4*sqrt(w1);
+	ae[2] = 4*sqrt(w2);
+	ae[3] = 4*sqrt(w3);
+
 
 }
 void run_filters_and_control()
