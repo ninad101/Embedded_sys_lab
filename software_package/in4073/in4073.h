@@ -33,10 +33,10 @@
 struct packet{
 	uint8_t header;
 	uint8_t dataType;
-	uint8_t roll;
-	uint8_t pitch;
-	uint8_t yaw;
-	uint8_t lift;
+	int8_t roll;
+	int8_t pitch;
+	int8_t yaw;
+	int8_t lift;
 	uint16_t crc;
 } values_Packet;
 uint8_t broken_Packet[PACKET_SIZE];

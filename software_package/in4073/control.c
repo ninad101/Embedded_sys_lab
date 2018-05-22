@@ -17,10 +17,7 @@
 
 void printMotorValues(void)
 {
-	printf("motor[%d]: %d\n",0,motor[0]);
-	printf("motor[%d]: %d\n",1,motor[1]);
-	printf("motor[%d]: %d\n",2,motor[2]);
-	printf("motor[%d]: %d\n",3,motor[3]);
+	printf("motor[%d]: %d, motor[%d]: %d, motor[%d]: %d, motor[%d]: %d\n",0,motor[0],1,motor[1],2,motor[2],3,motor[3]);
 }
 
 void update_motors(void) 
@@ -29,7 +26,7 @@ void update_motors(void)
 	motor[1] = ae[1];
 	motor[2] = ae[2];
 	motor[3] = ae[3];
-	//printMotorValues();
+	printMotorValues();
 }
      
 /*--------------------------------------------------------------------------
@@ -39,13 +36,13 @@ void update_motors(void)
 
 void escapeMode()
 {
-	printf("ESCAPE MODE\n");
+	//printf("ESCAPE MODE\n");
 	panicMode();
 	exit(0);
 }
 void panicMode()
 {	
-	printf("PANIC MODE\n");
+	//printf("PANIC MODE\n");
 	ae[0]=200; ae[1]=200; ae[2]=200; ae[3]=200;
 	update_motors();
 	for(int i=0;i<20000;i++) printf("Waiting\t");
@@ -61,13 +58,14 @@ void panicMode()
 void safeMode()
 {	
 	panicFlag=0;
-	printf("SAFE MODE\n");
+	//printf("SAFE MODE\n");
 	ae[0] = 0;
 	ae[1] = 0;
 	ae[2] = 0;
 	ae[3] = 0;
 	update_motors();
 }
+
 /*Manual Mode : written by Ninad */
 void calculateMotorRPM()
 {	
@@ -134,13 +132,18 @@ x4Sol = lift/(4*b) + roll/(2*b) + yaw/(4*d)
 	if (w2 < 0) w2 = 0;
 	if (w3 < 0) w3 = 0;
 
-	ae[0] = 4*sqrt(w0);
-	ae[1] = 4*sqrt(w1);
-	ae[2] = 4*sqrt(w2);
-	ae[3] = 4*sqrt(w3);
+	int multiFactor = 6;
+
+	ae[0] = (multiFactor*sqrt(w0));
+	ae[1] = (multiFactor*sqrt(w1));
+	ae[2] = (multiFactor*sqrt(w2));
+	ae[3] = (multiFactor*sqrt(w3));
 
 
 }
+
+
+
 void run_filters_and_control()
 {
 	// fancy stuff here
