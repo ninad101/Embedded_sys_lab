@@ -14,12 +14,11 @@
  */
 
 #include "in4073.h"
-
 #include <stdio.h>
 #include <string.h>
 #include "logData.h"
 
-
+uint8_t mode=0;
 /*------------------------------------------------------------------
  * process_key -- process command keys
  *------------------------------------------------------------------
@@ -36,7 +35,7 @@ void process_key(uint8_t c)
 			ae[0] -= 10;
 			if (ae[0] < 0) ae[0] = 0;
 			break;
-		case 'w':	
+		case 'w':
 			ae[1] += 10;
 			break;
 		case 's':
@@ -65,6 +64,14 @@ void process_key(uint8_t c)
 	}
 }
 
+void printInputValues(void)
+{
+	printf("%10ld | ", get_time_us());
+	printf("%3d %3d %3d %3d | ",ae[0],ae[1],ae[2],ae[3]);
+	printf("%6d %6d %6d | ", phi, theta, psi);
+	printf("%6d %6d %6d | ", sp, sq, sr);
+	printf("%4d | %4ld | %6ld \n", bat_volt, temperature, pressure);
+}
 
 /*------------------------------------------------------------------
  * main -- everything you need is here :)
@@ -89,11 +96,12 @@ int main(void)
 
 	while (!demo_done)
 	{
+		if(panicFlag) panicMode();
+
 		//This is where incoming data comes from
 		//int rx_count = rx_queue.count;
 		if (rx_queue.count > 7) {
 			readPacket();
-
 			//process_key( dequeue(&rx_queue) );
 		}
 
@@ -103,14 +111,28 @@ int main(void)
 
 			adc_request_sample();
 			read_baro();
+
+
+			switch(mode)
+			{
+				case 0: 
+					safeMode();
+					break;
+				case 1:
+					panicMode();
+					break;
+				case 2:
+					calculateMotorRPM();
+					update_motors();
+					break;
+				case 9:
+					escapeMode();
+					break;
+			}
+			
 			//logData();
 			//readLoggedData();
-
-			// printf("%10ld | ", get_time_us());
-			// printf("%3d %3d %3d %3d | ",ae[0],ae[1],ae[2],ae[3]);
-			// printf("%6d %6d %6d | ", phi, theta, psi);
-			// printf("%6d %6d %6d | ", sp, sq, sr);
-			// printf("%4d | %4ld | %6ld \n", bat_volt, temperature, pressure);
+			//printInputValues();
 
 			clear_timer_flag();
 		}
@@ -118,7 +140,6 @@ int main(void)
 		if (check_sensor_int_flag()) 
 		{
 			get_dmp_data();
-			run_filters_and_control();
 		}
 	}	
 

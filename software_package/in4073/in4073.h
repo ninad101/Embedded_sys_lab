@@ -33,21 +33,27 @@
 struct packet{
 	uint8_t header;
 	uint8_t dataType;
-	uint8_t roll;
-	uint8_t pitch;
-	uint8_t yaw;
-	uint8_t lift;
+	int8_t roll;
+	int8_t pitch;
+	int8_t yaw;
+	int8_t lift;
 	uint16_t crc;
 } values_Packet;
 uint8_t broken_Packet[PACKET_SIZE];
 
 uint8_t mode;
+int panicFlag;
 
 bool demo_done;
 
 // Control
 int16_t motor[4],ae[4];
-void run_filters_and_control();
+void update_motors(void);
+void panicMode(void);
+void escapeMode(void);
+void safeMode(void);
+void calculateMotorRPM(void);
+void run_filters_and_control(void);
 
 // Timers
 #define TIMER_PERIOD	50 //50ms=20Hz (MAX 23bit, 4.6h)

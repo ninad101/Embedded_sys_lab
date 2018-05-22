@@ -20,18 +20,22 @@
  */
 
 #define HEADER 0b11010000
-//#define JOYSTICK_CONNECTED 1
+#define JOYSTICK_CONNECTED 1
 //#define JOYSTICK_DEBUG 2
+#define CRC16_DNP	0x3D65
+#define HEADER 0b11010000
+
 
 
 uint8_t mode = 0;
+int panicFlag =0;
 struct packet{
 	uint8_t header;
 	uint8_t dataType;
-	uint8_t roll;
-	uint8_t pitch;
-	uint8_t yaw;
-	uint8_t lift;
+	int8_t roll;
+	int8_t pitch;
+	int8_t yaw;
+	int8_t lift;
 	uint16_t crc;
 } send_packet;
 
@@ -69,6 +73,11 @@ void	term_puts(char *s)
 
 void	term_putchar(char c)
 {
+	if(c == 'x') {
+		panicFlag = 0;
+		mode = 0;
+		fprintf(stderr, "%s\n", "Leaving panic mode");
+	}
 	putc(c,stderr);
 }
 
@@ -109,7 +118,6 @@ int	term_getchar()
 #include <errno.h>
 #define JS_DEV	"/dev/input/js0"
 
-
 int	axis[6];
 int	button[12];
 
@@ -121,7 +129,6 @@ void rs232_open(void)
   	char 		*name;
   	int 		result;
   	struct termios	tty;
-
 
 	// O_NOCTTY flag tells UNIX that this program doesn't want to be the "controlling terminal" for that port.
 	// O_RDWR flag is a Read Write flag
@@ -197,7 +204,87 @@ int 	rs232_getchar()
 	return c;
 }
 
+//TODO 
+//  Map keyboard inputs to values
+int keyboardToValue(char c) {
+ switch(c)
+ {
+	 case 27:
+	 	mode=9;
+		break;
+	 case '0' :
+	 	mode=0;
+	 break;
+	 case '1' :
+	 	mode=1;
+	 	printf("%s\n", "Going into panic mode");
+	 	panicFlag = 1;
+		//while(panicFlag!=0);
+	 break;
+	 case '2' :
+	 	mode=2;
+	 break;
+	 case 'a' :
+	 ;
+	 break;
+	 case 'z' :
+	 ;
+	 break;
+	 case 'q' :
+	 ;
+	 break;
+	 case 'w' :
+	 ;
+	 break;
 
+	default :
+	;
+	break;
+ }
+} 
+
+// Function written by Yuup
+// 5/5/2018
+int rs232_putchar_with_header(uint32_t c)
+{
+
+	char roll, pitch, yaw, lift;
+	roll 	= (c 	   & 0xFF);
+	pitch 	= ((c>>8)  & 0xFF);
+	yaw 	= ((c>>16) & 0xFF);
+	lift	= ((c>>24) & 0xFF);
+
+	char packet[7] = {HEADER, roll, pitch, yaw, lift, 0b00000001, 0b00000001};
+
+	int result;
+
+	do {
+		result = (int) write(fd_RS232, &packet, 7);
+	} while (result == 0);
+
+	assert(result==7);
+	return result;
+
+}
+
+
+unsigned int crc16(unsigned int crcValue, unsigned char newByte) 
+{
+	unsigned char i;
+
+	for (i = 0; i < 8; i++) {
+
+		if (((crcValue & 0x8000) >> 8) ^ (newByte & 0x80)){
+			crcValue = (crcValue << 1)  ^ CRC16_DNP;
+		}else{
+			crcValue = (crcValue << 1);
+		}
+
+		newByte <<= 1;
+	}
+  
+	return crcValue;
+}
 
 // Function written by Yuup
 // 8/5/2018
@@ -274,13 +361,10 @@ uint16_t crc16_compute(const uint8_t * p_data, uint32_t size, const uint16_t * p
  * 8/5/2018
  *------------------------------------------------------------------
  */
-void setHeader(struct packet *data) 
+void setHeader() 
 {
 	send_packet.header = (uint8_t) HEADER;
 	send_packet.header = send_packet.header | mode;
-
-
-	//data->header = HEADER;
 }
 
 /*------------------------------------------------------------------
@@ -289,16 +373,19 @@ void setHeader(struct packet *data)
  * 8/5/2018
  *------------------------------------------------------------------
  */
-void setData(struct packet *data)
+void setData(int *value,int size)
 {
 	send_packet.dataType = (uint8_t) "P";
-	send_packet.roll 	= (uint8_t) 55;
-	send_packet.pitch = (uint8_t) 64;
-	send_packet.yaw   = (uint8_t) 72;
-	send_packet.lift  = (uint8_t) 22;
+	send_packet.roll 	= (int8_t) *value;
+	value++;
+	send_packet.pitch = (int8_t) *value;
+	value++;
+	send_packet.yaw   = (int8_t) *value;
+	value++;
+	send_packet.lift  = (int8_t) *value;
 }
 
-void setCRC(struct packet *data)
+void setCRC()
 {
 
 	uint16_t crc1 = NULL;
@@ -323,18 +410,32 @@ void setCRC(struct packet *data)
  * 8/5/2018
  *------------------------------------------------------------------
  */
-void printPacket(struct packet *da)
+void printPacket() //struct packet *da
 {
 
-	fprintf(stderr, "%s %d %d %d %d %d %d %d\n", "Packet sent: ",
-												da->header, 
-												da->dataType,
-												da->roll,
-												da->pitch,
-												da->yaw,
-												da->lift,
-												da->crc);
+	// fprintf(stderr, "%s %d %d %d %d %d %d %d\n", "Packet sent: ",
+	// 											da->header, 
+	// 											da->dataType,
+	// 											da->roll,
+	// 											da->pitch,
+	// 											da->yaw,
+	// 											da->lift,
+	// 											da->crc);
+	printf("%d\n",send_packet.header);
+	printf("%d\n",send_packet.roll);
+	printf("%d\n",send_packet.lift);
+	printf("%d\n",send_packet.pitch);
+	printf("%d\n",send_packet.yaw);
+	printf("%d\n",send_packet.lift);
+	printf("%d\n",send_packet.crc);
 
+}
+
+void create_Packet(void)
+{
+	setHeader();
+	setData(axis,6);
+	setCRC();
 }
 
 /*------------------------------------------------------------------
@@ -343,14 +444,11 @@ void printPacket(struct packet *da)
  * 8/5/2018
  *------------------------------------------------------------------
  */
-int sendPacket() 
+int send_Packet(void) 
 {
-	struct packet data = {0, 0, 0, 0, 0, 0, 0};
-	setHeader(&data);
-	setData(&data);
-	setCRC(&data);
 
 	int result;
+	//printPacket();
 
 	do {
 		result = (int) write(fd_RS232, &send_packet, 8);
@@ -360,6 +458,21 @@ int sendPacket()
 	assert(result==8);
 	return result;
 
+}
+
+void send_Panic_Packet(void)
+{
+	setHeader();
+
+	send_packet.roll 	= send_packet.header;
+	send_packet.lift 	= send_packet.header;
+	send_packet.pitch 	= send_packet.header;
+	send_packet.yaw 	= send_packet.header;
+	send_packet.lift	= send_packet.header;
+
+	setCRC();
+
+	send_Packet();
 
 }
 
@@ -407,60 +520,69 @@ int main(int argc, char **argv)
 	int counter = 0;
 	/* send & receive
 	 */
-		for (;;)
-		{	//from JS.c 
+	for (;;)
+	{	
+		//input from Keyboard
+		char keyboardInput = term_getchar_nb();
+		keyboardToValue(keyboardInput);
 
-			#ifdef JOYSTICK_CONNECTED
-			while (read(fd, &js, sizeof(struct js_event)) == 
-							sizeof(struct js_event))  {
+		//from JS.c 
 
-				/* register data
-				*/
-				fprintf(stderr,".");
-				switch(js.type & ~JS_EVENT_INIT) {
-					case JS_EVENT_BUTTON:
-						button[js.number] = js.value;
-						break;
-					case JS_EVENT_AXIS:
-						axis[js.number] = js.value/256;
-						break;
-				}
+		#ifdef JOYSTICK_CONNECTED
+		while (read(fd, &js, sizeof(struct js_event)) == 
+						sizeof(struct js_event))  {
+
+			/* register data
+			*/
+			fprintf(stderr,".");
+			switch(js.type & ~JS_EVENT_INIT) {
+				case JS_EVENT_BUTTON:
+					button[js.number] = js.value;
+					break;
+				case JS_EVENT_AXIS:
+					axis[js.number] = js.value/256;
+					break;
 			}
-
-			if (errno != EAGAIN) {
-				perror("\njs: error reading (EAGAIN)"); //EAGAIN is returned when the queue is empty
-				exit (1);
-			}
-			#endif
-
-			//Added by Yuup
-			if(counter > 5) {
-				counter = 0;
-				sendPacket();			
-			}
-			counter++;
-
-			#ifdef JOYSTICK_DEBUG
-			printf("\n");
-			for (int i = 0; i < 6; i++) {
-				printf("%6d ",axis[i]);
-			}
-			printf(" |  ");
-			for (int i = 0; i < 12; i++) {
-				printf("%d ",button[i]);
-			}
-			#endif
-			if (button[0])
-				break;
-
-			//rs232 get char, c - input from the rs232 connection
-			if ((c = rs232_getchar_nb()) != -1)
-				term_putchar(c);
 		}
+
+		if (errno != EAGAIN) {
+			perror("\njs: error reading (EAGAIN)"); //EAGAIN is returned when the queue is empty
+			exit (1);
+		}
+		#endif
+
+		if(panicFlag) {
+			send_Panic_Packet();
+		} else if(counter > 20) {
+			counter = 0;
+			create_Packet();
+			send_Packet();
+		}
+		counter++;
+
+		#ifdef JOYSTICK_DEBUG
+		printf("\n");
+		for (int i = 0; i < 6; i++) {
+			printf("%6d ",axis[i]);
+		}
+		printf(" |  ");
+		for (int i = 0; i < 12; i++) {
+			printf("%d ",button[i]);
+		}
+		#endif
+
+		if (button[0])
+			break;
+			
+		//rs232 get char, c - input from the rs232 connection
+		if ((c = rs232_getchar_nb()) != -1)
+		{
+			term_putchar(c);
+		}
+	}
 	term_exitio();
 	rs232_close();
 	term_puts("\n<exit>\n");
 
 	return 0;
 }
-
