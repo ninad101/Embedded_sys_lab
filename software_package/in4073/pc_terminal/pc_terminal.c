@@ -116,7 +116,7 @@ int	term_getchar()
 #include <stdlib.h>
 #include "joystick.h"
 #include <errno.h>
-#define JS_DEV	"/dev/input/js0"
+#define JS_DEV	"/dev/input/js1"
 
 int	axis[6];
 int	button[12];
@@ -553,7 +553,7 @@ int main(int argc, char **argv)
 
 		if(panicFlag) {
 			send_Panic_Packet();
-		} else if(counter > 20) {
+		} else if(counter > 5) {
 			counter = 0;
 			create_Packet();
 			send_Packet();
