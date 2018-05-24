@@ -33,6 +33,15 @@ void update_motors(void)
  * quad rotor controller
  *--------------------------------------------------------------------------
  */
+// written by : ninad
+//to do : check if there is any need when no battery is connected
+void batteryMonitor()
+{
+  	if (bat_volt < 10.85){//low voltage
+  	panicMode();
+ 	 printf("low battery - panic mode enabled\n");
+  	} 
+}
 
 void escapeMode()
 {
@@ -42,7 +51,7 @@ void escapeMode()
 }
 void panicMode()
 {	
-	//printf("PANIC MODE\n");
+	printf("PANIC MODE\n");
 	ae[0]=200; ae[1]=200; ae[2]=200; ae[3]=200;
 	update_motors();
 	for(int i=0;i<20000;i++) printf("Waiting\t");

@@ -120,6 +120,7 @@ void baro_init(void);
 
 // ADC
 uint16_t bat_volt;
+void batteryMonitor(void);
 void adc_init(void);
 void adc_request_sample(void);
 

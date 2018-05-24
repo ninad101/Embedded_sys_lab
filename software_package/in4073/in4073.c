@@ -111,7 +111,8 @@ int main(void)
 
 			adc_request_sample();
 			read_baro();
-
+			
+			batteryMonitor();
 
 			switch(mode)
 			{
