@@ -17,6 +17,7 @@
 #include <stdio.h>
 #include <string.h>
 #include "logData.h"
+#include "filter.h"
 
 uint8_t mode=0;
 /*------------------------------------------------------------------
@@ -140,6 +141,7 @@ int main(void)
 		if (check_sensor_int_flag()) 
 		{
 			get_dmp_data();
+			filterFunction();
 		}
 	}	
 

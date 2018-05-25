@@ -1,5 +1,6 @@
 /*
-*filter.c - 
+Authored by Diwakar Babu
+*filter.c - Filters psi, phi and theta angles for yaw, roll and pitch respectively
 */
 
 #include <stdio.h>
