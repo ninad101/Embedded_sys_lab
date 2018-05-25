@@ -17,7 +17,6 @@
 #include <stdio.h>
 #include <string.h>
 #include "logData.h"
-#include "filter.h"
 
 uint8_t mode=0;
 /*------------------------------------------------------------------
