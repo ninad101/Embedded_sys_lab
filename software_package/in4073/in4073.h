@@ -52,6 +52,8 @@ void update_motors(void);
 void panicMode(void);
 void escapeMode(void);
 void safeMode(void);
+void manualMode(void);
+void yawMode(void);
 void calculateMotorRPM(void);
 void run_filters_and_control(void);
 

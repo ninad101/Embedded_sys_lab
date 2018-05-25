@@ -23,6 +23,11 @@ uint8_t mode=0;
  * process_key -- process command keys
  *------------------------------------------------------------------
  */
+
+void usbRemoved(){
+
+
+}
 void process_key(uint8_t c)
 {
 
@@ -123,17 +128,24 @@ int main(void)
 					panicMode();
 					break;
 				case 2:
+					manualMode();
 					calculateMotorRPM();
 					update_motors();
+
+				case 4:
+					yawMode();
+					calculateMotorRPM();
+					update_motors();	
 					break;
 				case 9:
 					escapeMode();
 					break;
+					
 			}
 			
 			//logData();
 			//readLoggedData();
-			//printInputValues();
+			printInputValues();
 
 			clear_timer_flag();
 		}
