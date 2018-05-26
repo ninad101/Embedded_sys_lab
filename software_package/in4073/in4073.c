@@ -61,6 +61,12 @@ void process_key(uint8_t c)
 			ae[3] -= 10;
 			if (ae[3] < 0) ae[3] = 0;
 			break;
+		case 'u':
+			kp_yaw += 5;	
+			break;
+		case 'j':
+			kp_yaw -= 5;	
+			break;
 		case 27:
 			demo_done = true;
 			break;
@@ -117,7 +123,7 @@ int main(void)
 			adc_request_sample();
 			read_baro();
 			
-			batteryMonitor();
+			//batteryMonitor();
 
 			switch(mode)
 			{
@@ -131,7 +137,7 @@ int main(void)
 					manualMode();
 					calculateMotorRPM();
 					update_motors();
-
+					break;
 				case 4:
 					yawMode();
 					calculateMotorRPM();

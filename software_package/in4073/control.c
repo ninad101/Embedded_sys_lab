@@ -77,15 +77,19 @@ void manualMode()
 
 }
 
+//written by : ninad
+//get a yaw offset of int16_t from caliberation mode
 void yawMode()
 {
 			int16_t sp_r;
-
+            int16_t yaw_offset = 10; 
+			get_dmp_data();
 			lift = (int16_t) -1 * values_Packet.lift*256;// pos lift -> neg z
 			roll = (int16_t)values_Packet.roll*256;
 			pitch = (int16_t)values_Packet.pitch*256;
-			sp_r = 5 * (int16_t)values_Packet.yaw*256; // setpoint is angular rate
-			yaw = 5 * (sp_r - sr);
+			sp_r = yaw_offset + (int16_t)values_Packet.yaw*256; // setpoint is angular rate
+			yaw =  kp_yaw*(sp_r - sr);
+
 			
 }
 
@@ -110,7 +114,7 @@ void calculateMotorRPM()
 	int16_t b = 1;
 	int16_t d = 1;
 	
-//	lift = roll = pitch = yaw = 0; // default
+	//lift = roll = pitch = yaw = 0; // default
 	
 	
 /*TO Do : 
@@ -173,8 +177,6 @@ x4Sol = lift/(4*b) + roll/(2*b) + yaw/(4*d)
 	ae[1] = (multiFactor*sqrt(w1));
 	ae[2] = (multiFactor*sqrt(w2));
 	ae[3] = (multiFactor*sqrt(w3));
-
-
 }
 
 
