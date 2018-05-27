@@ -136,7 +136,7 @@ void setMode(void)
 	} else {
 		mode = incomingMode;
 	}
-
+	
 	//printf("%s %d\n", "Mode is:", mode);
 }
 
@@ -234,7 +234,7 @@ void readPacket()
 	char crc2 = dequeue(&rx_queue);
 	values_Packet.crc = (uint16_t) ((crc2<<8) | crc1);
 
-	printPacket(&values_Packet);
+	//printPacket(&values_Packet);
 
 	// A little sloppy... My bad - Yuup
 	if(crc_check()){
