@@ -14,6 +14,8 @@
 #include <stdlib.h>
 #include "in4073.h"
 
+int16_t 	lift, roll, pitch, yaw;
+
 
 void printMotorValues(void)
 {
@@ -26,13 +28,25 @@ void update_motors(void)
 	motor[1] = ae[1];
 	motor[2] = ae[2];
 	motor[3] = ae[3];
-	//printMotorValues();
+	printMotorValues();
 }
      
 /*--------------------------------------------------------------------------
  * quad rotor controller
  *--------------------------------------------------------------------------
  */
+
+
+
+// written by : ninad
+//to do : check if there is any need when no battery is connected
+void batteryMonitor()
+{
+  	if (bat_volt < 10.85){//low voltage
+  	panicMode();
+ 	 printf("low battery - panic mode enabled\n");
+  	} 
+}
 
 void escapeMode()
 {
@@ -42,7 +56,7 @@ void escapeMode()
 }
 void panicMode()
 {	
-	//printf("PANIC MODE\n");
+	printf("PANIC MODE\n");
 	ae[0]=200; ae[1]=200; ae[2]=200; ae[3]=200;
 	update_motors();
 	for(int i=0;i<20000;i++) printf("Waiting\t");
@@ -52,6 +66,31 @@ void panicMode()
 
 	mode=0;
 	safeMode();
+}
+
+void manualMode()
+{
+			lift = (int16_t) -1 * values_Packet.lift*256;// pos lift -> neg z
+			roll = (int16_t)values_Packet.roll*256;
+			pitch = (int16_t)values_Packet.pitch*256;
+			yaw = (int16_t)values_Packet.yaw*256;
+
+}
+
+//written by : ninad
+//get a yaw offset of int16_t from caliberation mode
+void yawMode()
+{
+			int16_t sp_r;
+            int16_t yaw_offset = 10; 
+			//get_dmp_data();
+			lift = (int16_t) -1 * values_Packet.lift*256;// pos lift -> neg z
+			roll = (int16_t)values_Packet.roll*256;
+			pitch = (int16_t)values_Packet.pitch*256;
+			sp_r = yaw_offset + (int16_t)values_Packet.yaw*256; 
+			yaw =  kp_yaw*(sp_r - sr);// setpoint is angular rate
+
+			
 }
 
 //Written By Saumil
@@ -69,22 +108,22 @@ void safeMode()
 /*Manual Mode : written by Ninad */
 void calculateMotorRPM()
 {	
-	int16_t 	lift, roll, pitch, yaw;
+	
 	int16_t 	w0, w1, w2, w3; //rpm
 
 	int16_t b = 1;
 	int16_t d = 1;
-
-	lift = roll = pitch = yaw = 0; // default
 	
-	/* manual mode */
-	lift = (int16_t) -1 * values_Packet.lift*256;
-	roll = (int16_t)values_Packet.roll*256;
-	pitch = (int16_t)values_Packet.pitch*256;
-	yaw = (int16_t)values_Packet.yaw*256;
-			  	          
-	/* only want positive lift
-	 */
+	//lift = roll = pitch = yaw = 0; // default
+	
+	
+/*TO Do : 
+>replace pressure variable with calibrated baro values
+>check if datatype of pressure variable is matching with others
+>add pitch mode i.e when the QR is taking off
+>value coming from the sensor has to be modified*/
+  
+	 
 	if (lift < 0) lift = 0;
 
 	/* solving equations from Assignment.pdf */
@@ -138,8 +177,6 @@ x4Sol = lift/(4*b) + roll/(2*b) + yaw/(4*d)
 	ae[1] = (multiFactor*sqrt(w1));
 	ae[2] = (multiFactor*sqrt(w2));
 	ae[3] = (multiFactor*sqrt(w3));
-
-
 }
 
 
