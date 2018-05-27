@@ -50,27 +50,7 @@ void batteryMonitor()
   	} 
 }
 
-void escapeMode()
-{
-	panicMode();
-	demo_done=true;
-	exit(0);
-}
-void panicMode()
-{	
-	printf("PANIC MODE\n");
-	ae[0]=200; ae[1]=200; ae[2]=200; ae[3]=200;
-	update_motors();
-	for(int i=0;i<10000;i++) printf("Waiting in Panic Mode\n");
-
-	char endPanic = 'x';
-	for(int i = 0; i < 100; i++) printf("%c", endPanic);
-
-	mode=0;
-	safeMode();
-}
-
-void manualMode()
+void setting_packet_values_manual_mode()
 {
 			lift = (int16_t) -1 * values_Packet.lift*256;// pos lift -> neg z
 			roll = (int16_t)values_Packet.roll*256;
@@ -81,7 +61,7 @@ void manualMode()
 
 //written by : ninad
 //get a yaw offset of int16_t from caliberation mode
-void yawMode()
+void calculate_yaw_control()
 {
 			int16_t sp_r;
             int16_t yaw_offset = 10; 
@@ -93,18 +73,6 @@ void yawMode()
 			yaw =  kp_yaw*(sp_r - sr);// setpoint is angular rate
 
 			
-}
-
-//Written By Saumil
-void safeMode()
-{	
-	panicFlag=0;
-	//printf("SAFE MODE\n");
-	ae[0] = 0;
-	ae[1] = 0;
-	ae[2] = 0;
-	ae[3] = 0;
-	update_motors();
 }
 
 /*Manual Mode : Written by Ninad. Modified by Saumil(Fixed Lift, and Motor cappings.) */

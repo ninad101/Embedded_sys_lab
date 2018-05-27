@@ -51,6 +51,8 @@ $(abspath ./drivers/adc.c) \
 $(abspath ./drivers/baro.c) \
 $(abspath ./drivers/ble.c) \
 $(abspath ./drivers/packet_protocol.c) \
+$(abspath ./drivers/mode_control.c) \
+$(abspath ./drivers/calibration.c) \
 $(abspath ./drivers/spi_flash.c) \
 $(abspath ./drivers/crc16.c) \
 $(abspath ./invensense/inv_mpu.c) \

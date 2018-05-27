@@ -13,6 +13,7 @@
 #include <string.h>
 #include <inttypes.h>
 #include <time.h>
+#include <stdbool.h>
 
 /*------------------------------------------------------------
  * Global Variables
@@ -38,6 +39,12 @@ struct packet{
 	int8_t lift;
 	uint16_t crc;
 } send_packet;
+
+struct mode_packet {
+	char header;
+	uint8_t mode;
+	char ender;
+} mode_change_packet;
 
 /*------------------------------------------------------------
  * console I/O
@@ -73,11 +80,11 @@ void	term_puts(char *s)
 
 void	term_putchar(char c)
 {
-	if(c == 'x') {
-		panicFlag = 0;
-		mode = 0;
-		fprintf(stderr, "%s\n", "Leaving panic mode");
-	}
+	// if(c == 'x') {
+	// 	panicFlag = 0;
+	// 	mode = 0;
+	// 	fprintf(stderr, "%s\n", "Leaving panic mode");
+	// }
 	putc(c,stderr);
 }
 
@@ -116,7 +123,7 @@ int	term_getchar()
 #include <stdlib.h>
 #include "joystick.h"
 #include <errno.h>
-#define JS_DEV	"/dev/input/js1"
+#define JS_DEV	"/dev/input/js0"
 
 int	axis[6];
 int	button[12];
@@ -210,20 +217,22 @@ int keyboardToValue(char c) {
  switch(c)
  {
 	 case 27:
-	 	mode=9;
+	 	mode = 9;
 		break;
 	 case '0' :
-	 	mode=0;
+	 	mode = 0;
 	 break;
 	 case '1' :
-	 	mode=1;
+	 	mode = 1;
 	 	printf("%s\n", "Going into panic mode");
 	 	panicFlag = 1;
 		//while(panicFlag!=0);
 	 break;
 	 case '2' :
-	 	mode=2;
+	 	mode = 2;
 	 break;
+	 case '3' :
+	 	mode = 3;
 	 case 'a' :
 	 ;
 	 break;
@@ -234,9 +243,6 @@ int keyboardToValue(char c) {
 	 ;
 	 break;
 	 case 'w' :
-	 ;
-	 break;
-	 case 'u' :
 	 ;
 	 break;
 
@@ -479,14 +485,83 @@ void send_Panic_Packet(void)
 
 }
 
-int connectionCheck()
+uint8_t map_char_to_uint8_t(char v)
 {
-	int result;
-	const char *filename = "/dev/ttyUSB0";
-	result = access (filename, F_OK);
-	//printf("%d \n",result);
-	return result;
+	uint8_t res = 0;
+
+	switch(v){
+		case('0'):
+			res = 0;
+			break;
+		case('1'):
+			res = 1;
+			break;
+		case('2'):
+			res = 2;
+			break;
+		case('3'):
+			res = 3;
+			break;
+		case('4'):
+			res = 4;
+			break;
+		case('5'):
+			res = 5;
+			break;
+		case('6'):
+			res = 6;
+			break;
+		case('7'):
+			res = 7;
+			break;
+		case('8'):
+			res = 8;
+			break;
+		case('9'):
+			res = 9;
+			break;
+		default:
+			break;
+	}
+
+	return res;
 }
+
+bool header_found = false;
+
+void check_incoming_char(void)
+{
+	//Variables for mode change
+
+	int packet_counter = 0;
+	uint8_t newMode;
+	char c;
+
+	//rs232 get char, c - input from the rs232 connection
+
+
+	if ((c = rs232_getchar_nb()) != -1)
+	{
+
+		if(header_found)
+		{
+			printf("char after header found: %d\n", c);
+			mode = c;
+		}
+
+		if(c == '#') {
+			header_found = true;
+		} else {
+			header_found = false;
+		}
+
+		term_putchar(c);
+	}
+
+
+
+}
+
 /*----------------------------------------------------------------
  * main -- execute terminal
  *----------------------------------------------------------------
@@ -494,6 +569,8 @@ int connectionCheck()
 int main(int argc, char **argv)
 {
 	int 		fd;
+
+
 
 #ifdef JOYSTICK_CONNECTED	
 	struct js_event js;
@@ -533,14 +610,22 @@ int main(int argc, char **argv)
 	 */
 	for (;;)
 	{	
-		if(connectionCheck() ==-1) panicFlag=1;
-		else {
+		check_incoming_char();
+
+		if(panicFlag) {
+			send_Panic_Packet();
+		} else if(counter > 5) {
+			counter = 0;
+			create_Packet();
+			send_Packet();
+		}
+		counter++;
+
 		//input from Keyboard
 		char keyboardInput = term_getchar_nb();
 		keyboardToValue(keyboardInput);
 
 		//from JS.c 
-
 		#ifdef JOYSTICK_CONNECTED
 		while (read(fd, &js, sizeof(struct js_event)) == 
 						sizeof(struct js_event))  {
@@ -563,16 +648,6 @@ int main(int argc, char **argv)
 			exit (1);
 		}
 		#endif
-		}
-		//printf("%d\n", panicFlag);
-		if(panicFlag) {
-			send_Panic_Packet();
-		} else if(counter > 5) {
-			counter = 0;
-			create_Packet();
-			send_Packet();
-		}
-		counter++;
 
 		#ifdef JOYSTICK_DEBUG
 		printf("\n");
@@ -588,11 +663,7 @@ int main(int argc, char **argv)
 		if (button[0])
 			break;
 			
-		//rs232 get char, c - input from the rs232 connection
-		if ((c = rs232_getchar_nb()) != -1)
-		{
-			term_putchar(c);
-		}
+
 	}
 	term_exitio();
 	rs232_close();

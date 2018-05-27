@@ -33,13 +33,20 @@
 struct packet{
 	uint8_t header;
 	uint8_t dataType;
-	int8_t roll;
+	int8_t roll;	
 	int8_t pitch;
 	int8_t yaw;
 	int8_t lift;
 	uint16_t crc;
 } values_Packet;
 uint8_t broken_Packet[PACKET_SIZE];
+
+struct mode_packet {
+	char header;
+	uint8_t mode;
+	char ender;
+} mode_change_packet;
+bool mode_change_acknowledged;
 
 uint8_t mode;
 int panicFlag;
@@ -51,11 +58,30 @@ void update_motors(void);
 void panicMode(void);
 void escapeMode(void);
 void safeMode(void);
-void manualMode(void);
-void yawMode(void);
+void setting_packet_values_manual_mode(void);
+void calculate_yaw_control(void);
 void calculateMotorRPM(void);
 void run_filters_and_control(void);
 int connectionCheck(void);
+
+// Calibration
+#define CALIBRATION_BUFFER_SIZE 50
+int saxValues[CALIBRATION_BUFFER_SIZE], sayValues[CALIBRATION_BUFFER_SIZE], sazValues[CALIBRATION_BUFFER_SIZE]; 
+int buffer_fill_index;
+int offset_sax, offset_say, offset_saz;
+bool fill_calibration_buffer(void);
+void calibrate_offset_acceleration(void);
+
+// Mode
+uint8_t prevMode;
+void (*current_mode_function)(void);
+void panicMode(void);
+void escapeMode(void);
+void safeMode(void);
+void manualMode(void);
+void calibrationMode(void);
+void switchMode(int);
+void yawMode(void);
 
 // Timers
 #define TIMER_PERIOD	50 //50ms=20Hz (MAX 23bit, 4.6h)
@@ -90,8 +116,11 @@ void uart_put(uint8_t);
 
 // Packet Protocol
 #define PC_PACKET_LENGTH 3
-void readPacket(void);
+uint8_t readPacket(void);
 bool check_for_header(uint8_t);
+void init_send_mode_change(void);
+void set_acknowledge_flag(void);
+void send_mode_change(void);
 
 
 

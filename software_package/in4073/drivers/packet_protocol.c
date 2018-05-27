@@ -22,12 +22,8 @@
 
 /**
 * TODO List:
-*  Add CRC
-*  Add sending packets back
-*  Add parity
 *  Keep information on packets lost
 *  Keep information on packets sent 
-*  
 */
 
 /*------------------------------------------------------------------
@@ -126,9 +122,9 @@ void fill_values_Packet()
 	values_Packet.crc 		= ((broken_Packet[6]<<8) | broken_Packet[7]);
 }
 
-void setMode(void)
+uint8_t setMode(void)
 {
-	char incomingMode = values_Packet.header & 0b00001111;
+	uint8_t incomingMode = (uint8_t) values_Packet.header & 0b00001111;
 
 	if(incomingMode == 1) {
 		panicFlag = 1;
@@ -137,6 +133,23 @@ void setMode(void)
 		mode = incomingMode;
 	}
 	
+	//printf("%s%c%s%d\n","Header received: ", values_Packet.header, " mode: ", incomingMode );
+	if (!mode_change_acknowledged) {
+
+		if(incomingMode == mode) {
+			//printf("%s\n", "Changing mode_change_acknowledged to TRUE" );
+			mode_change_acknowledged = true;
+		} else {
+			//flushQueue(&rx_queue);
+			send_mode_change();
+		}
+	} else {
+		//printf("%s\n","mode_change_acknowledged is TRUE" );
+
+
+
+	}
+	return incomingMode;
 	//printf("%s %d\n", "Mode is:", mode);
 }
 
@@ -214,7 +227,7 @@ void printPacket(struct packet *da)
  */
 uint8_t broken_packet_counter2 = 0;
 
-void readPacket()
+uint8_t readPacket()
 {
 	//Packet is 8 bytes
 	bool headerFound = false;
@@ -222,6 +235,9 @@ void readPacket()
 		values_Packet.header = dequeue(&rx_queue);
 		headerFound = check_for_header( values_Packet.header);
 	} while( !headerFound && (rx_queue.count > 0) );
+
+	//uint8_t incomingmode = (uint8_t) values_Packet.header & 0b00001111;
+	//printf("%s%d\n","mode that was received: ", incomingmode);
 
 	//Now I need to make sure the whole packet is complete
 	values_Packet.dataType = dequeue(&rx_queue);
@@ -247,4 +263,36 @@ void readPacket()
 			readPacket();
 		}
 	}
+
+	return mode;
+}
+
+
+/*************************************
+This function sends a message to the pc
+that a mode change has taken place
+Board should stop sending once pc confirms
+the mode change, by sending the new correct mode.
+*************************************/
+void init_send_mode_change(void)
+{
+	mode_change_packet.header = '#';
+	mode_change_packet.ender = '$';
+	mode_change_acknowledged = true;
+
+}
+
+void set_acknowledge_flag(void)
+{
+	mode_change_acknowledged = false;
+}
+
+
+void send_mode_change(void)
+{
+	mode_change_packet.mode = (uint8_t) mode;
+
+	printf("%c%c%c\n",mode_change_packet.header, 
+					mode_change_packet.mode, 
+					mode_change_packet.ender);
 }

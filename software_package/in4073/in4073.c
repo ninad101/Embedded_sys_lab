@@ -105,13 +105,16 @@ int main(void)
 
 	flushQueue(&rx_queue);
 
+	switchMode(0);
+
 	while (!demo_done)
 	{	
 		//This is where incoming data comes from
 		//int rx_count = rx_queue.count;
 		if (rx_queue.count > 7) {
-			readPacket();
-			//process_key( dequeue(&rx_queue) );
+			if(prevMode != readPacket()) {
+				switchMode(mode);
+			}
 		}
 		if(panicFlag) panicMode();
 		
@@ -124,29 +127,30 @@ int main(void)
 			
 			//batteryMonitor();
 
-			switch(mode)
-			{
-				case 0: 
-					safeMode();
-					break;
-				case 1:
-					panicMode();
-					break;
-				case 2:
-					manualMode();
-					calculateMotorRPM();
-					update_motors();
-					break;
-				case 4:
-					yawMode();
-					calculateMotorRPM();
-					update_motors();	
-					break;
-				case 9:
-					escapeMode();
-					break;
+			current_mode_function();
+			// switch(mode)
+			// {
+			// 	case 0: 
+			// 		safeMode();
+			// 		break;
+			// 	case 1:
+			// 		panicMode();
+			// 		break;
+			// 	case 2:
+			// 		manualMode();
+			// 		calculateMotorRPM();
+			// 		update_motors();
+			// 		break;
+			// 	case 4:
+			// 		yawMode();
+			// 		calculateMotorRPM();
+			// 		update_motors();	
+			// 		break;
+			// 	case 9:
+			// 		escapeMode();
+			// 		break;
 					
-			}
+			// }
 			
 			//logData();
 			//readLoggedData();
