@@ -150,7 +150,7 @@ int main(void)
 			
 			//logData();
 			//readLoggedData();
-			printInputValues();
+			//printInputValues();
 
 			clear_timer_flag();
 		}

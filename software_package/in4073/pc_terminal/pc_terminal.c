@@ -482,7 +482,7 @@ void send_Panic_Packet(void)
 int connectionCheck()
 {
 	int result;
-	const char *filename = "/dev/ttyUSB1";
+	const char *filename = "/dev/ttyUSB0";
 	result = access (filename, F_OK);
 	//printf("%d \n",result);
 	return result;
