@@ -95,16 +95,15 @@ int main(void)
 	flushQueue(&rx_queue);
 
 	while (!demo_done)
-	{
-		if(panicFlag) panicMode();
-
+	{	
 		//This is where incoming data comes from
 		//int rx_count = rx_queue.count;
 		if (rx_queue.count > 7) {
 			readPacket();
 			//process_key( dequeue(&rx_queue) );
 		}
-
+		if(panicFlag) panicMode();
+		
 		if (check_timer_flag()) 
 		{
 			if (counter++%20 == 0) nrf_gpio_pin_toggle(BLUE);

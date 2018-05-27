@@ -13,7 +13,8 @@
 #include <math.h>
 #include <stdlib.h>
 #include "in4073.h"
-
+#include <stdint.h>
+#include <unistd.h>
 
 void printMotorValues(void)
 {
@@ -26,18 +27,17 @@ void update_motors(void)
 	motor[1] = ae[1];
 	motor[2] = ae[2];
 	motor[3] = ae[3];
-	//printMotorValues();
+	printMotorValues();
 }
      
 /*--------------------------------------------------------------------------
  * quad rotor controller
  *--------------------------------------------------------------------------
  */
-
 void escapeMode()
 {
-	//printf("ESCAPE MODE\n");
 	panicMode();
+	demo_done=true;
 	exit(0);
 }
 void panicMode()
@@ -45,7 +45,7 @@ void panicMode()
 	//printf("PANIC MODE\n");
 	ae[0]=200; ae[1]=200; ae[2]=200; ae[3]=200;
 	update_motors();
-	for(int i=0;i<20000;i++) printf("Waiting\t");
+	for(int i=0;i<10000;i++) printf("Waiting in Panic Mode\n");
 
 	char endPanic = 'x';
 	for(int i = 0; i < 100; i++) printf("%c", endPanic);
@@ -66,59 +66,58 @@ void safeMode()
 	update_motors();
 }
 
-/*Manual Mode : written by Ninad */
+/*Manual Mode : Written by Ninad. Modified by Saumil(Fixed Lift, and Motor cappings.) */
 void calculateMotorRPM()
 {	
-	int16_t 	lift, roll, pitch, yaw;
-	int16_t 	w0, w1, w2, w3; //rpm
+	int32_t 	lift, roll, pitch, yaw;
+	int32_t 	w0, w1, w2, w3; //rpm
 
-	int16_t b = 1;
-	int16_t d = 1;
+	int32_t b = 2;
+	int32_t d = 1;
 
+	int multiFactor = 5; //To be tested with QR
+	int minMotorValue = 100; //To be determined exactly using QR
+	int maxMotorValue = 600;
+ 
 	lift = roll = pitch = yaw = 0; // default
 	
 	/* manual mode */
-	lift = (int16_t) -1 * values_Packet.lift*256;
-	roll = (int16_t)values_Packet.roll*256;
-	pitch = (int16_t)values_Packet.pitch*256;
-	yaw = (int16_t)values_Packet.yaw*256;
-			  	          
-	/* only want positive lift
-	 */
-	if (lift < 0) lift = 0;
+	lift = (int32_t) -1 * (values_Packet.lift -127)*256;
+	roll = (int32_t)(values_Packet.roll)*256;
+	pitch = (int32_t)(values_Packet.pitch)*256;
+	yaw = (int32_t)(values_Packet.yaw)*256;
 
-	/* solving equations from Assignment.pdf */
-	/*
-RPMcalculate.m
-% lift= b * (x1 + x2 + x3 + x4);
-% roll= b * (-x2 + x4);
-% pitch= b * (x1 - x3);
-% yaw= d * (-x1 + x2 -x3 + x4);
+	/* solving equations from Assignment.pdf
+	RPMcalculate.m
+	% lift= b * (x1 + x2 + x3 + x4);
+	% roll= b * (-x2 + x4);
+	% pitch= b * (x1 - x3);
+	% yaw= d * (-x1 + x2 -x3 + x4);
 
-syms x1 x2 x3 x4
-syms roll lift pitch yaw b d
-eqn1 = x1 + x2 + x3 + x4 == lift/b;
-eqn2 = -x2 + x4 == roll/b;
-eqn3 = x1 - x3 == pitch/b;
-eqn4 = -x1 + x2 -x3 + x4 == yaw/d;
+	syms x1 x2 x3 x4
+	syms roll lift pitch yaw b d
+	eqn1 = x1 + x2 + x3 + x4 == lift/b;
+	eqn2 = -x2 + x4 == roll/b;
+	eqn3 = x1 - x3 == pitch/b;
+	eqn4 = -x1 + x2 -x3 + x4 == yaw/d;
 
-sol = solve([eqn1, eqn2, eqn3, eqn4], [x1, x2, x3, x4]);
-x1Sol = sol.x1
-x2Sol = sol.x2
-x3Sol = sol.x3
-x4Sol = sol.x4
+	sol = solve([eqn1, eqn2, eqn3, eqn4], [x1, x2, x3, x4]);
+	x1Sol = sol.x1
+	x2Sol = sol.x2
+	x3Sol = sol.x3
+	x4Sol = sol.x4
 
-x1Sol = lift/(4*b) + pitch/(2*b) - yaw/(4*d)
- 
- 
-x2Sol = lift/(4*b) - roll/(2*b) + yaw/(4*d)
- 
- 
-x3Sol = lift/(4*b) - pitch/(2*b) - yaw/(4*d)
- 
- 
-x4Sol = lift/(4*b) + roll/(2*b) + yaw/(4*d)
-*/
+	x1Sol = lift/(4*b) + pitch/(2*b) - yaw/(4*d)
+	
+	
+	x2Sol = lift/(4*b) - roll/(2*b) + yaw/(4*d)
+	
+	
+	x3Sol = lift/(4*b) - pitch/(2*b) - yaw/(4*d)
+	
+	
+	x4Sol = lift/(4*b) + roll/(2*b) + yaw/(4*d)
+	*/
 
 	w0 = (lift / b + 2 * pitch / b - yaw / d) / 4;
 	w1 = (lift / b - 2 * roll / b + yaw / d) / 4;
@@ -132,17 +131,31 @@ x4Sol = lift/(4*b) + roll/(2*b) + yaw/(4*d)
 	if (w2 < 0) w2 = 0;
 	if (w3 < 0) w3 = 0;
 
-	int multiFactor = 6;
-
+	if(((minMotorValue/multiFactor)*(minMotorValue/multiFactor)*4*b) < lift)
+	{
+	ae[0] = (multiFactor*sqrt(w0));
+	if(ae[0] < minMotorValue) ae[0]= minMotorValue;
+	else if(ae[0] > maxMotorValue) ae[0]=maxMotorValue;
+	ae[1] = (multiFactor*sqrt(w1));
+	if(ae[1] < minMotorValue) ae[1]= minMotorValue;
+	else if(ae[1] > maxMotorValue) ae[1]=maxMotorValue;
+	ae[2] = (multiFactor*sqrt(w2));
+	if(ae[2] < minMotorValue) ae[2]= minMotorValue;
+	else if(ae[2] > maxMotorValue) ae[2]=maxMotorValue;
+	ae[3] = (multiFactor*sqrt(w3));
+	if(ae[3] < minMotorValue) ae[3]= minMotorValue;
+	else if(ae[3] > maxMotorValue) ae[3]=maxMotorValue;
+	}
+	else
+	{
 	ae[0] = (multiFactor*sqrt(w0));
 	ae[1] = (multiFactor*sqrt(w1));
 	ae[2] = (multiFactor*sqrt(w2));
 	ae[3] = (multiFactor*sqrt(w3));
+	}
 
 
 }
-
-
 
 void run_filters_and_control()
 {
