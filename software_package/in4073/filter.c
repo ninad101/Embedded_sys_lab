@@ -1,29 +1,31 @@
-/*
-Authored by Diwakar Babu
-*filter.c - Filters psi, phi and theta angles for yaw, roll and pitch respectively
-*/
+
+//Authored by Diwakar Babu
+//filter.c - Filters psi, phi and theta sensor values for yaw, roll and pitch respectively
+
 
 #include "in4073.h"
 
 #define MAXWIN 5
 
+float_t a[5];
+float_t b[5];
+float_t x[5];
+float_t y[5];
+int8_t i;
+int8_t sphi;
+int8_t stheta;
+int8_t pb=0;
+int8_t sb=0;
+float_t p2phi=0;
+float_t s2theta=0;
+int8_t c1;
+int8_t c2;
+float_t p_kal;
+float_t s_kal;
+
 void filterFunction()
 {
-    float_t a[5];
-    float_t b[5];
-    float_t x[5];
-    float_t y[5];
-    int8_t i;
-    int8_t sphi;
-    int8_t stheta;
-    int8_t pb;
-    int8_t sb;
-    int8_t p2phi;
-    int8_t s2theta;
-    int8_t c1;
-    int8_t c2;
-    int8_t p_kal;
-    int8_t s_kal;
+    
     
     //Butterworth Filtering for Yaw 
     for(i=0;i<MAXWIN;i++)
@@ -34,10 +36,10 @@ void filterFunction()
         x[i]=psi;
     }
 
-    a[0]=0.0; //give some value
-    b[0]=0.0;
-    a[1]=0.0;
-    b[1]=0.0;
+    a[0]=2239; //give some value
+    b[0]=16384;
+    a[1]=11903;
+    b[1]=2239;
 
     y[1]=0;
 
@@ -57,10 +59,10 @@ void filterFunction()
     //Kalman Filtering for Roll and Pitch
     get_raw_sensor_data();
 
-    p2phi=0.0; //give some value
-    s2theta=0.0;
-    c1=0;
-    c2=0;
+    p2phi=1.2; //give some value
+    s2theta=1.2;
+    c1=100;
+    c2=100;
 
     sphi=phi;
     stheta=theta;

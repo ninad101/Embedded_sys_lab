@@ -133,6 +133,7 @@ int main(void)
 			//logData();
 			//readLoggedData();
 			//printInputValues();
+			//filterFunction();
 
 			clear_timer_flag();
 		}
