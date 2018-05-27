@@ -83,12 +83,12 @@ void yawMode()
 {
 			int16_t sp_r;
             int16_t yaw_offset = 10; 
-			get_dmp_data();
+			//get_dmp_data();
 			lift = (int16_t) -1 * values_Packet.lift*256;// pos lift -> neg z
 			roll = (int16_t)values_Packet.roll*256;
 			pitch = (int16_t)values_Packet.pitch*256;
-			sp_r = yaw_offset + (int16_t)values_Packet.yaw*256; // setpoint is angular rate
-			yaw =  kp_yaw*(sp_r - sr);
+			sp_r = yaw_offset + (int16_t)values_Packet.yaw*256; 
+			yaw =  kp_yaw*(sp_r - sr);// setpoint is angular rate
 
 			
 }
