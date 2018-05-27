@@ -476,6 +476,14 @@ void send_Panic_Packet(void)
 
 }
 
+int connectionCheck()
+{
+	int result;
+	const char *filename = "/dev/ttyUSB1";
+	result = access (filename, F_OK);
+	//printf("%d \n",result);
+	return result;
+}
 /*----------------------------------------------------------------
  * main -- execute terminal
  *----------------------------------------------------------------
@@ -522,6 +530,8 @@ int main(int argc, char **argv)
 	 */
 	for (;;)
 	{	
+		if(connectionCheck() ==-1) panicFlag=1;
+		else {
 		//input from Keyboard
 		char keyboardInput = term_getchar_nb();
 		keyboardToValue(keyboardInput);
@@ -550,7 +560,8 @@ int main(int argc, char **argv)
 			exit (1);
 		}
 		#endif
-
+		}
+		//printf("%d\n", panicFlag);
 		if(panicFlag) {
 			send_Panic_Packet();
 		} else if(counter > 5) {

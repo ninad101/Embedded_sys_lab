@@ -136,7 +136,7 @@ void setMode(void)
 	} else {
 		mode = incomingMode;
 	}
-
+	
 	//printf("%s %d\n", "Mode is:", mode);
 }
 

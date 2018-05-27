@@ -14,7 +14,7 @@
 #include <stdlib.h>
 #include "in4073.h"
 #include <stdint.h>
-
+#include <unistd.h>
 
 void printMotorValues(void)
 {
@@ -34,11 +34,10 @@ void update_motors(void)
  * quad rotor controller
  *--------------------------------------------------------------------------
  */
-
 void escapeMode()
 {
-	//printf("ESCAPE MODE\n");
 	panicMode();
+	demo_done=true;
 	exit(0);
 }
 void panicMode()
@@ -46,7 +45,7 @@ void panicMode()
 	//printf("PANIC MODE\n");
 	ae[0]=200; ae[1]=200; ae[2]=200; ae[3]=200;
 	update_motors();
-	for(int i=0;i<15000;i++) printf("Waiting in Panic Mode\n");
+	for(int i=0;i<10000;i++) printf("Waiting in Panic Mode\n");
 
 	char endPanic = 'x';
 	for(int i = 0; i < 100; i++) printf("%c", endPanic);

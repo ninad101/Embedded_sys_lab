@@ -43,7 +43,6 @@ uint8_t broken_Packet[PACKET_SIZE];
 
 uint8_t mode;
 int panicFlag;
-
 bool demo_done;
 
 // Control
@@ -54,6 +53,7 @@ void escapeMode(void);
 void safeMode(void);
 void calculateMotorRPM(void);
 void run_filters_and_control(void);
+int connectionCheck(void);
 
 // Timers
 #define TIMER_PERIOD	50 //50ms=20Hz (MAX 23bit, 4.6h)
