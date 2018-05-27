@@ -16,6 +16,9 @@
 #include <stdint.h>
 #include <unistd.h>
 
+int16_t 	lift, roll, pitch, yaw;
+
+
 void printMotorValues(void)
 {
 	printf("motor[%d]: %d, motor[%d]: %d, motor[%d]: %d, motor[%d]: %d\n",0,motor[0],1,motor[1],2,motor[2],3,motor[3]);
@@ -34,6 +37,19 @@ void update_motors(void)
  * quad rotor controller
  *--------------------------------------------------------------------------
  */
+
+
+
+// written by : ninad
+//to do : check if there is any need when no battery is connected
+void batteryMonitor()
+{
+  	if (bat_volt < 10.85){//low voltage
+  	panicMode();
+ 	 printf("low battery - panic mode enabled\n");
+  	} 
+}
+
 void escapeMode()
 {
 	panicMode();
@@ -42,7 +58,7 @@ void escapeMode()
 }
 void panicMode()
 {	
-	//printf("PANIC MODE\n");
+	printf("PANIC MODE\n");
 	ae[0]=200; ae[1]=200; ae[2]=200; ae[3]=200;
 	update_motors();
 	for(int i=0;i<10000;i++) printf("Waiting in Panic Mode\n");
@@ -52,6 +68,31 @@ void panicMode()
 
 	mode=0;
 	safeMode();
+}
+
+void manualMode()
+{
+			lift = (int16_t) -1 * values_Packet.lift*256;// pos lift -> neg z
+			roll = (int16_t)values_Packet.roll*256;
+			pitch = (int16_t)values_Packet.pitch*256;
+			yaw = (int16_t)values_Packet.yaw*256;
+
+}
+
+//written by : ninad
+//get a yaw offset of int16_t from caliberation mode
+void yawMode()
+{
+			int16_t sp_r;
+            int16_t yaw_offset = 10; 
+			//get_dmp_data();
+			lift = (int16_t) -1 * values_Packet.lift*256;// pos lift -> neg z
+			roll = (int16_t)values_Packet.roll*256;
+			pitch = (int16_t)values_Packet.pitch*256;
+			sp_r = yaw_offset + (int16_t)values_Packet.yaw*256; 
+			yaw =  kp_yaw*(sp_r - sr);// setpoint is angular rate
+
+			
 }
 
 //Written By Saumil

@@ -236,6 +236,9 @@ int keyboardToValue(char c) {
 	 case 'w' :
 	 ;
 	 break;
+	 case 'u' :
+	 ;
+	 break;
 
 	default :
 	;

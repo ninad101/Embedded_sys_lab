@@ -51,6 +51,8 @@ void update_motors(void);
 void panicMode(void);
 void escapeMode(void);
 void safeMode(void);
+void manualMode(void);
+void yawMode(void);
 void calculateMotorRPM(void);
 void run_filters_and_control(void);
 int connectionCheck(void);
@@ -102,6 +104,7 @@ bool i2c_write(uint8_t slave_addr, uint8_t reg_addr, uint8_t length, uint8_t con
 bool i2c_read(uint8_t slave_addr, uint8_t reg_addr, uint8_t length, uint8_t *data);
 
 // MPU wrapper
+int16_t kp_yaw;
 int16_t phi, theta, psi;
 int16_t sp, sq, sr;
 int16_t sax, say, saz;
@@ -120,6 +123,7 @@ void baro_init(void);
 
 // ADC
 uint16_t bat_volt;
+void batteryMonitor(void);
 void adc_init(void);
 void adc_request_sample(void);
 
