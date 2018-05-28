@@ -43,7 +43,7 @@ void calibrationMode(void)
 
 void manualMode(void)
 {
-	//printf("ManualMode\n");
+	printf("ManualMode\n");
 	setting_packet_values_manual_mode();
 	calculateMotorRPM();
 	update_motors();	
@@ -70,7 +70,10 @@ void safeMode(void)
 
 void yawMode(void)
 {
+	printf("yaw MODE\n");
 	calculate_yaw_control();
+	calculateMotorRPM();
+	update_motors();
 }
 
 void panicMode(void)

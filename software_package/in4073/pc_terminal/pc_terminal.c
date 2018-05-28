@@ -123,7 +123,7 @@ int	term_getchar()
 #include <stdlib.h>
 #include "joystick.h"
 #include <errno.h>
-#define JS_DEV	"/dev/input/js0"
+#define JS_DEV	"/dev/input/js1"
 
 int	axis[6];
 int	button[12];
@@ -233,6 +233,9 @@ int keyboardToValue(char c) {
 	 break;
 	 case '3' :
 	 	mode = 3;
+	 case '4' :
+	    mode = 4;
+	break;		 
 	 case 'a' :
 	 ;
 	 break;

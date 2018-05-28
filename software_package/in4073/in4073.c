@@ -62,10 +62,10 @@ void process_key(uint8_t c)
 			if (ae[3] < 0) ae[3] = 0;
 			break;
 		case 'u':
-			kp_yaw += 5;	
+			//kp_yaw += 5;	
 			break;
 		case 'j':
-			kp_yaw -= 5;	
+			//kp_yaw -= 5;	
 			break;
 		case 27:
 			demo_done = true;
@@ -159,10 +159,10 @@ int main(void)
 			clear_timer_flag();
 		}
 
-		if (check_sensor_int_flag()) 
-		{
-			get_dmp_data();
-		}
+		//if (check_sensor_int_flag()) 
+		//{
+	//		get_dmp_data();
+	//	}
 	}	
 
 	printf("\n\t Goodbye \n\n");

@@ -16,7 +16,7 @@
 #include <stdint.h>
 #include <unistd.h>
 
-int16_t 	lift, roll, pitch, yaw;
+int32_t 	lift, roll, pitch, yaw;
 
 
 void printMotorValues(void)
@@ -52,10 +52,10 @@ void batteryMonitor()
 
 void setting_packet_values_manual_mode()
 {
-			lift = (int16_t) -1 * values_Packet.lift*256;// pos lift -> neg z
-			roll = (int16_t)values_Packet.roll*256;
-			pitch = (int16_t)values_Packet.pitch*256;
-			yaw = (int16_t)values_Packet.yaw*256;
+			lift = (int16_t) -1 * (values_Packet.lift -127)*256;
+			roll = (int16_t)(values_Packet.roll)*256;
+			pitch = (int16_t)(values_Packet.pitch)*256;
+			yaw = (int16_t)(values_Packet.yaw)*256;
 
 }
 
@@ -63,38 +63,45 @@ void setting_packet_values_manual_mode()
 //get a yaw offset of int16_t from caliberation mode
 void calculate_yaw_control()
 {
-			int16_t sp_r;
-            int16_t yaw_offset = 10; 
-			//get_dmp_data();
-			lift = (int16_t) -1 * values_Packet.lift*256;// pos lift -> neg z
+			int16_t yaw_error;
+			int16_t kp_yaw = 2;
+            int16_t yaw_offset = 100; 
+			if (check_sensor_int_flag()) 
+		{
+			get_dmp_data();
+			
+		
+		}
+			lift = (int16_t) -1 * (values_Packet.lift -127)*256;// pos lift -> neg z
+			//printf("lift : %ld \n",lift);
 			roll = (int16_t)values_Packet.roll*256;
+			//printf("roll : %ld \n",roll);
 			pitch = (int16_t)values_Packet.pitch*256;
-			sp_r = yaw_offset + (int16_t)values_Packet.yaw*256; 
-			yaw =  kp_yaw*(sp_r - sr);// setpoint is angular rate
-
+			//printf("pitch : %ld \n",pitch);
+			yaw_error = yaw_offset + (int16_t)(values_Packet.yaw*256) - sr; 
+		
+			yaw =  kp_yaw*yaw_error;// setpoint is angular rate
+	//printf("yaw : %ld \n",yaw);
 			
 }
 
 /*Manual Mode : Written by Ninad. Modified by Saumil(Fixed Lift, and Motor cappings.) */
 void calculateMotorRPM()
 {	
-	int32_t 	lift, roll, pitch, yaw;
-	int32_t 	w0, w1, w2, w3; //rpm
+	//int32_t 	lift, roll, pitch, yaw;
+	int16_t 	w0, w1, w2, w3; //rpm
 
-	int32_t b = 2;
-	int32_t d = 1;
+	int16_t b = 1;
+	int16_t d = 0.5;
 
 	int multiFactor = 5; //To be tested with QR
 	int minMotorValue = 100; //To be determined exactly using QR
 	int maxMotorValue = 600;
  
-	lift = roll = pitch = yaw = 0; // default
+	//lift = roll = pitch = yaw = 0; // default
 	
 	/* manual mode */
-	lift = (int32_t) -1 * (values_Packet.lift -127)*256;
-	roll = (int32_t)(values_Packet.roll)*256;
-	pitch = (int32_t)(values_Packet.pitch)*256;
-	yaw = (int32_t)(values_Packet.yaw)*256;
+	
 
 	/* solving equations from Assignment.pdf
 	RPMcalculate.m
