@@ -52,47 +52,69 @@ void batteryMonitor()
 
 void setting_packet_values_manual_mode()
 {
-			lift = (int16_t) -1 * (values_Packet.lift -127)*256;
-			roll = (int16_t)(values_Packet.roll)*256;
-			pitch = (int16_t)(values_Packet.pitch)*256;
-			yaw = (int16_t)(values_Packet.yaw)*256;
+			lift = (int32_t) -1 * (values_Packet.lift -127)*256;
+			roll = (int32_t)(values_Packet.roll)*256;
+			pitch = (int32_t)(values_Packet.pitch)*256;
+			yaw = (int32_t)(values_Packet.yaw)*256;
 
 }
+
+
+//**********************YAW-CONTROL***********************//
 
 //written by : ninad
 //get a yaw offset of int16_t from caliberation mode
 void calculate_yaw_control()
 {
-			int16_t yaw_error;
-			int16_t kp_yaw = 2;
-            int16_t yaw_offset = 100; 
-			if (check_sensor_int_flag()) 
-		{
-			get_dmp_data();
-			
+			int32_t yaw_error;
+			int32_t kp_yaw = 5;
+            int32_t yaw_offset = 10; 
 		
-		}
-			lift = (int16_t) -1 * (values_Packet.lift -127)*256;// pos lift -> neg z
+			lift = (int32_t) -1 * (values_Packet.lift -127)*256;// pos lift -> neg z
 			//printf("lift : %ld \n",lift);
-			roll = (int16_t)values_Packet.roll*256;
+			roll = (int32_t)values_Packet.roll*256;
 			//printf("roll : %ld \n",roll);
-			pitch = (int16_t)values_Packet.pitch*256;
+			pitch = (int32_t)values_Packet.pitch*256;
 			//printf("pitch : %ld \n",pitch);
-			yaw_error = yaw_offset + (int16_t)(values_Packet.yaw*256) - sr; 
-		
-			yaw =  kp_yaw*yaw_error;// setpoint is angular rate
+			yaw_error = yaw_offset + (int32_t)(values_Packet.yaw*256) ; 
+		   // printf("sr : %d \n",sr);
+			yaw =  kp_yaw*(yaw_error - sr);// setpoint is angular rate
 	//printf("yaw : %ld \n",yaw);
-			
+}
+
+//**********************FULL-CONTROL********************//
+//written by : Ninad
+void calculate_roll_control()
+{	//add roll and pitch offsets from calibration mode
+	int32_t yaw_error, roll_error, pitch_error;
+	int32_t kp_yaw = 5;
+    int32_t yaw_offset = 10; 
+	int32_t kp1_roll = 5;   
+	int32_t kp2_roll = 10;
+	int32_t kp1_pitch = 2;
+	int32_t kp2_pitch = 10;
+	
+	lift = (int32_t) -1 * (values_Packet.lift -127)*256;
+	
+	roll_error = ((int32_t)values_Packet.roll*256 -(int32_t) phi);
+	roll = kp1_roll*roll_error - kp2_roll*sp;
+
+	pitch_error = ((int32_t)values_Packet.pitch*256 -(int32_t) theta); 
+	pitch = kp1_pitch*pitch_error - kp2_pitch*sq;
+
+	yaw_error =  yaw_offset + (int32_t)(values_Packet.yaw*256) ; 
+	yaw =  kp_yaw*(yaw_error - sr);
+
 }
 
 /*Manual Mode : Written by Ninad. Modified by Saumil(Fixed Lift, and Motor cappings.) */
 void calculateMotorRPM()
 {	
 	//int32_t 	lift, roll, pitch, yaw;
-	int16_t 	w0, w1, w2, w3; //rpm
+	int32_t 	w0, w1, w2, w3; //rpm
 
-	int16_t b = 1;
-	int16_t d = 0.5;
+	int32_t b = 3;
+	int32_t d = 1;
 
 	int multiFactor = 5; //To be tested with QR
 	int minMotorValue = 100; //To be determined exactly using QR

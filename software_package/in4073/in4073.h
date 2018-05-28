@@ -60,6 +60,7 @@ void escapeMode(void);
 void safeMode(void);
 void setting_packet_values_manual_mode(void);
 void calculate_yaw_control(void);
+void calculate_roll_control(void);
 void calculateMotorRPM(void);
 void run_filters_and_control(void);
 int connectionCheck(void);
@@ -82,6 +83,7 @@ void manualMode(void);
 void calibrationMode(void);
 void switchMode(int);
 void yawMode(void);
+void fullMode(void);
 
 // Timers
 #define TIMER_PERIOD	50 //50ms=20Hz (MAX 23bit, 4.6h)

@@ -235,7 +235,13 @@ int keyboardToValue(char c) {
 	 	mode = 3;
 	 case '4' :
 	    mode = 4;
-	break;		 
+	break;
+
+	 case '5' :
+	    mode = 5;
+	break;
+
+
 	 case 'a' :
 	 ;
 	 break;
