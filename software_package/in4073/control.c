@@ -30,7 +30,7 @@ void update_motors(void)
 	motor[1] = ae[1];
 	motor[2] = ae[2];
 	motor[3] = ae[3];
-	printMotorValues();
+	//printMotorValues();
 }
      
 /*--------------------------------------------------------------------------

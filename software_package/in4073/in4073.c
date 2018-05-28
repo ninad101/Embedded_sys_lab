@@ -118,6 +118,8 @@ int main(void)
 		}
 		if(panicFlag) panicMode();
 		
+		current_mode_function();
+
 		if (check_timer_flag()) 
 		{
 			if (counter++%20 == 0) nrf_gpio_pin_toggle(BLUE);
@@ -127,7 +129,6 @@ int main(void)
 			
 			//batteryMonitor();
 
-			current_mode_function();
 			// switch(mode)
 			// {
 			// 	case 0: 

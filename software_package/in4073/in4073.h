@@ -116,10 +116,11 @@ void uart_put(uint8_t);
 
 // Packet Protocol
 #define PC_PACKET_LENGTH 3
+uint8_t prevAcknowledgeMode;
 uint8_t readPacket(void);
 bool check_for_header(uint8_t);
 void init_send_mode_change(void);
-void set_acknowledge_flag(void);
+void set_acknowledge_flag(bool);
 void send_mode_change(void);
 
 
