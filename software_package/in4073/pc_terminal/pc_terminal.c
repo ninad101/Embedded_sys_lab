@@ -541,6 +541,26 @@ void check_incoming_char(void)
 
 }
 
+void lower_tuning_value(int8_t d) {
+		setHeader();
+		send_packet.dataType 	= (int8_t) d;	
+		send_packet.pitch		= (int8_t) 0;
+		send_packet.roll		= (int8_t) 0;
+		send_packet.yaw   		= (int8_t) 0;
+		send_packet.lift  		= (int8_t) 0;	
+		setCRC();	
+}
+
+void increase_tuning_value(int8_t d) {
+		setHeader();
+		send_packet.dataType 	= (int8_t) d;	
+		send_packet.pitch		= (int8_t) 64;
+		send_packet.roll		= (int8_t) 64;
+		send_packet.yaw   		= (int8_t) 64;
+		send_packet.lift  		= (int8_t) 64;
+		setCRC();	
+}
+
 //TODO 
 //  Map keyboard inputs to values
 int keyboardToValue(char c) {
@@ -572,29 +592,82 @@ int keyboardToValue(char c) {
 	case '6' :
 	 	mode = 6;
 	 	break;
+ 	//changes kp_yaw++
 	case 'u' :
-
 		specialdataType = true;
-		setHeader();
-		send_packet.dataType 	= (int8_t) 10;	
-		send_packet.pitch		= (int8_t) 0;
-		send_packet.roll		= (int8_t) 0;
-		send_packet.yaw   		= (int8_t) 0;
-		send_packet.lift  		= (int8_t) 0;	
-		setCRC();
+		lower_tuning_value(10);
 		send_Packet();
 		specialdataType = false;
 		send_packet.dataType 	= (int8_t) 0;	
 		break;
+ 	//changes kp_yaw--
 	case 'j' :
-		send_packet.pitch 	= (int8_t) 64;
 		specialdataType = true;
-		send_packet.dataType 	= (int8_t) 10;	
-		send_packet.pitch		= (int8_t) 64;
-		send_packet.roll		= (int8_t) 64;
-		send_packet.yaw   		= (int8_t) 64;
-		send_packet.lift  		= (int8_t) 64;
-		setCRC();	
+		increase_tuning_value(10);
+		send_Packet();
+		specialdataType = false;
+		send_packet.dataType 	= (int8_t) 0;
+		break;
+	//changes kp1_roll++
+	case 'i' :
+		specialdataType = true;
+		lower_tuning_value(20);
+		send_Packet();
+		specialdataType = false;
+		send_packet.dataType 	= (int8_t) 0;	
+		break;
+	//changes kp1_roll--
+	case 'k' :
+		specialdataType = true;
+		increase_tuning_value(20);
+		send_Packet();
+		specialdataType = false;
+		send_packet.dataType 	= (int8_t) 0;
+		break;
+	//changes kp2_roll++
+	case 'o' :
+		specialdataType = true;
+		lower_tuning_value(30);
+		send_Packet();
+		specialdataType = false;
+		send_packet.dataType 	= (int8_t) 0;	
+		break;
+	//changes kp2_roll--
+	case 'l' :
+		specialdataType = true;
+		increase_tuning_value(30);
+		send_Packet();
+		specialdataType = false;
+		send_packet.dataType 	= (int8_t) 0;
+		break;
+	//changes kp1_pitch++
+	case 'y' :
+		specialdataType = true;
+		lower_tuning_value(40);
+		send_Packet();
+		specialdataType = false;
+		send_packet.dataType 	= (int8_t) 0;	
+		break;
+	//changes kp1_pitch--
+	case 'h' :
+		specialdataType = true;
+		increase_tuning_value(40);
+		send_Packet();
+		specialdataType = false;
+		send_packet.dataType 	= (int8_t) 0;
+		break;
+	//changes kp2_pitch++
+	case 't' :
+		specialdataType = true;
+		lower_tuning_value(50);
+		send_Packet();
+		specialdataType = false;
+		send_packet.dataType 	= (int8_t) 0;	
+		break;
+	//changes kp2_pitch--
+	case 'g' :
+		specialdataType = true;
+		increase_tuning_value(50);
 		send_Packet();
 		specialdataType = false;
 		send_packet.dataType 	= (int8_t) 0;
@@ -671,7 +744,7 @@ int main(int argc, char **argv)
 
 		if(panicFlag) {
 			send_Panic_Packet();
-		} else if(counter > 5){
+		} else if(counter > 0){
 			counter = 0;
 			create_Packet();
 			send_Packet();

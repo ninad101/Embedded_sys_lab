@@ -57,7 +57,8 @@ void check_data_type(void);
 
 // Control
 int16_t motor[4],ae[4];
-int32_t kp_yaw,kp1_roll,kp2_roll,kp1_pitch,kp2_pitch;
+int32_t kp_yaw, kp1_roll, kp2_roll, kp1_pitch, kp2_pitch;
+int32_t pitch_error, yaw_error, roll_error;
 void update_motors(void);
 void panicMode(void);
 void escapeMode(void);

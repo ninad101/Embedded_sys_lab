@@ -66,7 +66,7 @@ void setting_packet_values_manual_mode()
 //get a yaw offset of int16_t from caliberation mode
 void calculate_yaw_control()
 {
-			int32_t yaw_error;
+			//int32_t yaw_error;
 			//int32_t kp_yaw = 5;
            // int32_t yaw_offset = 10; 
 		
@@ -86,7 +86,7 @@ void calculate_yaw_control()
 //written by : Ninad
 void calculate_roll_control()
 {	//add roll and pitch offsets from calibration mode
-	int32_t  roll_error;// pitch_error;
+	//int32_t  roll_error;// pitch_error;
 //	int32_t kp_yaw = 5;
     //int32_t yaw_offset = 10; 
 //	int32_t kp1_roll = 0;   

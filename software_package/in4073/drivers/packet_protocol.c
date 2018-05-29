@@ -135,14 +135,55 @@ bool check_Broken_Packet()
 
 void check_data_type(void)
 {
-	if(values_Packet.dataType == 10) {
-		if((int8_t)values_Packet.pitch < 40) {
-			kp_yaw++;
-			//printf("%s%d Pit:%d\n", "kp_yaw++: ", kp_yaw, (int8_t) values_Packet.pitch);
-		} else {
-			kp_yaw--;
-			//printf("%s%d Pit:%d\n", "kp_yaw--: ", kp_yaw, (int8_t) values_Packet.pitch);
-		}
+	switch(values_Packet.dataType)
+	{
+		case 10:
+			if((int8_t)values_Packet.pitch < 40) {
+				kp_yaw++;
+				//printf("%s%d Pit:%d\n", "kp_yaw++: ", kp_yaw, (int8_t) values_Packet.pitch);
+			} else {
+				kp_yaw--;
+				//printf("%s%d Pit:%d\n", "kp_yaw--: ", kp_yaw, (int8_t) values_Packet.pitch);
+			}
+			break;
+		case 20:
+			if((int8_t)values_Packet.pitch < 40) {
+				kp1_roll++;
+				//printf("%s%d Pit:%d\n", "kp1_roll++: ",(int)kp1_roll, (int8_t) values_Packet.pitch);
+			} else {
+				kp1_roll--;
+				//printf("%s%d Pit:%d\n", "kp1_roll--: ",(int) kp1_roll, (int8_t) values_Packet.pitch);
+			}
+			break;
+		case 30:
+			if((int8_t)values_Packet.pitch < 40) {
+				kp2_roll++;
+				//printf("%s%d Pit:%d\n", "kp2_roll++: ",(int) kp2_roll, (int8_t) values_Packet.pitch);
+			} else {
+				kp2_roll--;
+				//printf("%s%d Pit:%d\n", "kp2_roll--: ",(int)kp2_roll, (int8_t) values_Packet.pitch);
+			}
+			break;
+		case 40:
+			if((int8_t)values_Packet.pitch < 40) {
+				kp1_pitch++;
+				//printf("%s%d Pit:%d\n", "kp1_pitch++: ",(int) kp1_pitch, (int8_t) values_Packet.pitch);
+			} else {
+				kp1_pitch--;
+				//printf("%s%d Pit:%d\n", "kp1_pitch--: ", (int)kp1_pitch, (int8_t) values_Packet.pitch);
+			}
+			break;
+		case 50:
+			if((int8_t)values_Packet.pitch < 40) {
+				kp2_pitch++;
+				//printf("%s%d Pit:%d\n", "kp2_pitch++: ",(int) kp2_pitch, (int8_t) values_Packet.pitch);
+			} else {
+				kp2_pitch--;
+				//printf("%s%d Pit:%d\n", "kp2_pitch--: ", (int)kp2_pitch, (int8_t) values_Packet.pitch);
+			}
+			break;
+
+
 	}
 }
 
