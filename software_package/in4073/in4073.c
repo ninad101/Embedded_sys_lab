@@ -149,7 +149,7 @@ int main(void)
 			//}
 			get_dmp_data();
 			//get_raw_sensor_data();
-			filterFunction();
+			//filterFunction();
 		}
 	}	
 
