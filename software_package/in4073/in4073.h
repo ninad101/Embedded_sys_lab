@@ -63,6 +63,7 @@ void escapeMode(void);
 void safeMode(void);
 void setting_packet_values_manual_mode(void);
 void calculate_yaw_control(void);
+void calculate_roll_control(void);
 void calculateMotorRPM(void);
 void run_filters_and_control(void);
 int connectionCheck(void);
@@ -86,6 +87,7 @@ void manualMode(void);
 void calibrationMode(void);
 void switchMode(int);
 void yawMode(void);
+void fullMode(void);
 
 // Timers
 #define TIMER_PERIOD	50 //50ms=20Hz (MAX 23bit, 4.6h)
@@ -138,7 +140,7 @@ bool i2c_write(uint8_t slave_addr, uint8_t reg_addr, uint8_t length, uint8_t con
 bool i2c_read(uint8_t slave_addr, uint8_t reg_addr, uint8_t length, uint8_t *data);
 
 // MPU wrapper
-int16_t kp_yaw;
+//int16_t kp_yaw;
 int16_t phi, theta, psi;
 int16_t sp, sq, sr;
 int16_t sax, say, saz;
