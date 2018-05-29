@@ -86,24 +86,26 @@ void calculate_yaw_control()
 //written by : Ninad
 void calculate_roll_control()
 {	//add roll and pitch offsets from calibration mode
-	int32_t yaw_error, roll_error, pitch_error;
-	int32_t kp_yaw = 5;
+	int32_t  roll_error;// pitch_error;
+//	int32_t kp_yaw = 5;
     //int32_t yaw_offset = 10; 
-	int32_t kp1_roll = 5;   
-	int32_t kp2_roll = 10;
-	int32_t kp1_pitch = 2;
-	int32_t kp2_pitch = 10;
+	int32_t kp1_roll = 0;   
+	int32_t kp2_roll = -3;
+//	int32_t kp1_pitch = 2;
+//	int32_t kp2_pitch = 10;
 	
+
+
 	lift = (int32_t) -1 * (values_Packet.lift -127)*256;
 	
 	roll_error = ((int32_t)values_Packet.roll*256 -(int32_t) phi);
 	roll = kp1_roll*roll_error - kp2_roll*sp;
 
-	pitch_error = ((int32_t)values_Packet.pitch*256 -(int32_t) theta); 
-	pitch = kp1_pitch*pitch_error - kp2_pitch*sq;
+	//pitch_error = ((int32_t)values_Packet.pitch*256 -(int32_t) theta); 
+	//pitch = kp1_pitch*pitch_error - kp2_pitch*sq;
 
-	yaw_error =   (int32_t)(values_Packet.yaw*256) ; //add offset here
-	yaw =  kp_yaw*(yaw_error - sr);
+	//yaw_error =   (int32_t)(values_Packet.yaw*256) ; //add offset here
+	//yaw =  kp_yaw*(yaw_error - sr);
 
 }
 
@@ -118,9 +120,9 @@ void calculateMotorRPM()
 	int32_t b = 1;
 	int32_t d = 1;
 
-	int multiFactor = 5; //To be tested with QR
+	int multiFactor = 4; //To be tested with QR
 	int minMotorValue = 180; //To be determined exactly using QR
-	int maxMotorValue = 1000;
+	int maxMotorValue = 700;
  
 	//lift = roll = pitch = yaw = 0; // default
 	
