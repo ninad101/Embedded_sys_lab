@@ -39,6 +39,7 @@ struct packet{
 	int8_t lift;
 	uint16_t crc;
 } send_packet;
+bool specialdataType;
 
 struct mode_packet {
 	char header;
@@ -211,55 +212,9 @@ int 	rs232_getchar()
 	return c;
 }
 
-//TODO 
-//  Map keyboard inputs to values
-int keyboardToValue(char c) {
- switch(c)
- {
-	 case 27:
-	 	mode = 9;
-		break;
-	 case '0' :
-	 	mode = 0;
-	 break;
-	 case '1' :
-	 	mode = 1;
-	 	printf("%s\n", "Going into panic mode");
-	 	panicFlag = 1;
-	 break;
-	 case '2' :
-	 	mode = 2;
-	 break;
-	 case '3' :
-	 	mode = 3;
-	 	break;
-	 case '4' :
-	 	mode = 4;
-	 	break;
-	case '5' :
-	 	mode = 5;
-	 	break;
-	case '6' :
-	 	mode = 6;
-	 	break;
-	 case 'a' :
-	 ;
-	 break;
-	 case 'z' :
-	 ;
-	 break;
-	 case 'q' :
-	 ;
-	 break;
-	 case 'w' :
-	 ;
-	 break;
 
-	default :
-	;
-	break;
- }
-} 
+
+
 
 // Function written by Yuup
 // 5/5/2018
@@ -395,14 +350,20 @@ void setHeader()
  */
 void setData(int *value,int size)
 {
-	send_packet.dataType = (uint8_t) "P";
-	send_packet.roll 	= (int8_t) *value;
-	value++;
-	send_packet.pitch = (int8_t) *value;
-	value++;
-	send_packet.yaw   = (int8_t) *value;
-	value++;
-	send_packet.lift  = (int8_t) *value;
+	if(specialdataType){
+		send_packet.dataType = (int8_t) 10; // Yaw tuning
+	} else {
+		send_packet.dataType = (int8_t) 0;
+		send_packet.roll 	= (int8_t) *value;
+		value++;
+		send_packet.pitch = (int8_t) *value;
+		value++;
+		send_packet.yaw   = (int8_t) *value;
+		value++;
+		send_packet.lift  = (int8_t) *value;
+	}
+
+
 }
 
 void setCRC()
@@ -441,12 +402,12 @@ void printPacket() //struct packet *da
 	// 											da->yaw,
 	// 											da->lift,
 	// 											da->crc);
-	printf("%d\n",send_packet.header);
-	printf("%d\n",send_packet.roll);
-	printf("%d\n",send_packet.lift);
-	printf("%d\n",send_packet.pitch);
-	printf("%d\n",send_packet.yaw);
-	printf("%d\n",send_packet.lift);
+	printf("p:%d ",send_packet.header);
+	printf("%d ",send_packet.roll);
+	printf("%d ",send_packet.lift);
+	printf("%d ",send_packet.pitch);
+	printf("%d ",send_packet.yaw);
+	printf("%d ",send_packet.lift);
 	printf("%d\n",send_packet.crc);
 
 }
@@ -468,7 +429,9 @@ int send_Packet(void)
 {
 
 	int result;
-	//printPacket();
+	if(specialdataType){
+		//printPacket();		
+	}
 
 	do {
 		result = (int) write(fd_RS232, &send_packet, 8);
@@ -578,6 +541,83 @@ void check_incoming_char(void)
 
 }
 
+//TODO 
+//  Map keyboard inputs to values
+int keyboardToValue(char c) {
+ switch(c)
+ {
+	 case 27:
+	 	mode = 9;
+		break;
+	 case '0' :
+	 	mode = 0;
+	 break;
+	 case '1' :
+	 	mode = 1;
+	 	printf("%s\n", "Going into panic mode");
+	 	panicFlag = 1;
+	 break;
+	 case '2' :
+	 	mode = 2;
+	 break;
+	 case '3' :
+	 	mode = 3;
+	 	break;
+	 case '4' :
+	 	mode = 4;
+	 	break;
+	case '5' :
+	 	mode = 5;
+	 	break;
+	case '6' :
+	 	mode = 6;
+	 	break;
+	case 'u' :
+
+		specialdataType = true;
+		setHeader();
+		send_packet.dataType 	= (int8_t) 10;	
+		send_packet.pitch		= (int8_t) 0;
+		send_packet.roll		= (int8_t) 0;
+		send_packet.yaw   		= (int8_t) 0;
+		send_packet.lift  		= (int8_t) 0;	
+		setCRC();
+		send_Packet();
+		specialdataType = false;
+		send_packet.dataType 	= (int8_t) 0;	
+		break;
+	case 'j' :
+		send_packet.pitch 	= (int8_t) 64;
+		specialdataType = true;
+		send_packet.dataType 	= (int8_t) 10;	
+		send_packet.pitch		= (int8_t) 64;
+		send_packet.roll		= (int8_t) 64;
+		send_packet.yaw   		= (int8_t) 64;
+		send_packet.lift  		= (int8_t) 64;
+		setCRC();	
+		send_Packet();
+		specialdataType = false;
+		send_packet.dataType 	= (int8_t) 0;
+		break;
+	 case 'a' :
+	 ;
+	 break;
+	 case 'z' :
+	 ;
+	 break;
+	 case 'q' :
+	 ;
+	 break;
+	 case 'w' :
+	 ;
+	 break;
+
+	default :
+	;
+	break;
+ }
+} 
+
 /*----------------------------------------------------------------
  * main -- execute terminal
  *----------------------------------------------------------------
@@ -586,6 +626,7 @@ int main(int argc, char **argv)
 {
 	int 		fd;
 	header_found = false;
+	specialdataType = false;
 
 
 #ifdef JOYSTICK_CONNECTED	
@@ -630,7 +671,7 @@ int main(int argc, char **argv)
 
 		if(panicFlag) {
 			send_Panic_Packet();
-		} else if(counter > 0){
+		} else if(counter > 5){
 			counter = 0;
 			create_Packet();
 			send_Packet();

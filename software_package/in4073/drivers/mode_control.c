@@ -26,17 +26,15 @@ void calibrationMode(void)
 
 	printf("%s %d ","sp:", sp );
 	printf("%s %d ","sq:", sq );
-	printf("%s %d","sr:", sr );
+	printf("%s %d\n","sr:", sr );
 
 	if(fill_calibration_buffer()) {
 		calibrate_offset_acceleration();
 		mode = 0;
 
 		mode_change_acknowledged = false;
-
 		//set_acknowledge_flag();
 		send_mode_change();
-		switchMode(0);
 	}
 	//printf("%s %d\n","sp:", sp );
 }
@@ -100,7 +98,7 @@ void panicMode(void)
 	ae[0]=200; ae[1]=200; ae[2]=200; ae[3]=200;
 	update_motors();
 	int b = 0;
-	for(int i=0;i<15;i++) printf(".\t");//{b = i;} //
+	for(int i=0;i<20000;i++) printf("wait\t");//{b = i;} //
 
 	b = b+b;
 
