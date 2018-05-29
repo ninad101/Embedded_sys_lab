@@ -139,6 +139,8 @@ x4Sol = lift/(4*b) + roll/(2*b) + yaw/(4*d)
 	ae[2] = (multiFactor*sqrt(w2));
 	ae[3] = (multiFactor*sqrt(w3));
 
+	//filterFunction();
+
 
 }
 

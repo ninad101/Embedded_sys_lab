@@ -19,6 +19,7 @@
 #include "logData.h"
 
 uint8_t mode=0;
+int8_t valuepsi[12];
 /*------------------------------------------------------------------
  * process_key -- process command keys
  *------------------------------------------------------------------
@@ -129,7 +130,7 @@ int main(void)
 					escapeMode();
 					break;
 			}
-			
+			//filterFunction();
 			//logData();
 			//readLoggedData();
 			//printInputValues();
@@ -140,7 +141,14 @@ int main(void)
 
 		if (check_sensor_int_flag()) 
 		{
+			//for(int8_t icount;icount<12;icount++)
+			//{
+			//	get_raw_sensor_data();
+			//	get_dmp_data();
+			//	valuepsi[icount]=icount+100;
+			//}
 			get_dmp_data();
+			//get_raw_sensor_data();
 			filterFunction();
 		}
 	}	

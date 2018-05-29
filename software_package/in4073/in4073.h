@@ -92,7 +92,7 @@ void readPacket(void);
 bool check_for_header(uint8_t);
 
 //filtering
-void filterFunction(void); //Function that does filtering for roll, pitch and yaw
+void filterFunction(); //Function that does filtering for roll, pitch and yaw
 
 
 // TWI
