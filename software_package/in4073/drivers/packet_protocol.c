@@ -148,18 +148,22 @@ void check_data_type(void)
 			break;
 		case 20:
 			if((int8_t)values_Packet.pitch < 40) {
+				kp1_pitch++;
 				kp1_roll++;
 				//printf("%s%d Pit:%d\n", "kp1_roll++: ",(int)kp1_roll, (int8_t) values_Packet.pitch);
 			} else {
+				kp1_pitch--;
 				kp1_roll--;
 				//printf("%s%d Pit:%d\n", "kp1_roll--: ",(int) kp1_roll, (int8_t) values_Packet.pitch);
 			}
 			break;
 		case 30:
 			if((int8_t)values_Packet.pitch < 40) {
+				kp2_pitch++;
 				kp2_roll++;
 				//printf("%s%d Pit:%d\n", "kp2_roll++: ",(int) kp2_roll, (int8_t) values_Packet.pitch);
 			} else {
+				kp2_pitch--;
 				kp2_roll--;
 				//printf("%s%d Pit:%d\n", "kp2_roll--: ",(int)kp2_roll, (int8_t) values_Packet.pitch);
 			}
