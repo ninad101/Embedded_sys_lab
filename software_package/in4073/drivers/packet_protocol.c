@@ -7,6 +7,7 @@
 
 #include "in4073.h"
 #include <string.h>
+#include <time.h>
 
 /*------------------------------------------------------------------
  * Protocol - Eacyh message is 8 bytes
@@ -131,6 +132,7 @@ uint8_t setMode(void)
 		mode = 1;
 	} else {
 		mode = incomingMode;
+		//panicFlag = false;
 	}
 	
 	//printf("%s%c%s%d\n","Header received: ", values_Packet.header, " mode: ", incomingMode );
@@ -138,10 +140,12 @@ uint8_t setMode(void)
 
 		if(incomingMode == mode) {
 			//printf("%s\n", "Changing mode_change_acknowledged to TRUE" );
+			flushQueue(&rx_queue);
 			mode_change_acknowledged = true;
 		} else {
 			//flushQueue(&rx_queue);
 			send_mode_change();
+			printf("%s\n", "Sending mode change");
 		}
 	} else {
 		//printf("%s\n","mode_change_acknowledged is TRUE" );
@@ -282,9 +286,9 @@ void init_send_mode_change(void)
 
 }
 
-void set_acknowledge_flag(void)
+void set_acknowledge_flag(bool ack_flag)
 {
-	mode_change_acknowledged = false;
+	mode_change_acknowledged = ack_flag;
 }
 
 
@@ -292,7 +296,26 @@ void send_mode_change(void)
 {
 	mode_change_packet.mode = (uint8_t) mode;
 
-	printf("%c%c%c\n",mode_change_packet.header, 
+	mode_change_packet.header = '#';
+	mode_change_packet.ender = '$';
+
+	printf("%c%d%c\n",mode_change_packet.header, 
 					mode_change_packet.mode, 
 					mode_change_packet.ender);
+
+	bool acknowledge = false;
+
+	while(!acknowledge)
+	{
+		if (rx_queue.count > 7) {
+			if(prevAcknowledgeMode != readPacket()) {
+				switchMode(mode);
+				acknowledge = true;
+			}
+		}
+		printf("%c%d%c\n",mode_change_packet.header, 
+				mode_change_packet.mode, 
+				mode_change_packet.ender);
+	}
+
 }

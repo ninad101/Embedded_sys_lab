@@ -100,16 +100,18 @@ void panicMode(void)
 	ae[0]=200; ae[1]=200; ae[2]=200; ae[3]=200;
 	update_motors();
 	int b = 0;
-	for(int i=0;i<20000;i++) printf("Waiting\t");//{b = i;} //
+	for(int i=0;i<15;i++) printf(".\t");//{b = i;} //
 
 	b = b+b;
 
-	flushQueue(&rx_queue);
+	//flushQueue(&rx_queue);
 
 	mode=0;
+	panicFlag = false;
 	mode_change_acknowledged = false;
 
 	//set_acknowledge_flag();
+	
 	send_mode_change();
 
 
@@ -127,12 +129,14 @@ void switchMode(int mod)
 			current_mode_function = &safeMode;
 			break;
 		case 1:
+			prevAcknowledgeMode = 1;
 			current_mode_function = &panicMode;
 			break;
 		case 2:
 			current_mode_function = &manualMode;
 			break;
 		case 3:
+			prevAcknowledgeMode = 3;
 			buffer_fill_index = 0;
 			current_mode_function = &calibrationMode;
 			break;
@@ -146,6 +150,9 @@ void switchMode(int mod)
 
 		case 9:
 			current_mode_function = &escapeMode;
+			break;
+		//default:
+		//11	current_mode_function = &safeMode;
 			// insert calibration mode function
 	}
 

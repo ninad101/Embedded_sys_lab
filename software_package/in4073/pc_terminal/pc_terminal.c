@@ -21,7 +21,7 @@
  */
 
 #define HEADER 0b11010000
-#define JOYSTICK_CONNECTED 1
+//#define JOYSTICK_CONNECTED 1
 //#define JOYSTICK_DEBUG 2
 #define CRC16_DNP	0x3D65
 #define HEADER 0b11010000
@@ -226,22 +226,22 @@ int keyboardToValue(char c) {
 	 	mode = 1;
 	 	printf("%s\n", "Going into panic mode");
 	 	panicFlag = 1;
-		//while(panicFlag!=0);
 	 break;
 	 case '2' :
 	 	mode = 2;
 	 break;
 	 case '3' :
 	 	mode = 3;
+	 	break;
 	 case '4' :
-	    mode = 4;
-	break;
-
-	 case '5' :
-	    mode = 5;
-	break;
-
-
+	 	mode = 4;
+	 	break;
+	case '5' :
+	 	mode = 5;
+	 	break;
+	case '6' :
+	 	mode = 6;
+	 	break;
 	 case 'a' :
 	 ;
 	 break;
@@ -383,6 +383,8 @@ void setHeader()
 {
 	send_packet.header = (uint8_t) HEADER;
 	send_packet.header = send_packet.header | mode;
+	//printf("%s%d\n","Header being sent: " ,send_packet.header);
+
 }
 
 /*------------------------------------------------------------------
@@ -536,7 +538,7 @@ uint8_t map_char_to_uint8_t(char v)
 	return res;
 }
 
-bool header_found = false;
+bool header_found;
 
 void check_incoming_char(void)
 {
@@ -554,12 +556,17 @@ void check_incoming_char(void)
 
 		if(header_found)
 		{
-			printf("char after header found: %d\n", c);
-			mode = c;
+
+			mode = NULL;
+			mode = (uint8_t) map_char_to_uint8_t(c);
+			printf("mode found: %d\n", (uint8_t) mode);
+			tcflush(fd_RS232, TCIOFLUSH); /* flush I/O buffer */
+
+
 		}
 
 		if(c == '#') {
-			header_found = true;
+			header_found = true;			
 		} else {
 			header_found = false;
 		}
@@ -578,7 +585,7 @@ void check_incoming_char(void)
 int main(int argc, char **argv)
 {
 	int 		fd;
-
+	header_found = false;
 
 
 #ifdef JOYSTICK_CONNECTED	
@@ -623,7 +630,7 @@ int main(int argc, char **argv)
 
 		if(panicFlag) {
 			send_Panic_Packet();
-		} else if(counter > 5) {
+		} else if(counter > 0){
 			counter = 0;
 			create_Packet();
 			send_Packet();
