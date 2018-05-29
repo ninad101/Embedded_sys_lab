@@ -138,10 +138,10 @@ void check_data_type(void)
 	if(values_Packet.dataType == 10) {
 		if((int8_t)values_Packet.pitch < 40) {
 			kp_yaw++;
-			printf("%s%d Pit:%d\n", "kp_yaw++: ", kp_yaw, (int8_t) values_Packet.pitch);
+			//printf("%s%d Pit:%d\n", "kp_yaw++: ", kp_yaw, (int8_t) values_Packet.pitch);
 		} else {
 			kp_yaw--;
-			printf("%s%d Pit:%d\n", "kp_yaw--: ", kp_yaw, (int8_t) values_Packet.pitch);
+			//printf("%s%d Pit:%d\n", "kp_yaw--: ", kp_yaw, (int8_t) values_Packet.pitch);
 		}
 	}
 }

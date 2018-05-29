@@ -430,9 +430,8 @@ int send_Packet(void)
 
 	int result;
 	if(specialdataType){
-		printPacket();		
+		//printPacket();		
 	}
-
 
 	do {
 		result = (int) write(fd_RS232, &send_packet, 8);
