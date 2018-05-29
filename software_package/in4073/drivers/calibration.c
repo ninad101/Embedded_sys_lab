@@ -33,6 +33,11 @@ void calibrate_offset_acceleration(void)
 	offset_sax = sumX / CALIBRATION_BUFFER_SIZE;
 	offset_say = sumY / CALIBRATION_BUFFER_SIZE;
 	offset_saz = sumZ / CALIBRATION_BUFFER_SIZE;
+	if(offset_saz < MPU_1G) {
+		offset_saz = MPU_1G - offset_saz;
+	} else {
+		offset_saz = offset_saz - MPU_1G;
+	}
 
 	printf("%s %d %d %d\n", "Offesets are: ", offset_sax, offset_say, offset_saz );
 }

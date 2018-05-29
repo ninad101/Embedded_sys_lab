@@ -66,6 +66,27 @@ bool check_for_header(uint8_t h)
 	return header;
 }
 
+/*------------------------------------------------------------------
+ * printPacket -- prints the packet values
+ * Create by Yuup
+ * 5/5/2018
+ * 1 check and find header
+ * 2 extract information
+ * 3 check how crc and partey bit work
+ *------------------------------------------------------------------
+ */
+void printPacket()
+{
+	printf("b:%d %d %d %d %d %d %d\n", 		values_Packet.header, 
+												values_Packet.dataType,
+												values_Packet.roll,
+												values_Packet.pitch,
+												values_Packet.yaw,
+												values_Packet.lift,
+												values_Packet.crc);
+
+}
+
 void fillBroken_Packet()
 {
 	broken_Packet[0] = values_Packet.header;
@@ -110,6 +131,19 @@ bool check_Broken_Packet()
 	uint16_t crc_broken_Packet = ((broken_Packet[6] << 8) | broken_Packet[7]);
 
 	return (crc_ == crc_broken_Packet);
+}
+
+void check_data_type(void)
+{
+	if(values_Packet.dataType == 10) {
+		if((int8_t)values_Packet.pitch < 40) {
+			kp_yaw++;
+			printf("%s%d Pit:%d\n", "kp_yaw++: ", kp_yaw, (int8_t) values_Packet.pitch);
+		} else {
+			kp_yaw--;
+			printf("%s%d Pit:%d\n", "kp_yaw--: ", kp_yaw, (int8_t) values_Packet.pitch);
+		}
+	}
 }
 
 void fill_values_Packet()
@@ -166,6 +200,7 @@ uint8_t setMode(void)
  */
 bool find_next_packet()
 {
+	printf("Packet broken, looking for next");
 	fillBroken_Packet();
 	find_header_in_broken_Packet();
 	if(check_Broken_Packet()) {
@@ -199,26 +234,7 @@ bool crc_check()
 	return (crc_ == values_Packet.crc);
 }
 
-/*------------------------------------------------------------------
- * printPacket -- prints the packet values
- * Create by Yuup
- * 5/5/2018
- * 1 check and find header
- * 2 extract information
- * 3 check how crc and partey bit work
- *------------------------------------------------------------------
- */
-void printPacket(struct packet *da)
-{
-	printf("%d %d %d %d %d %d %d\n", 		da->header, 
-												da->dataType,
-												da->roll,
-												da->pitch,
-												da->yaw,
-												da->lift,
-												da->crc);
 
-}
 
 /*------------------------------------------------------------------
  * readPacket -- processes and structures a packet
@@ -245,6 +261,9 @@ uint8_t readPacket()
 
 	//Now I need to make sure the whole packet is complete
 	values_Packet.dataType = dequeue(&rx_queue);
+	//printf("d: %d\n", (int8_t) values_Packet.dataType );
+
+
 	values_Packet.roll = dequeue(&rx_queue);
 	values_Packet.pitch = dequeue(&rx_queue);
 	values_Packet.yaw = dequeue(&rx_queue);
@@ -255,7 +274,7 @@ uint8_t readPacket()
 	values_Packet.crc = (uint16_t) ((crc2<<8) | crc1);
 
 	//printPacket(&values_Packet);
-
+	check_data_type();
 	// A little sloppy... My bad - Yuup
 	if(crc_check()){
 		setMode();
@@ -267,6 +286,8 @@ uint8_t readPacket()
 			readPacket();
 		}
 	}
+
+	//printPacket();
 
 	return mode;
 }

@@ -52,6 +52,9 @@ uint8_t mode;
 int panicFlag;
 bool demo_done;
 
+void check_data_type(void);
+
+
 // Control
 int16_t motor[4],ae[4];
 void update_motors(void);
@@ -65,7 +68,8 @@ void run_filters_and_control(void);
 int connectionCheck(void);
 
 // Calibration
-#define CALIBRATION_BUFFER_SIZE 50
+#define CALIBRATION_BUFFER_SIZE 100
+#define MPU_1G 16384
 int saxValues[CALIBRATION_BUFFER_SIZE], sayValues[CALIBRATION_BUFFER_SIZE], sazValues[CALIBRATION_BUFFER_SIZE]; 
 int buffer_fill_index;
 int offset_sax, offset_say, offset_saz;

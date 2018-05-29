@@ -128,30 +128,6 @@ int main(void)
 			read_baro();
 			
 			//batteryMonitor();
-
-			// switch(mode)
-			// {
-			// 	case 0: 
-			// 		safeMode();
-			// 		break;
-			// 	case 1:
-			// 		panicMode();
-			// 		break;
-			// 	case 2:
-			// 		manualMode();
-			// 		calculateMotorRPM();
-			// 		update_motors();
-			// 		break;
-			// 	case 4:
-			// 		yawMode();
-			// 		calculateMotorRPM();
-			// 		update_motors();	
-			// 		break;
-			// 	case 9:
-			// 		escapeMode();
-			// 		break;
-					
-			// }
 			
 			//logData();
 			//readLoggedData();

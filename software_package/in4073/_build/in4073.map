@@ -183,7 +183,7 @@ Allocating common symbols
 Common symbol       size              file
 
 say                 0x2               _build/in4073.o
-saxValues           0xc8              _build/in4073.o
+saxValues           0x190             _build/in4073.o
 psi                 0x2               _build/in4073.o
 sensor_fifo_count   0x1               _build/in4073.o
 mode_change_acknowledged
@@ -212,7 +212,7 @@ Address             0x4               _build/in4073.o
 global_time         0x4               _build/timers.o
 bat_volt            0x2               _build/in4073.o
 values_Packet       0x8               _build/in4073.o
-sayValues           0xc8              _build/in4073.o
+sayValues           0x190             _build/in4073.o
 ble_rx_queue        0x106             _build/in4073.o
 timer_flag          0x1               _build/timers.o
 sp                  0x2               _build/in4073.o
@@ -232,7 +232,7 @@ ae                  0x8               _build/in4073.o
 offset_say          0x4               _build/in4073.o
 D1                  0x4               _build/baro.o
 sr                  0x2               _build/in4073.o
-sazValues           0xc8              _build/in4073.o
+sazValues           0x190             _build/in4073.o
 demo_done           0x1               _build/in4073.o
 
 Discarded input sections
@@ -348,27 +348,29 @@ Discarded input sections
                 0x00000000       0x5c _build/packet_protocol.o
  .text.check_for_header
                 0x00000000        0xc _build/packet_protocol.o
+ .text.printPacket
+                0x00000000       0x38 _build/packet_protocol.o
  .text.fillBroken_Packet
                 0x00000000       0x30 _build/packet_protocol.o
  .text.find_header_in_broken_Packet
                 0x00000000       0xf4 _build/packet_protocol.o
  .text.check_Broken_Packet
                 0x00000000       0x24 _build/packet_protocol.o
+ .text.check_data_type
+                0x00000000       0x4c _build/packet_protocol.o
  .text.fill_values_Packet
                 0x00000000       0x30 _build/packet_protocol.o
  .text.find_next_packet
-                0x00000000      0x160 _build/packet_protocol.o
+                0x00000000      0x168 _build/packet_protocol.o
  .text.crc_check
                 0x00000000       0x3c _build/packet_protocol.o
- .text.printPacket
-                0x00000000       0x30 _build/packet_protocol.o
  .text.init_send_mode_change
                 0x00000000       0x1c _build/packet_protocol.o
  .text.set_acknowledge_flag
                 0x00000000        0xc _build/packet_protocol.o
  .bss.broken_packet_counter2
                 0x00000000        0x1 _build/packet_protocol.o
- .bss.b.7312    0x00000000        0x9 _build/packet_protocol.o
+ .bss.b.7314    0x00000000        0x9 _build/packet_protocol.o
  .text          0x00000000        0x0 _build/mode_control.o
  .data          0x00000000        0x0 _build/mode_control.o
  .bss           0x00000000        0x0 _build/mode_control.o
@@ -1069,7 +1071,7 @@ END GROUP
  *(fs_data)
                 [!provide]                PROVIDE (__stop_fs_data, .)
 
-.text           0x00018000     0xb244
+.text           0x00018000     0xb2f4
  *(.Vectors)
  .Vectors       0x00018000       0xc0 _build/gcc_startup_nrf51.o
                 0x00018000                __Vectors
@@ -1212,501 +1214,501 @@ END GROUP
                 0x0001929c      0x204 _build/ble.o
                 0x0001929c                ble_init
  .text.readPacket
-                0x000194a0      0x1f8 _build/packet_protocol.o
+                0x000194a0      0x24c _build/packet_protocol.o
                 0x000194a0                readPacket
- .text.setMode  0x00019698       0x50 _build/packet_protocol.o
-                0x00019698                setMode
+ .text.setMode  0x000196ec       0x50 _build/packet_protocol.o
+                0x000196ec                setMode
  .text.send_mode_change
-                0x000196e8       0x80 _build/packet_protocol.o
-                0x000196e8                send_mode_change
+                0x0001973c       0x80 _build/packet_protocol.o
+                0x0001973c                send_mode_change
  .text.manualMode
-                0x00019768       0x10 _build/mode_control.o
-                0x00019768                manualMode
+                0x000197bc       0x10 _build/mode_control.o
+                0x000197bc                manualMode
  .text.safeMode
-                0x00019778       0x20 _build/mode_control.o
-                0x00019778                safeMode
+                0x000197cc       0x20 _build/mode_control.o
+                0x000197cc                safeMode
  .text.panicMode
-                0x00019798       0x80 _build/mode_control.o
-                0x00019798                panicMode
- .text.yawMode  0x00019818        0x8 _build/mode_control.o
-                0x00019818                yawMode
+                0x000197ec       0x84 _build/mode_control.o
+                0x000197ec                panicMode
+ .text.yawMode  0x00019870        0x8 _build/mode_control.o
+                0x00019870                yawMode
  .text.calibrationMode
-                0x00019820       0xe0 _build/mode_control.o
-                0x00019820                calibrationMode
+                0x00019878       0xb8 _build/mode_control.o
+                0x00019878                calibrationMode
  .text.escapeMode
-                0x00019900       0x88 _build/mode_control.o
-                0x00019900                escapeMode
+                0x00019930       0x8c _build/mode_control.o
+                0x00019930                escapeMode
  .text.switchMode
-                0x00019988       0x94 _build/mode_control.o
-                0x00019988                switchMode
+                0x000199bc       0x94 _build/mode_control.o
+                0x000199bc                switchMode
  .text.fill_calibration_buffer
-                0x00019a1c       0x54 _build/calibration.o
-                0x00019a1c                fill_calibration_buffer
+                0x00019a50       0x54 _build/calibration.o
+                0x00019a50                fill_calibration_buffer
  .text.calibrate_offset_acceleration
-                0x00019a70       0x84 _build/calibration.o
-                0x00019a70                calibrate_offset_acceleration
+                0x00019aa4       0xa8 _build/calibration.o
+                0x00019aa4                calibrate_offset_acceleration
  .text.spi_flash_init
-                0x00019af4      0x230 _build/spi_flash.o
-                0x00019af4                spi_flash_init
+                0x00019b4c      0x230 _build/spi_flash.o
+                0x00019b4c                spi_flash_init
  .text.crc16_compute
-                0x00019d24       0x44 _build/crc16.o
-                0x00019d24                crc16_compute
+                0x00019d7c       0x44 _build/crc16.o
+                0x00019d7c                crc16_compute
  .text.mpu_reset_fifo
-                0x00019d68      0x15c _build/inv_mpu.o
-                0x00019d68                mpu_reset_fifo
+                0x00019dc0      0x15c _build/inv_mpu.o
+                0x00019dc0                mpu_reset_fifo
  .text.mpu_lp_accel_mode
-                0x00019ec4      0x1b8 _build/inv_mpu.o
-                0x00019ec4                mpu_lp_accel_mode
+                0x00019f1c      0x1b8 _build/inv_mpu.o
+                0x00019f1c                mpu_lp_accel_mode
  .text.mpu_get_accel_fsr
-                0x0001a07c       0x4c _build/inv_mpu.o
-                0x0001a07c                mpu_get_accel_fsr
+                0x0001a0d4       0x4c _build/inv_mpu.o
+                0x0001a0d4                mpu_get_accel_fsr
  .text.mpu_set_lpf
-                0x0001a0c8       0x78 _build/inv_mpu.o
-                0x0001a0c8                mpu_set_lpf
+                0x0001a120       0x78 _build/inv_mpu.o
+                0x0001a120                mpu_set_lpf
  .text.mpu_set_sample_rate
-                0x0001a140      0x168 _build/inv_mpu.o
-                0x0001a140                mpu_set_sample_rate
+                0x0001a198      0x168 _build/inv_mpu.o
+                0x0001a198                mpu_set_sample_rate
  .text.mpu_configure_fifo
-                0x0001a2a8       0xd0 _build/inv_mpu.o
-                0x0001a2a8                mpu_configure_fifo
+                0x0001a300       0xd0 _build/inv_mpu.o
+                0x0001a300                mpu_configure_fifo
  .text.mpu_set_sensors
-                0x0001a378      0x140 _build/inv_mpu.o
-                0x0001a378                mpu_set_sensors
+                0x0001a3d0      0x140 _build/inv_mpu.o
+                0x0001a3d0                mpu_set_sensors
  .text.mpu_init
-                0x0001a4b8      0x1f4 _build/inv_mpu.o
-                0x0001a4b8                mpu_init
+                0x0001a510      0x1f4 _build/inv_mpu.o
+                0x0001a510                mpu_init
  .text.mpu_read_fifo_stream
-                0x0001a6ac       0xb0 _build/inv_mpu.o
-                0x0001a6ac                mpu_read_fifo_stream
+                0x0001a704       0xb0 _build/inv_mpu.o
+                0x0001a704                mpu_read_fifo_stream
  .text.mpu_set_int_level
-                0x0001a75c       0x10 _build/inv_mpu.o
-                0x0001a75c                mpu_set_int_level
+                0x0001a7b4       0x10 _build/inv_mpu.o
+                0x0001a7b4                mpu_set_int_level
  .text.mpu_set_int_latched
-                0x0001a76c       0x68 _build/inv_mpu.o
-                0x0001a76c                mpu_set_int_latched
+                0x0001a7c4       0x68 _build/inv_mpu.o
+                0x0001a7c4                mpu_set_int_latched
  .text.mpu_write_mem
-                0x0001a7d4       0x58 _build/inv_mpu.o
-                0x0001a7d4                mpu_write_mem
+                0x0001a82c       0x58 _build/inv_mpu.o
+                0x0001a82c                mpu_write_mem
  .text.mpu_load_firmware
-                0x0001a82c      0x15c _build/inv_mpu.o
-                0x0001a82c                mpu_load_firmware
+                0x0001a884      0x15c _build/inv_mpu.o
+                0x0001a884                mpu_load_firmware
  .text.mpu_set_dmp_state
-                0x0001a988      0x174 _build/inv_mpu.o
-                0x0001a988                mpu_set_dmp_state
+                0x0001a9e0      0x174 _build/inv_mpu.o
+                0x0001a9e0                mpu_set_dmp_state
  .text.dmp_load_motion_driver_firmware
-                0x0001aafc       0x1c _build/inv_mpu_dmp_motion_driver.o
-                0x0001aafc                dmp_load_motion_driver_firmware
+                0x0001ab54       0x1c _build/inv_mpu_dmp_motion_driver.o
+                0x0001ab54                dmp_load_motion_driver_firmware
  .text.dmp_set_orientation
-                0x0001ab18      0x118 _build/inv_mpu_dmp_motion_driver.o
-                0x0001ab18                dmp_set_orientation
+                0x0001ab70      0x118 _build/inv_mpu_dmp_motion_driver.o
+                0x0001ab70                dmp_set_orientation
  .text.dmp_set_fifo_rate
-                0x0001ac30       0x64 _build/inv_mpu_dmp_motion_driver.o
-                0x0001ac30                dmp_set_fifo_rate
+                0x0001ac88       0x64 _build/inv_mpu_dmp_motion_driver.o
+                0x0001ac88                dmp_set_fifo_rate
  .text.dmp_set_tap_thresh
-                0x0001ac94      0x164 _build/inv_mpu_dmp_motion_driver.o
-                0x0001ac94                dmp_set_tap_thresh
+                0x0001acec      0x164 _build/inv_mpu_dmp_motion_driver.o
+                0x0001acec                dmp_set_tap_thresh
  .text.dmp_enable_feature
-                0x0001adf8      0x28c _build/inv_mpu_dmp_motion_driver.o
-                0x0001adf8                dmp_enable_feature
+                0x0001ae50      0x28c _build/inv_mpu_dmp_motion_driver.o
+                0x0001ae50                dmp_enable_feature
  .text.dmp_read_fifo
-                0x0001b084      0x20c _build/inv_mpu_dmp_motion_driver.o
-                0x0001b084                dmp_read_fifo
+                0x0001b0dc      0x20c _build/inv_mpu_dmp_motion_driver.o
+                0x0001b0dc                dmp_read_fifo
  .text.inv_orientation_matrix_to_scalar
-                0x0001b290      0x11c _build/ml.o
-                0x0001b290                inv_orientation_matrix_to_scalar
+                0x0001b2e8      0x11c _build/ml.o
+                0x0001b2e8                inv_orientation_matrix_to_scalar
  .text.get_dmp_data
-                0x0001b3ac      0x218 _build/mpu_wrapper.o
-                0x0001b3ac                get_dmp_data
+                0x0001b404      0x218 _build/mpu_wrapper.o
+                0x0001b404                get_dmp_data
  .text.check_sensor_int_flag
-                0x0001b5c4       0x20 _build/mpu_wrapper.o
-                0x0001b5c4                check_sensor_int_flag
+                0x0001b61c       0x20 _build/mpu_wrapper.o
+                0x0001b61c                check_sensor_int_flag
  .text.imu_init
-                0x0001b5e4      0x10c _build/mpu_wrapper.o
-                0x0001b5e4                imu_init
+                0x0001b63c      0x10c _build/mpu_wrapper.o
+                0x0001b63c                imu_init
  .text.app_error_handler
-                0x0001b6f0       0x40 _build/app_error.o
-                0x0001b6f0                app_error_handler
+                0x0001b748       0x40 _build/app_error.o
+                0x0001b748                app_error_handler
  .text.rtc1_stop
-                0x0001b730       0x78 _build/app_timer.o
+                0x0001b788       0x78 _build/app_timer.o
  .text.RTC1_IRQHandler
-                0x0001b7a8       0xe0 _build/app_timer.o
-                0x0001b7a8                RTC1_IRQHandler
+                0x0001b800       0xe0 _build/app_timer.o
+                0x0001b800                RTC1_IRQHandler
  .text.SWI0_IRQHandler
-                0x0001b888      0x4cc _build/app_timer.o
-                0x0001b888                SWI0_IRQHandler
+                0x0001b8e0      0x4cc _build/app_timer.o
+                0x0001b8e0                SWI0_IRQHandler
  .text.app_timer_init
-                0x0001bd54       0xe4 _build/app_timer.o
-                0x0001bd54                app_timer_init
+                0x0001bdac       0xe4 _build/app_timer.o
+                0x0001bdac                app_timer_init
  .text.app_timer_create
-                0x0001be38       0x34 _build/app_timer.o
-                0x0001be38                app_timer_create
+                0x0001be90       0x34 _build/app_timer.o
+                0x0001be90                app_timer_create
  .text.app_timer_start
-                0x0001be6c       0xec _build/app_timer.o
-                0x0001be6c                app_timer_start
+                0x0001bec4       0xec _build/app_timer.o
+                0x0001bec4                app_timer_start
  .text.app_timer_stop
-                0x0001bf58       0xc4 _build/app_timer.o
-                0x0001bf58                app_timer_stop
+                0x0001bfb0       0xc4 _build/app_timer.o
+                0x0001bfb0                app_timer_stop
  .text.pstorage_access_status_get
-                0x0001c01c       0x28 _build/pstorage.o
-                0x0001c01c                pstorage_access_status_get
+                0x0001c074       0x28 _build/pstorage.o
+                0x0001c074                pstorage_access_status_get
  .text.sd_ble_gap_address_get
-                0x0001c044        0x4 _build/ble_advdata.o
+                0x0001c09c        0x4 _build/ble_advdata.o
  .text.sd_ble_gap_adv_data_set
-                0x0001c048        0x4 _build/ble_advdata.o
+                0x0001c0a0        0x4 _build/ble_advdata.o
  .text.sd_ble_gap_appearance_get
-                0x0001c04c        0x4 _build/ble_advdata.o
+                0x0001c0a4        0x4 _build/ble_advdata.o
  .text.sd_ble_gap_device_name_get
-                0x0001c050        0x4 _build/ble_advdata.o
+                0x0001c0a8        0x4 _build/ble_advdata.o
  .text.sd_ble_uuid_encode
-                0x0001c054        0x4 _build/ble_advdata.o
+                0x0001c0ac        0x4 _build/ble_advdata.o
  .text.uuid_list_sized_encode
-                0x0001c058       0xf8 _build/ble_advdata.o
+                0x0001c0b0       0xf8 _build/ble_advdata.o
  .text.adv_data_encode
-                0x0001c150      0x5b8 _build/ble_advdata.o
-                0x0001c150                adv_data_encode
+                0x0001c1a8      0x5b8 _build/ble_advdata.o
+                0x0001c1a8                adv_data_encode
  .text.ble_advdata_set
-                0x0001c708       0x68 _build/ble_advdata.o
-                0x0001c708                ble_advdata_set
+                0x0001c760       0x68 _build/ble_advdata.o
+                0x0001c760                ble_advdata_set
  .text.sd_ble_gap_adv_start
-                0x0001c770        0x4 _build/ble_advertising.o
+                0x0001c7c8        0x4 _build/ble_advertising.o
  .text.ble_advertising_start.part.1
-                0x0001c774      0x2a8 _build/ble_advertising.o
+                0x0001c7cc      0x2a8 _build/ble_advertising.o
  .text.ble_advertising_init
-                0x0001ca1c      0x144 _build/ble_advertising.o
-                0x0001ca1c                ble_advertising_init
+                0x0001ca74      0x144 _build/ble_advertising.o
+                0x0001ca74                ble_advertising_init
  .text.ble_advertising_start
-                0x0001cb60       0x3c _build/ble_advertising.o
-                0x0001cb60                ble_advertising_start
+                0x0001cbb8       0x3c _build/ble_advertising.o
+                0x0001cbb8                ble_advertising_start
  .text.ble_advertising_on_ble_evt
-                0x0001cb9c       0xec _build/ble_advertising.o
-                0x0001cb9c                ble_advertising_on_ble_evt
+                0x0001cbf4       0xec _build/ble_advertising.o
+                0x0001cbf4                ble_advertising_on_ble_evt
  .text.sd_ble_gap_conn_param_update
-                0x0001cc88        0x4 _build/ble_conn_params.o
+                0x0001cce0        0x4 _build/ble_conn_params.o
  .text.sd_ble_gap_disconnect
-                0x0001cc8c        0x4 _build/ble_conn_params.o
+                0x0001cce4        0x4 _build/ble_conn_params.o
  .text.sd_ble_gap_ppcp_set
-                0x0001cc90        0x4 _build/ble_conn_params.o
+                0x0001cce8        0x4 _build/ble_conn_params.o
  .text.sd_ble_gap_ppcp_get
-                0x0001cc94        0x4 _build/ble_conn_params.o
+                0x0001ccec        0x4 _build/ble_conn_params.o
  .text.update_timeout_handler
-                0x0001cc98       0x78 _build/ble_conn_params.o
+                0x0001ccf0       0x78 _build/ble_conn_params.o
  .text.conn_params_negotiation
-                0x0001cd10       0x88 _build/ble_conn_params.o
+                0x0001cd68       0x88 _build/ble_conn_params.o
  .text.ble_conn_params_init
-                0x0001cd98       0x78 _build/ble_conn_params.o
-                0x0001cd98                ble_conn_params_init
+                0x0001cdf0       0x78 _build/ble_conn_params.o
+                0x0001cdf0                ble_conn_params_init
  .text.ble_conn_params_on_ble_evt
-                0x0001ce10       0xac _build/ble_conn_params.o
-                0x0001ce10                ble_conn_params_on_ble_evt
+                0x0001ce68       0xac _build/ble_conn_params.o
+                0x0001ce68                ble_conn_params_on_ble_evt
  .text.sd_ble_gatts_service_add
-                0x0001cebc        0x4 _build/ble_nus.o
+                0x0001cf14        0x4 _build/ble_nus.o
  .text.sd_ble_gatts_characteristic_add
-                0x0001cec0        0x4 _build/ble_nus.o
+                0x0001cf18        0x4 _build/ble_nus.o
  .text.sd_ble_uuid_vs_add
-                0x0001cec4        0x4 _build/ble_nus.o
+                0x0001cf1c        0x4 _build/ble_nus.o
  .text.ble_nus_on_ble_evt
-                0x0001cec8       0x60 _build/ble_nus.o
-                0x0001cec8                ble_nus_on_ble_evt
+                0x0001cf20       0x60 _build/ble_nus.o
+                0x0001cf20                ble_nus_on_ble_evt
  .text.ble_nus_init
-                0x0001cf28      0x208 _build/ble_nus.o
-                0x0001cf28                ble_nus_init
+                0x0001cf80      0x208 _build/ble_nus.o
+                0x0001cf80                ble_nus_init
  .text.sd_nvic_EnableIRQ
-                0x0001d130        0x4 _build/softdevice_handler.o
+                0x0001d188        0x4 _build/softdevice_handler.o
  .text.sd_evt_get
-                0x0001d134        0x4 _build/softdevice_handler.o
+                0x0001d18c        0x4 _build/softdevice_handler.o
  .text.sd_softdevice_enable
-                0x0001d138        0x4 _build/softdevice_handler.o
+                0x0001d190        0x4 _build/softdevice_handler.o
  .text.sd_ble_evt_get
-                0x0001d13c        0x4 _build/softdevice_handler.o
+                0x0001d194        0x4 _build/softdevice_handler.o
  .text.softdevice_assertion_handler
-                0x0001d140        0xc _build/softdevice_handler.o
-                0x0001d140                softdevice_assertion_handler
+                0x0001d198        0xc _build/softdevice_handler.o
+                0x0001d198                softdevice_assertion_handler
  .text.intern_softdevice_events_execute.part.0
-                0x0001d14c       0xec _build/softdevice_handler.o
+                0x0001d1a4       0xec _build/softdevice_handler.o
  .text.softdevice_handler_init
-                0x0001d238       0x4c _build/softdevice_handler.o
-                0x0001d238                softdevice_handler_init
+                0x0001d290       0x4c _build/softdevice_handler.o
+                0x0001d290                softdevice_handler_init
  .text.softdevice_ble_evt_handler_set
-                0x0001d284       0x14 _build/softdevice_handler.o
-                0x0001d284                softdevice_ble_evt_handler_set
+                0x0001d2dc       0x14 _build/softdevice_handler.o
+                0x0001d2dc                softdevice_ble_evt_handler_set
  .text.SWI2_IRQHandler
-                0x0001d298       0x34 _build/softdevice_handler.o
-                0x0001d298                SWI2_IRQHandler
- .text          0x0001d2cc       0x54 _build/gcc_startup_nrf51.o
-                0x0001d2cc                Reset_Handler
-                0x0001d314                NMI_Handler
-                0x0001d316                HardFault_Handler
-                0x0001d318                SVC_Handler
-                0x0001d31a                PendSV_Handler
-                0x0001d31c                SysTick_Handler
-                0x0001d31e                RTC0_IRQHandler
-                0x0001d31e                GPIOTE_IRQHandler
-                0x0001d31e                POWER_CLOCK_IRQHandler
-                0x0001d31e                RADIO_IRQHandler
-                0x0001d31e                LPCOMP_IRQHandler
-                0x0001d31e                SWI4_IRQHandler
-                0x0001d31e                TEMP_IRQHandler
-                0x0001d31e                QDEC_IRQHandler
-                0x0001d31e                SWI5_IRQHandler
-                0x0001d31e                TIMER0_IRQHandler
-                0x0001d31e                ECB_IRQHandler
-                0x0001d31e                Default_Handler
-                0x0001d31e                SWI3_IRQHandler
-                0x0001d31e                CCM_AAR_IRQHandler
-                0x0001d31e                WDT_IRQHandler
-                0x0001d31e                RNG_IRQHandler
-                0x0001d31e                SPI1_TWI1_IRQHandler
- .text.fabs     0x0001d320        0x8 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv6-m/libm.a(lib_a-s_fabs.o)
-                0x0001d320                fabs
- .text.asin     0x0001d328       0xc4 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv6-m/libm.a(lib_a-w_asin.o)
-                0x0001d328                asin
- .text.atan2    0x0001d3ec        0x8 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv6-m/libm.a(lib_a-w_atan2.o)
-                0x0001d3ec                atan2
- .text.sqrt     0x0001d3f4       0xc0 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv6-m/libm.a(lib_a-w_sqrt.o)
-                0x0001d3f4                sqrt
+                0x0001d2f0       0x34 _build/softdevice_handler.o
+                0x0001d2f0                SWI2_IRQHandler
+ .text          0x0001d324       0x54 _build/gcc_startup_nrf51.o
+                0x0001d324                Reset_Handler
+                0x0001d36c                NMI_Handler
+                0x0001d36e                HardFault_Handler
+                0x0001d370                SVC_Handler
+                0x0001d372                PendSV_Handler
+                0x0001d374                SysTick_Handler
+                0x0001d376                RTC0_IRQHandler
+                0x0001d376                GPIOTE_IRQHandler
+                0x0001d376                POWER_CLOCK_IRQHandler
+                0x0001d376                RADIO_IRQHandler
+                0x0001d376                LPCOMP_IRQHandler
+                0x0001d376                SWI4_IRQHandler
+                0x0001d376                TEMP_IRQHandler
+                0x0001d376                QDEC_IRQHandler
+                0x0001d376                SWI5_IRQHandler
+                0x0001d376                TIMER0_IRQHandler
+                0x0001d376                ECB_IRQHandler
+                0x0001d376                Default_Handler
+                0x0001d376                SWI3_IRQHandler
+                0x0001d376                CCM_AAR_IRQHandler
+                0x0001d376                WDT_IRQHandler
+                0x0001d376                RNG_IRQHandler
+                0x0001d376                SPI1_TWI1_IRQHandler
+ .text.fabs     0x0001d378        0x8 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv6-m/libm.a(lib_a-s_fabs.o)
+                0x0001d378                fabs
+ .text.asin     0x0001d380       0xc4 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv6-m/libm.a(lib_a-w_asin.o)
+                0x0001d380                asin
+ .text.atan2    0x0001d444        0x8 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv6-m/libm.a(lib_a-w_atan2.o)
+                0x0001d444                atan2
+ .text.sqrt     0x0001d44c       0xc0 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv6-m/libm.a(lib_a-w_sqrt.o)
+                0x0001d44c                sqrt
  .text.__ieee754_asin
-                0x0001d4b4      0x3cc /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv6-m/libm.a(lib_a-e_asin.o)
-                0x0001d4b4                __ieee754_asin
+                0x0001d50c      0x3cc /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv6-m/libm.a(lib_a-e_asin.o)
+                0x0001d50c                __ieee754_asin
  .text.__ieee754_atan2
-                0x0001d880      0x178 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv6-m/libm.a(lib_a-e_atan2.o)
-                0x0001d880                __ieee754_atan2
+                0x0001d8d8      0x178 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv6-m/libm.a(lib_a-e_atan2.o)
+                0x0001d8d8                __ieee754_atan2
  .text.__ieee754_sqrt
-                0x0001d9f8      0x1ec /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv6-m/libm.a(lib_a-e_sqrt.o)
-                0x0001d9f8                __ieee754_sqrt
- .text.atan     0x0001dbe4      0x33c /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv6-m/libm.a(lib_a-s_atan.o)
-                0x0001dbe4                atan
- .text.matherr  0x0001df20        0x4 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv6-m/libm.a(lib_a-s_matherr.o)
-                0x0001df20                matherr
- .text.nan      0x0001df24        0xc /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv6-m/libm.a(lib_a-s_nan.o)
-                0x0001df24                nan
- .text          0x0001df30      0x114 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/armv6-m/libgcc.a(_udivsi3.o)
-                0x0001df30                __udivsi3
-                0x0001df30                __aeabi_uidiv
-                0x0001e03c                __aeabi_uidivmod
- .text          0x0001e044      0x1d4 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/armv6-m/libgcc.a(_divsi3.o)
-                0x0001e044                __aeabi_idiv
-                0x0001e044                __divsi3
-                0x0001e210                __aeabi_idivmod
- .text          0x0001e218        0x4 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/armv6-m/libgcc.a(_dvmd_tls.o)
-                0x0001e218                __aeabi_ldiv0
-                0x0001e218                __aeabi_idiv0
- .text          0x0001e21c       0x7c /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/armv6-m/libgcc.a(_arm_cmpdf2.o)
-                0x0001e21c                __aeabi_cdrcmple
-                0x0001e22c                __aeabi_cdcmple
-                0x0001e22c                __aeabi_cdcmpeq
-                0x0001e23c                __aeabi_dcmpeq
-                0x0001e248                __aeabi_dcmplt
-                0x0001e25c                __aeabi_dcmple
-                0x0001e270                __aeabi_dcmpgt
-                0x0001e284                __aeabi_dcmpge
- .text          0x0001e298       0x74 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/armv6-m/libgcc.a(_arm_cmpsf2.o)
-                0x0001e298                __aeabi_cfrcmple
-                0x0001e2a0                __aeabi_cfcmple
-                0x0001e2a0                __aeabi_cfcmpeq
-                0x0001e2b0                __aeabi_fcmpeq
-                0x0001e2bc                __aeabi_fcmplt
-                0x0001e2d0                __aeabi_fcmple
-                0x0001e2e4                __aeabi_fcmpgt
-                0x0001e2f8                __aeabi_fcmpge
- .text          0x0001e30c       0x58 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/armv6-m/libgcc.a(_muldi3.o)
-                0x0001e30c                __aeabi_lmul
-                0x0001e30c                __muldi3
- .text          0x0001e364       0x30 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/armv6-m/libgcc.a(_fixunssfsi.o)
-                0x0001e364                __aeabi_f2uiz
-                0x0001e364                __fixunssfsi
- .text          0x0001e394      0x2ec /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/armv6-m/libgcc.a(addsf3.o)
-                0x0001e394                __aeabi_fadd
- .text          0x0001e680      0x234 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/armv6-m/libgcc.a(divsf3.o)
-                0x0001e680                __aeabi_fdiv
- .text          0x0001e8b4       0x50 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/armv6-m/libgcc.a(eqsf2.o)
-                0x0001e8b4                __nesf2
-                0x0001e8b4                __eqsf2
- .text          0x0001e904       0x88 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/armv6-m/libgcc.a(gesf2.o)
-                0x0001e904                __gtsf2
-                0x0001e904                __gesf2
- .text          0x0001e98c       0x88 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/armv6-m/libgcc.a(lesf2.o)
-                0x0001e98c                __lesf2
-                0x0001e98c                __ltsf2
- .text          0x0001ea14      0x228 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/armv6-m/libgcc.a(mulsf3.o)
-                0x0001ea14                __aeabi_fmul
- .text          0x0001ec3c      0x30c /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/armv6-m/libgcc.a(subsf3.o)
-                0x0001ec3c                __aeabi_fsub
- .text          0x0001ef48       0x44 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/armv6-m/libgcc.a(fixsfsi.o)
-                0x0001ef48                __aeabi_f2iz
- .text          0x0001ef8c       0x90 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/armv6-m/libgcc.a(floatsisf.o)
-                0x0001ef8c                __aeabi_i2f
- .text          0x0001f01c       0x7c /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/armv6-m/libgcc.a(floatunsisf.o)
-                0x0001f01c                __aeabi_ui2f
- .text          0x0001f098      0x658 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/armv6-m/libgcc.a(adddf3.o)
-                0x0001f098                __aeabi_dadd
- .text          0x0001f6f0      0x62c /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/armv6-m/libgcc.a(divdf3.o)
-                0x0001f6f0                __aeabi_ddiv
- .text          0x0001fd1c       0x80 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/armv6-m/libgcc.a(eqdf2.o)
-                0x0001fd1c                __eqdf2
-                0x0001fd1c                __nedf2
- .text          0x0001fd9c       0xc8 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/armv6-m/libgcc.a(gedf2.o)
-                0x0001fd9c                __gtdf2
-                0x0001fd9c                __gedf2
- .text          0x0001fe64       0xd4 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/armv6-m/libgcc.a(ledf2.o)
-                0x0001fe64                __ltdf2
-                0x0001fe64                __ledf2
- .text          0x0001ff38      0x4f4 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/armv6-m/libgcc.a(muldf3.o)
-                0x0001ff38                __aeabi_dmul
- .text          0x0002042c      0x6a8 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/armv6-m/libgcc.a(subdf3.o)
-                0x0002042c                __aeabi_dsub
- .text          0x00020ad4       0x40 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/armv6-m/libgcc.a(unorddf2.o)
-                0x00020ad4                __aeabi_dcmpun
- .text          0x00020b14       0x6c /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/armv6-m/libgcc.a(fixdfsi.o)
-                0x00020b14                __aeabi_d2iz
- .text          0x00020b80       0x84 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/armv6-m/libgcc.a(floatsidf.o)
-                0x00020b80                __aeabi_i2d
- .text          0x00020c04       0xa8 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/armv6-m/libgcc.a(extendsfdf2.o)
-                0x00020c04                __aeabi_f2d
- .text          0x00020cac       0x3c /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/armv6-m/libgcc.a(_clzsi2.o)
-                0x00020cac                __clzsi2
- .text.__errno  0x00020ce8        0xc /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv6-m/libc_nano.a(lib_a-errno.o)
-                0x00020ce8                __errno
- .text.memcmp   0x00020cf4       0x1e /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv6-m/libc_nano.a(lib_a-memcmp.o)
-                0x00020cf4                memcmp
- .text.memcpy   0x00020d12       0x12 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv6-m/libc_nano.a(lib_a-memcpy-stub.o)
-                0x00020d12                memcpy
- .text.printf   0x00020d24       0x34 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv6-m/libc_nano.a(lib_a-printf.o)
-                0x00020d24                printf
-                0x00020d24                iprintf
- .text.sprintf  0x00020d58       0x44 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv6-m/libc_nano.a(lib_a-sprintf.o)
-                0x00020d58                sprintf
-                0x00020d58                siprintf
- .text          0x00020d9c        0xe /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv6-m/libc_nano.a(lib_a-strlen.o)
-                0x00020d9c                strlen
- *fill*         0x00020daa        0x2 
+                0x0001da50      0x1ec /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv6-m/libm.a(lib_a-e_sqrt.o)
+                0x0001da50                __ieee754_sqrt
+ .text.atan     0x0001dc3c      0x33c /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv6-m/libm.a(lib_a-s_atan.o)
+                0x0001dc3c                atan
+ .text.matherr  0x0001df78        0x4 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv6-m/libm.a(lib_a-s_matherr.o)
+                0x0001df78                matherr
+ .text.nan      0x0001df7c        0xc /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv6-m/libm.a(lib_a-s_nan.o)
+                0x0001df7c                nan
+ .text          0x0001df88      0x114 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/armv6-m/libgcc.a(_udivsi3.o)
+                0x0001df88                __udivsi3
+                0x0001df88                __aeabi_uidiv
+                0x0001e094                __aeabi_uidivmod
+ .text          0x0001e09c      0x1d4 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/armv6-m/libgcc.a(_divsi3.o)
+                0x0001e09c                __aeabi_idiv
+                0x0001e09c                __divsi3
+                0x0001e268                __aeabi_idivmod
+ .text          0x0001e270        0x4 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/armv6-m/libgcc.a(_dvmd_tls.o)
+                0x0001e270                __aeabi_ldiv0
+                0x0001e270                __aeabi_idiv0
+ .text          0x0001e274       0x7c /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/armv6-m/libgcc.a(_arm_cmpdf2.o)
+                0x0001e274                __aeabi_cdrcmple
+                0x0001e284                __aeabi_cdcmple
+                0x0001e284                __aeabi_cdcmpeq
+                0x0001e294                __aeabi_dcmpeq
+                0x0001e2a0                __aeabi_dcmplt
+                0x0001e2b4                __aeabi_dcmple
+                0x0001e2c8                __aeabi_dcmpgt
+                0x0001e2dc                __aeabi_dcmpge
+ .text          0x0001e2f0       0x74 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/armv6-m/libgcc.a(_arm_cmpsf2.o)
+                0x0001e2f0                __aeabi_cfrcmple
+                0x0001e2f8                __aeabi_cfcmple
+                0x0001e2f8                __aeabi_cfcmpeq
+                0x0001e308                __aeabi_fcmpeq
+                0x0001e314                __aeabi_fcmplt
+                0x0001e328                __aeabi_fcmple
+                0x0001e33c                __aeabi_fcmpgt
+                0x0001e350                __aeabi_fcmpge
+ .text          0x0001e364       0x58 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/armv6-m/libgcc.a(_muldi3.o)
+                0x0001e364                __aeabi_lmul
+                0x0001e364                __muldi3
+ .text          0x0001e3bc       0x30 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/armv6-m/libgcc.a(_fixunssfsi.o)
+                0x0001e3bc                __aeabi_f2uiz
+                0x0001e3bc                __fixunssfsi
+ .text          0x0001e3ec      0x2ec /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/armv6-m/libgcc.a(addsf3.o)
+                0x0001e3ec                __aeabi_fadd
+ .text          0x0001e6d8      0x234 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/armv6-m/libgcc.a(divsf3.o)
+                0x0001e6d8                __aeabi_fdiv
+ .text          0x0001e90c       0x50 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/armv6-m/libgcc.a(eqsf2.o)
+                0x0001e90c                __nesf2
+                0x0001e90c                __eqsf2
+ .text          0x0001e95c       0x88 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/armv6-m/libgcc.a(gesf2.o)
+                0x0001e95c                __gtsf2
+                0x0001e95c                __gesf2
+ .text          0x0001e9e4       0x88 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/armv6-m/libgcc.a(lesf2.o)
+                0x0001e9e4                __lesf2
+                0x0001e9e4                __ltsf2
+ .text          0x0001ea6c      0x228 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/armv6-m/libgcc.a(mulsf3.o)
+                0x0001ea6c                __aeabi_fmul
+ .text          0x0001ec94      0x30c /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/armv6-m/libgcc.a(subsf3.o)
+                0x0001ec94                __aeabi_fsub
+ .text          0x0001efa0       0x44 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/armv6-m/libgcc.a(fixsfsi.o)
+                0x0001efa0                __aeabi_f2iz
+ .text          0x0001efe4       0x90 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/armv6-m/libgcc.a(floatsisf.o)
+                0x0001efe4                __aeabi_i2f
+ .text          0x0001f074       0x7c /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/armv6-m/libgcc.a(floatunsisf.o)
+                0x0001f074                __aeabi_ui2f
+ .text          0x0001f0f0      0x658 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/armv6-m/libgcc.a(adddf3.o)
+                0x0001f0f0                __aeabi_dadd
+ .text          0x0001f748      0x62c /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/armv6-m/libgcc.a(divdf3.o)
+                0x0001f748                __aeabi_ddiv
+ .text          0x0001fd74       0x80 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/armv6-m/libgcc.a(eqdf2.o)
+                0x0001fd74                __eqdf2
+                0x0001fd74                __nedf2
+ .text          0x0001fdf4       0xc8 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/armv6-m/libgcc.a(gedf2.o)
+                0x0001fdf4                __gtdf2
+                0x0001fdf4                __gedf2
+ .text          0x0001febc       0xd4 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/armv6-m/libgcc.a(ledf2.o)
+                0x0001febc                __ltdf2
+                0x0001febc                __ledf2
+ .text          0x0001ff90      0x4f4 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/armv6-m/libgcc.a(muldf3.o)
+                0x0001ff90                __aeabi_dmul
+ .text          0x00020484      0x6a8 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/armv6-m/libgcc.a(subdf3.o)
+                0x00020484                __aeabi_dsub
+ .text          0x00020b2c       0x40 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/armv6-m/libgcc.a(unorddf2.o)
+                0x00020b2c                __aeabi_dcmpun
+ .text          0x00020b6c       0x6c /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/armv6-m/libgcc.a(fixdfsi.o)
+                0x00020b6c                __aeabi_d2iz
+ .text          0x00020bd8       0x84 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/armv6-m/libgcc.a(floatsidf.o)
+                0x00020bd8                __aeabi_i2d
+ .text          0x00020c5c       0xa8 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/armv6-m/libgcc.a(extendsfdf2.o)
+                0x00020c5c                __aeabi_f2d
+ .text          0x00020d04       0x3c /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/armv6-m/libgcc.a(_clzsi2.o)
+                0x00020d04                __clzsi2
+ .text.__errno  0x00020d40        0xc /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv6-m/libc_nano.a(lib_a-errno.o)
+                0x00020d40                __errno
+ .text.memcmp   0x00020d4c       0x1e /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv6-m/libc_nano.a(lib_a-memcmp.o)
+                0x00020d4c                memcmp
+ .text.memcpy   0x00020d6a       0x12 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv6-m/libc_nano.a(lib_a-memcpy-stub.o)
+                0x00020d6a                memcpy
+ .text.printf   0x00020d7c       0x34 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv6-m/libc_nano.a(lib_a-printf.o)
+                0x00020d7c                printf
+                0x00020d7c                iprintf
+ .text.sprintf  0x00020db0       0x44 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv6-m/libc_nano.a(lib_a-sprintf.o)
+                0x00020db0                sprintf
+                0x00020db0                siprintf
+ .text          0x00020df4        0xe /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv6-m/libc_nano.a(lib_a-strlen.o)
+                0x00020df4                strlen
+ *fill*         0x00020e02        0x2 
  .text._cleanup_r
-                0x00020dac       0x10 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv6-m/libc_nano.a(lib_a-findfp.o)
-                0x00020dac                _cleanup_r
+                0x00020e04       0x10 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv6-m/libc_nano.a(lib_a-findfp.o)
+                0x00020e04                _cleanup_r
  .text.std.isra.0
-                0x00020dbc       0x48 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv6-m/libc_nano.a(lib_a-findfp.o)
+                0x00020e14       0x48 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv6-m/libc_nano.a(lib_a-findfp.o)
  .text.__sfmoreglue
-                0x00020e04       0x2c /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv6-m/libc_nano.a(lib_a-findfp.o)
-                0x00020e04                __sfmoreglue
- .text.__sinit  0x00020e30       0x68 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv6-m/libc_nano.a(lib_a-findfp.o)
-                0x00020e30                __sinit
- .text.__sfp    0x00020e98       0x7c /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv6-m/libc_nano.a(lib_a-findfp.o)
-                0x00020e98                __sfp
+                0x00020e5c       0x2c /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv6-m/libc_nano.a(lib_a-findfp.o)
+                0x00020e5c                __sfmoreglue
+ .text.__sinit  0x00020e88       0x68 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv6-m/libc_nano.a(lib_a-findfp.o)
+                0x00020e88                __sinit
+ .text.__sfp    0x00020ef0       0x7c /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv6-m/libc_nano.a(lib_a-findfp.o)
+                0x00020ef0                __sfp
  .text._fwalk_reent
-                0x00020f14       0x42 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv6-m/libc_nano.a(lib_a-fwalk.o)
-                0x00020f14                _fwalk_reent
- *fill*         0x00020f56        0x2 
+                0x00020f6c       0x42 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv6-m/libc_nano.a(lib_a-fwalk.o)
+                0x00020f6c                _fwalk_reent
+ *fill*         0x00020fae        0x2 
  .text._malloc_r
-                0x00020f58       0xc0 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv6-m/libc_nano.a(lib_a-nano-mallocr.o)
-                0x00020f58                _malloc_r
+                0x00020fb0       0xc0 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv6-m/libc_nano.a(lib_a-nano-mallocr.o)
+                0x00020fb0                _malloc_r
  .text.__ssputs_r
-                0x00021018       0xc4 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv6-m/libc_nano.a(lib_a-nano-svfprintf.o)
-                0x00021018                __ssputs_r
+                0x00021070       0xc4 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv6-m/libc_nano.a(lib_a-nano-svfprintf.o)
+                0x00021070                __ssputs_r
  .text._svfprintf_r
-                0x000210dc      0x1fc /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv6-m/libc_nano.a(lib_a-nano-svfprintf.o)
-                0x000210dc                _svfprintf_r
-                0x000210dc                _svfiprintf_r
+                0x00021134      0x1fc /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv6-m/libc_nano.a(lib_a-nano-svfprintf.o)
+                0x00021134                _svfprintf_r
+                0x00021134                _svfiprintf_r
  .text.__sfputc_r
-                0x000212d8       0x2a /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv6-m/libc_nano.a(lib_a-nano-vfprintf.o)
+                0x00021330       0x2a /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv6-m/libc_nano.a(lib_a-nano-vfprintf.o)
  .text.__sfputs_r
-                0x00021302       0x24 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv6-m/libc_nano.a(lib_a-nano-vfprintf.o)
-                0x00021302                __sfputs_r
- *fill*         0x00021326        0x2 
+                0x0002135a       0x24 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv6-m/libc_nano.a(lib_a-nano-vfprintf.o)
+                0x0002135a                __sfputs_r
+ *fill*         0x0002137e        0x2 
  .text._vfprintf_r
-                0x00021328      0x238 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv6-m/libc_nano.a(lib_a-nano-vfprintf.o)
-                0x00021328                _vfiprintf_r
-                0x00021328                _vfprintf_r
+                0x00021380      0x238 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv6-m/libc_nano.a(lib_a-nano-vfprintf.o)
+                0x00021380                _vfiprintf_r
+                0x00021380                _vfprintf_r
  .text._printf_common
-                0x00021560       0xdc /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv6-m/libc_nano.a(lib_a-nano-vfprintf_i.o)
-                0x00021560                _printf_common
+                0x000215b8       0xdc /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv6-m/libc_nano.a(lib_a-nano-vfprintf_i.o)
+                0x000215b8                _printf_common
  .text._printf_i
-                0x0002163c      0x244 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv6-m/libc_nano.a(lib_a-nano-vfprintf_i.o)
-                0x0002163c                _printf_i
- .text._sbrk_r  0x00021880       0x24 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv6-m/libc_nano.a(lib_a-sbrkr.o)
-                0x00021880                _sbrk_r
- .text.__sread  0x000218a4       0x28 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv6-m/libc_nano.a(lib_a-stdio.o)
-                0x000218a4                __sread
+                0x00021694      0x244 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv6-m/libc_nano.a(lib_a-nano-vfprintf_i.o)
+                0x00021694                _printf_i
+ .text._sbrk_r  0x000218d8       0x24 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv6-m/libc_nano.a(lib_a-sbrkr.o)
+                0x000218d8                _sbrk_r
+ .text.__sread  0x000218fc       0x28 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv6-m/libc_nano.a(lib_a-stdio.o)
+                0x000218fc                __sread
  .text.__swrite
-                0x000218cc       0x38 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv6-m/libc_nano.a(lib_a-stdio.o)
-                0x000218cc                __swrite
- .text.__sseek  0x00021904       0x2c /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv6-m/libc_nano.a(lib_a-stdio.o)
-                0x00021904                __sseek
+                0x00021924       0x38 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv6-m/libc_nano.a(lib_a-stdio.o)
+                0x00021924                __swrite
+ .text.__sseek  0x0002195c       0x2c /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv6-m/libc_nano.a(lib_a-stdio.o)
+                0x0002195c                __sseek
  .text.__sclose
-                0x00021930        0xc /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv6-m/libc_nano.a(lib_a-stdio.o)
-                0x00021930                __sclose
+                0x00021988        0xc /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv6-m/libc_nano.a(lib_a-stdio.o)
+                0x00021988                __sclose
  .text.__swbuf_r
-                0x0002193c       0xb0 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv6-m/libc_nano.a(lib_a-wbuf.o)
-                0x0002193c                __swbuf_r
+                0x00021994       0xb0 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv6-m/libc_nano.a(lib_a-wbuf.o)
+                0x00021994                __swbuf_r
  .text._write_r
-                0x000219ec       0x28 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv6-m/libc_nano.a(lib_a-writer.o)
-                0x000219ec                _write_r
+                0x00021a44       0x28 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv6-m/libc_nano.a(lib_a-writer.o)
+                0x00021a44                _write_r
  .text.__swsetup_r
-                0x00021a14       0xec /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv6-m/libc_nano.a(lib_a-wsetup.o)
-                0x00021a14                __swsetup_r
+                0x00021a6c       0xec /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv6-m/libc_nano.a(lib_a-wsetup.o)
+                0x00021a6c                __swsetup_r
  .text._close_r
-                0x00021b00       0x24 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv6-m/libc_nano.a(lib_a-closer.o)
-                0x00021b00                _close_r
+                0x00021b58       0x24 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv6-m/libc_nano.a(lib_a-closer.o)
+                0x00021b58                _close_r
  .text.__sflush_r
-                0x00021b24      0x10c /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv6-m/libc_nano.a(lib_a-fflush.o)
-                0x00021b24                __sflush_r
+                0x00021b7c      0x10c /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv6-m/libc_nano.a(lib_a-fflush.o)
+                0x00021b7c                __sflush_r
  .text._fflush_r
-                0x00021c30       0x58 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv6-m/libc_nano.a(lib_a-fflush.o)
-                0x00021c30                _fflush_r
+                0x00021c88       0x58 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv6-m/libc_nano.a(lib_a-fflush.o)
+                0x00021c88                _fflush_r
  .text._lseek_r
-                0x00021c88       0x28 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv6-m/libc_nano.a(lib_a-lseekr.o)
-                0x00021c88                _lseek_r
+                0x00021ce0       0x28 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv6-m/libc_nano.a(lib_a-lseekr.o)
+                0x00021ce0                _lseek_r
  .text.__swhatbuf_r
-                0x00021cb0       0x4c /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv6-m/libc_nano.a(lib_a-makebuf.o)
-                0x00021cb0                __swhatbuf_r
+                0x00021d08       0x4c /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv6-m/libc_nano.a(lib_a-makebuf.o)
+                0x00021d08                __swhatbuf_r
  .text.__smakebuf_r
-                0x00021cfc       0x7c /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv6-m/libc_nano.a(lib_a-makebuf.o)
-                0x00021cfc                __smakebuf_r
- .text.memchr   0x00021d78       0x16 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv6-m/libc_nano.a(lib_a-memchr-stub.o)
-                0x00021d78                memchr
- .text.memmove  0x00021d8e       0x2a /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv6-m/libc_nano.a(lib_a-memmove.o)
-                0x00021d8e                memmove
+                0x00021d54       0x7c /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv6-m/libc_nano.a(lib_a-makebuf.o)
+                0x00021d54                __smakebuf_r
+ .text.memchr   0x00021dd0       0x16 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv6-m/libc_nano.a(lib_a-memchr-stub.o)
+                0x00021dd0                memchr
+ .text.memmove  0x00021de6       0x2a /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv6-m/libc_nano.a(lib_a-memmove.o)
+                0x00021de6                memmove
  .text.__malloc_lock
-                0x00021db8        0x2 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv6-m/libc_nano.a(lib_a-mlock.o)
-                0x00021db8                __malloc_lock
+                0x00021e10        0x2 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv6-m/libc_nano.a(lib_a-mlock.o)
+                0x00021e10                __malloc_lock
  .text.__malloc_unlock
-                0x00021dba        0x2 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv6-m/libc_nano.a(lib_a-mlock.o)
-                0x00021dba                __malloc_unlock
- .text._free_r  0x00021dbc       0x98 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv6-m/libc_nano.a(lib_a-nano-freer.o)
-                0x00021dbc                _free_r
+                0x00021e12        0x2 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv6-m/libc_nano.a(lib_a-mlock.o)
+                0x00021e12                __malloc_unlock
+ .text._free_r  0x00021e14       0x98 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv6-m/libc_nano.a(lib_a-nano-freer.o)
+                0x00021e14                _free_r
  .text._realloc_r
-                0x00021e54       0x4c /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv6-m/libc_nano.a(lib_a-nano-reallocr.o)
-                0x00021e54                _realloc_r
- .text._read_r  0x00021ea0       0x28 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv6-m/libc_nano.a(lib_a-readr.o)
-                0x00021ea0                _read_r
+                0x00021eac       0x4c /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv6-m/libc_nano.a(lib_a-nano-reallocr.o)
+                0x00021eac                _realloc_r
+ .text._read_r  0x00021ef8       0x28 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv6-m/libc_nano.a(lib_a-readr.o)
+                0x00021ef8                _read_r
  .text._fstat_r
-                0x00021ec8       0x24 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv6-m/libc_nano.a(lib_a-fstatr.o)
-                0x00021ec8                _fstat_r
+                0x00021f20       0x24 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv6-m/libc_nano.a(lib_a-fstatr.o)
+                0x00021f20                _fstat_r
  .text._isatty_r
-                0x00021eec       0x24 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv6-m/libc_nano.a(lib_a-isattyr.o)
-                0x00021eec                _isatty_r
+                0x00021f44       0x24 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv6-m/libc_nano.a(lib_a-isattyr.o)
+                0x00021f44                _isatty_r
  .text._malloc_usable_size_r
-                0x00021f10       0x16 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv6-m/libc_nano.a(lib_a-nano-msizer.o)
-                0x00021f10                _malloc_usable_size_r
- *fill*         0x00021f26        0x2 
- .text._close   0x00021f28       0x10 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv6-m/libnosys.a(close.o)
-                0x00021f28                _close
- .text._fstat   0x00021f38       0x10 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv6-m/libnosys.a(fstat.o)
-                0x00021f38                _fstat
- .text._isatty  0x00021f48       0x10 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv6-m/libnosys.a(isatty.o)
-                0x00021f48                _isatty
- .text._lseek   0x00021f58       0x10 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv6-m/libnosys.a(lseek.o)
-                0x00021f58                _lseek
- .text._read    0x00021f68       0x10 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv6-m/libnosys.a(read.o)
-                0x00021f68                _read
- .text._sbrk    0x00021f78       0x1c /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv6-m/libnosys.a(sbrk.o)
-                0x00021f78                _sbrk
+                0x00021f68       0x16 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv6-m/libc_nano.a(lib_a-nano-msizer.o)
+                0x00021f68                _malloc_usable_size_r
+ *fill*         0x00021f7e        0x2 
+ .text._close   0x00021f80       0x10 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv6-m/libnosys.a(close.o)
+                0x00021f80                _close
+ .text._fstat   0x00021f90       0x10 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv6-m/libnosys.a(fstat.o)
+                0x00021f90                _fstat
+ .text._isatty  0x00021fa0       0x10 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv6-m/libnosys.a(isatty.o)
+                0x00021fa0                _isatty
+ .text._lseek   0x00021fb0       0x10 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv6-m/libnosys.a(lseek.o)
+                0x00021fb0                _lseek
+ .text._read    0x00021fc0       0x10 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv6-m/libnosys.a(read.o)
+                0x00021fc0                _read
+ .text._sbrk    0x00021fd0       0x1c /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv6-m/libnosys.a(sbrk.o)
+                0x00021fd0                _sbrk
  *(.init)
- .init          0x00021f94        0x4 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/armv6-m/crti.o
-                0x00021f94                _init
- .init          0x00021f98        0x8 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/armv6-m/crtn.o
+ .init          0x00021fec        0x4 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/armv6-m/crti.o
+                0x00021fec                _init
+ .init          0x00021ff0        0x8 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/armv6-m/crtn.o
  *(.fini)
- .fini          0x00021fa0        0x4 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/armv6-m/crti.o
-                0x00021fa0                _fini
- .fini          0x00021fa4        0x8 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/armv6-m/crtn.o
+ .fini          0x00021ff8        0x4 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/armv6-m/crti.o
+                0x00021ff8                _fini
+ .fini          0x00021ffc        0x8 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/armv6-m/crtn.o
  *crtbegin.o(.ctors)
  *crtbegin?.o(.ctors)
  *(EXCLUDE_FILE(*crtend.o *crtend?.o) .ctors)
@@ -1719,127 +1721,129 @@ END GROUP
  *(.dtors)
  *(.rodata*)
  .rodata.str1.1
-                0x00021fac        0x2 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv6-m/libc_nano.a(lib_a-impure.o)
- *fill*         0x00021fae        0x2 
- .rodata._global_impure_ptr
-                0x00021fb0        0x4 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv6-m/libc_nano.a(lib_a-impure.o)
-                0x00021fb0                _global_impure_ptr
- .rodata.str1.4
-                0x00021fb4       0x52 _build/in4073.o
+                0x00022004        0x2 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv6-m/libc_nano.a(lib_a-impure.o)
  *fill*         0x00022006        0x2 
- .rodata.quadrupel_timer.7181
-                0x00022008        0x4 _build/timers.o
+ .rodata._global_impure_ptr
+                0x00022008        0x4 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv6-m/libc_nano.a(lib_a-impure.o)
+                0x00022008                _global_impure_ptr
  .rodata.str1.4
-                0x0002200c       0x11 _build/uart.o
- *fill*         0x0002201d        0x3 
+                0x0002200c       0x52 _build/in4073.o
+ *fill*         0x0002205e        0x2 
+ .rodata.quadrupel_timer.7183
+                0x00022060        0x4 _build/timers.o
  .rodata.str1.4
-                0x00022020       0x20 _build/queue.o
+                0x00022064       0x11 _build/uart.o
+ *fill*         0x00022075        0x3 
  .rodata.str1.4
-                0x00022040       0x38 _build/twi.o
+                0x00022078       0x20 _build/queue.o
  .rodata.str1.4
-                0x00022078       0x12 _build/ble.o
- *fill*         0x0002208a        0x2 
+                0x00022098       0x38 _build/twi.o
  .rodata.str1.4
-                0x0002208c       0x28 _build/packet_protocol.o
+                0x000220d0       0x12 _build/ble.o
+ *fill*         0x000220e2        0x2 
+ .rodata.str1.4
+                0x000220e4       0x70 _build/packet_protocol.o
  .rodata.switchMode
-                0x000220b4       0x28 _build/mode_control.o
+                0x00022154       0x28 _build/mode_control.o
  .rodata.str1.4
-                0x000220dc       0x5c _build/mode_control.o
+                0x0002217c       0x67 _build/mode_control.o
+ *fill*         0x000221e3        0x1 
  .rodata.str1.4
-                0x00022138       0x1d _build/calibration.o
- *fill*         0x00022155        0x3 
- .rodata.test   0x00022158       0x28 _build/inv_mpu.o
-                0x00022158                test
+                0x000221e4       0x1d _build/calibration.o
+ *fill*         0x00022201        0x3 
+ .rodata.test   0x00022204       0x28 _build/inv_mpu.o
+                0x00022204                test
  .rodata.str1.4
-                0x00022180       0xa6 _build/inv_mpu.o
- *fill*         0x00022226        0x2 
- .rodata.hw     0x00022228        0xc _build/inv_mpu.o
-                0x00022228                hw
- .rodata.reg    0x00022234       0x1e _build/inv_mpu.o
-                0x00022234                reg
- *fill*         0x00022252        0x2 
- .rodata        0x00022254       0x4b _build/inv_mpu_dmp_motion_driver.o
- *fill*         0x0002229f        0x1 
+                0x0002222c       0xa6 _build/inv_mpu.o
+ *fill*         0x000222d2        0x2 
+ .rodata.hw     0x000222d4        0xc _build/inv_mpu.o
+                0x000222d4                hw
+ .rodata.reg    0x000222e0       0x1e _build/inv_mpu.o
+                0x000222e0                reg
+ *fill*         0x000222fe        0x2 
+ .rodata        0x00022300       0x4b _build/inv_mpu_dmp_motion_driver.o
+ *fill*         0x0002234b        0x1 
  .rodata.dmp_memory
-                0x000222a0      0xbf6 _build/inv_mpu_dmp_motion_driver.o
- *fill*         0x00022e96        0x2 
+                0x0002234c      0xbf6 _build/inv_mpu_dmp_motion_driver.o
+ *fill*         0x00022f42        0x2 
  .rodata.str1.4
-                0x00022e98      0x14a _build/mpu_wrapper.o
- *fill*         0x00022fe2        0x2 
+                0x00022f44      0x14a _build/mpu_wrapper.o
+ *fill*         0x0002308e        0x2 
  .rodata.str1.4
-                0x00022fe4       0x27 _build/app_error.o
- *fill*         0x0002300b        0x1 
+                0x00023090       0x27 _build/app_error.o
+ *fill*         0x000230b7        0x1 
  .rodata.m_conn_params_timer_id
-                0x0002300c        0x4 _build/ble_conn_params.o
- .rodata        0x00023010       0x10 _build/ble_nus.o
+                0x000230b8        0x4 _build/ble_conn_params.o
+ .rodata        0x000230bc       0x10 _build/ble_nus.o
  .rodata.str1.4
-                0x00023020        0x5 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv6-m/libm.a(lib_a-w_asin.o)
+                0x000230cc        0x5 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv6-m/libm.a(lib_a-w_asin.o)
                                   0x9 (size before relaxing)
- *fill*         0x00023025        0x3 
+ *fill*         0x000230d1        0x3 
  .rodata.str1.4
-                0x00023028        0x8 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv6-m/libm.a(lib_a-w_sqrt.o)
+                0x000230d4        0x8 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv6-m/libm.a(lib_a-w_sqrt.o)
                                   0x5 (size before relaxing)
+ *fill*         0x000230dc        0x4 
  .rodata.atanlo
-                0x00023030       0x20 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv6-m/libm.a(lib_a-s_atan.o)
+                0x000230e0       0x20 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv6-m/libm.a(lib_a-s_atan.o)
  .rodata.atanhi
-                0x00023050       0x20 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv6-m/libm.a(lib_a-s_atan.o)
- .rodata        0x00023070       0x80 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/armv6-m/libgcc.a(divsf3.o)
- .rodata        0x000230f0       0x40 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/armv6-m/libgcc.a(mulsf3.o)
- .rodata        0x00023130       0x40 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/armv6-m/libgcc.a(divdf3.o)
- .rodata        0x00023170       0x40 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/armv6-m/libgcc.a(muldf3.o)
+                0x00023100       0x20 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv6-m/libm.a(lib_a-s_atan.o)
+ .rodata        0x00023120       0x80 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/armv6-m/libgcc.a(divsf3.o)
+ .rodata        0x000231a0       0x40 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/armv6-m/libgcc.a(mulsf3.o)
+ .rodata        0x000231e0       0x40 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/armv6-m/libgcc.a(divdf3.o)
+ .rodata        0x00023220       0x40 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/armv6-m/libgcc.a(muldf3.o)
  .rodata.__sf_fake_stdin
-                0x000231b0       0x20 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv6-m/libc_nano.a(lib_a-findfp.o)
-                0x000231b0                __sf_fake_stdin
+                0x00023260       0x20 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv6-m/libc_nano.a(lib_a-findfp.o)
+                0x00023260                __sf_fake_stdin
  .rodata.__sf_fake_stdout
-                0x000231d0       0x20 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv6-m/libc_nano.a(lib_a-findfp.o)
-                0x000231d0                __sf_fake_stdout
+                0x00023280       0x20 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv6-m/libc_nano.a(lib_a-findfp.o)
+                0x00023280                __sf_fake_stdout
  .rodata.__sf_fake_stderr
-                0x000231f0       0x20 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv6-m/libc_nano.a(lib_a-findfp.o)
-                0x000231f0                __sf_fake_stderr
+                0x000232a0       0x20 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv6-m/libc_nano.a(lib_a-findfp.o)
+                0x000232a0                __sf_fake_stderr
  .rodata.str1.1
-                0x00023210       0x11 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv6-m/libc_nano.a(lib_a-nano-svfprintf.o)
+                0x000232c0       0x11 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv6-m/libc_nano.a(lib_a-nano-svfprintf.o)
  .rodata.str1.1
-                0x00023221       0x11 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv6-m/libc_nano.a(lib_a-nano-vfprintf.o)
+                0x000232d1       0x11 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv6-m/libc_nano.a(lib_a-nano-vfprintf.o)
  .rodata.str1.1
-                0x00023221       0x22 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv6-m/libc_nano.a(lib_a-nano-vfprintf_i.o)
+                0x000232d1       0x22 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv6-m/libc_nano.a(lib_a-nano-vfprintf_i.o)
  *(.eh_frame*)
- *fill*         0x00023243        0x1 
- .eh_frame      0x00023244        0x0 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/armv6-m/crtbegin.o
-                0x00023244                . = ALIGN (0x4)
+ *fill*         0x000232f3        0x1 
+ .eh_frame      0x000232f4        0x0 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/armv6-m/crtbegin.o
+                0x000232f4                . = ALIGN (0x4)
 
-.glue_7         0x00023244        0x0
- .glue_7        0x00023244        0x0 linker stubs
+.glue_7         0x000232f4        0x0
+ .glue_7        0x000232f4        0x0 linker stubs
 
-.glue_7t        0x00023244        0x0
- .glue_7t       0x00023244        0x0 linker stubs
+.glue_7t        0x000232f4        0x0
+ .glue_7t       0x000232f4        0x0 linker stubs
 
-.vfp11_veneer   0x00023244        0x0
- .vfp11_veneer  0x00023244        0x0 linker stubs
+.vfp11_veneer   0x000232f4        0x0
+ .vfp11_veneer  0x000232f4        0x0 linker stubs
 
-.v4_bx          0x00023244        0x0
- .v4_bx         0x00023244        0x0 linker stubs
+.v4_bx          0x000232f4        0x0
+ .v4_bx         0x000232f4        0x0 linker stubs
 
-.iplt           0x00023244        0x0
- .iplt          0x00023244        0x0 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/armv6-m/crtbegin.o
+.iplt           0x000232f4        0x0
+ .iplt          0x000232f4        0x0 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/armv6-m/crtbegin.o
 
-.ARM.extab      0x00023244        0x0
+.ARM.extab      0x000232f4        0x0
  *(.ARM.extab* .gnu.linkonce.armextab.*)
-                0x00023244                . = ALIGN (0x4)
-                0x00023244                __exidx_start = .
+                0x000232f4                . = ALIGN (0x4)
+                0x000232f4                __exidx_start = .
 
-.ARM.exidx      0x00023244        0x8
+.ARM.exidx      0x000232f4        0x8
  *(.ARM.exidx* .gnu.linkonce.armexidx.*)
- .ARM.exidx     0x00023244        0x8 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv6-m/crt0.o
- .ARM.exidx     0x0002324c        0x0 _build/gcc_startup_nrf51.o
+ .ARM.exidx     0x000232f4        0x8 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv6-m/crt0.o
+ .ARM.exidx     0x000232fc        0x0 _build/gcc_startup_nrf51.o
                                   0x8 (size before relaxing)
-                0x0002324c                . = ALIGN (0x4)
-                0x0002324c                __exidx_end = .
-                0x0002324c                __etext = .
+                0x000232fc                . = ALIGN (0x4)
+                0x000232fc                __exidx_end = .
+                0x000232fc                __etext = .
 
-.rel.dyn        0x0002324c        0x0
- .rel.iplt      0x0002324c        0x0 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/armv6-m/crtbegin.o
+.rel.dyn        0x000232fc        0x0
+ .rel.iplt      0x000232fc        0x0 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/armv6-m/crtbegin.o
 
-.data           0x20002000       0xb4 load address 0x0002324c
+.data           0x20002000       0xb4 load address 0x000232fc
                 0x20002000                __data_start__ = .
  *(vtable)
  *(.data*)
@@ -1858,7 +1862,7 @@ END GROUP
                 0x2000206c        0x2 _build/ble.o
  *fill*         0x2000206e        0x2 
  .data.st       0x20002070       0x2c _build/inv_mpu.o
- .data.gyro_orientation.7101
+ .data.gyro_orientation.7103
                 0x2000209c        0x9 _build/mpu_wrapper.o
  *fill*         0x200020a5        0x1 
  .data.current_slave_link_conn_handle.7275
@@ -1888,10 +1892,10 @@ END GROUP
                 0x200020b4                . = ALIGN (0x4)
                 0x200020b4                __data_end__ = .
 
-.igot.plt       0x200020b4        0x0 load address 0x00023300
+.igot.plt       0x200020b4        0x0 load address 0x000233b0
  .igot.plt      0x200020b4        0x0 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/armv6-m/crtbegin.o
 
-.bss            0x200020b4      0xc4c load address 0x00023300
+.bss            0x200020b4      0xea4 load address 0x000233b0
                 0x200020b4                . = ALIGN (0x4)
                 0x200020b4                __bss_start__ = .
  *(.bss*)
@@ -1899,9 +1903,9 @@ END GROUP
  .bss.mode      0x200020d0        0x1 _build/in4073.o
                 0x200020d0                mode
  *fill*         0x200020d1        0x3 
- .bss.APP_TIMER_BUF.7177
+ .bss.APP_TIMER_BUF.7179
                 0x200020d4      0x1c8 _build/timers.o
- .bss.quadrupel_timer_data.7180
+ .bss.quadrupel_timer_data.7182
                 0x2000229c       0x20 _build/timers.o
  .bss.sent      0x200022bc        0x1 _build/twi.o
  .bss.read      0x200022bd        0x1 _build/twi.o
@@ -1909,14 +1913,14 @@ END GROUP
                 0x200022be        0x1 _build/baro.o
  *fill*         0x200022bf        0x1 
  .bss.prom      0x200022c0       0x10 _build/baro.o
- .bss.data.7094
+ .bss.data.7096
                 0x200022d0        0x2 _build/baro.o
  *fill*         0x200022d2        0x2 
  .bss.data      0x200022d4        0x3 _build/baro.o
  *fill*         0x200022d7        0x1 
  .bss.initTime  0x200022d8        0x4 _build/baro.o
                 0x200022d8                initTime
- .bss.BLE_EVT_BUFFER.9025
+ .bss.BLE_EVT_BUFFER.9027
                 0x200022dc       0x48 _build/ble.o
  .bss.m_nus     0x20002324       0x1c _build/ble.o
  .bss.spi_config_table
@@ -2031,76 +2035,76 @@ END GROUP
  .bss.heap_end.4167
                 0x200025ec        0x4 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv6-m/libnosys.a(sbrk.o)
  *(COMMON)
- COMMON         0x200025f0      0x6f1 _build/in4073.o
+ COMMON         0x200025f0      0x949 _build/in4073.o
                 0x200025f0                say
                 0x200025f4                saxValues
-                0x200026bc                psi
-                0x200026be                sensor_fifo_count
-                0x200026bf                mode_change_acknowledged
-                0x200026c0                kp_yaw
-                0x200026c2                saz
-                0x200026c4                buffer_fill_index
-                0x200026c8                offset_saz
-                0x200026cc                rx_queue
-                0x200027d2                phi
-                0x200027d4                mode_change_packet
-                0x200027d8                temperature
-                0x200027dc                theta
-                0x200027e0                pressure
-                0x200027e4                prevMode
-                0x200027e8                tx_queue
-                0x200028f0                current_mode_function
-                0x200028f4                sax
-                0x200028f8                offset_sax
-                0x200028fc                sq
-                0x20002900                Address
-                0x20002904                bat_volt
-                0x20002908                values_Packet
-                0x20002910                sayValues
-                0x200029d8                ble_rx_queue
-                0x20002ade                sp
-                0x20002ae0                prevAcknowledgeMode
-                0x20002ae4                broken_Packet
-                0x20002aec                radio_active
-                0x20002af0                motor
-                0x20002af8                last_correct_checksum_time
-                0x20002afc                ble_tx_queue
-                0x20002c04                panicFlag
-                0x20002c08                ae
-                0x20002c10                offset_say
-                0x20002c14                sr
-                0x20002c18                sazValues
-                0x20002ce0                demo_done
- *fill*         0x20002ce1        0x1 
- COMMON         0x20002ce2        0x8 _build/control.o
-                0x20002ce2                lift
-                0x20002ce4                yaw
-                0x20002ce6                pitch
-                0x20002ce8                roll
- *fill*         0x20002cea        0x2 
- COMMON         0x20002cec        0x5 _build/timers.o
-                0x20002cec                global_time
-                0x20002cf0                timer_flag
- *fill*         0x20002cf1        0x3 
- COMMON         0x20002cf4        0x8 _build/baro.o
-                0x20002cf4                D2
-                0x20002cf8                D1
- COMMON         0x20002cfc        0x4 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv6-m/libc_nano.a(lib_a-reent.o)
-                0x20002cfc                errno
-                0x20002d00                . = ALIGN (0x4)
-                0x20002d00                __bss_end__ = .
+                0x20002784                psi
+                0x20002786                sensor_fifo_count
+                0x20002787                mode_change_acknowledged
+                0x20002788                kp_yaw
+                0x2000278a                saz
+                0x2000278c                buffer_fill_index
+                0x20002790                offset_saz
+                0x20002794                rx_queue
+                0x2000289a                phi
+                0x2000289c                mode_change_packet
+                0x200028a0                temperature
+                0x200028a4                theta
+                0x200028a8                pressure
+                0x200028ac                prevMode
+                0x200028b0                tx_queue
+                0x200029b8                current_mode_function
+                0x200029bc                sax
+                0x200029c0                offset_sax
+                0x200029c4                sq
+                0x200029c8                Address
+                0x200029cc                bat_volt
+                0x200029d0                values_Packet
+                0x200029d8                sayValues
+                0x20002b68                ble_rx_queue
+                0x20002c6e                sp
+                0x20002c70                prevAcknowledgeMode
+                0x20002c74                broken_Packet
+                0x20002c7c                radio_active
+                0x20002c80                motor
+                0x20002c88                last_correct_checksum_time
+                0x20002c8c                ble_tx_queue
+                0x20002d94                panicFlag
+                0x20002d98                ae
+                0x20002da0                offset_say
+                0x20002da4                sr
+                0x20002da8                sazValues
+                0x20002f38                demo_done
+ *fill*         0x20002f39        0x1 
+ COMMON         0x20002f3a        0x8 _build/control.o
+                0x20002f3a                lift
+                0x20002f3c                yaw
+                0x20002f3e                pitch
+                0x20002f40                roll
+ *fill*         0x20002f42        0x2 
+ COMMON         0x20002f44        0x5 _build/timers.o
+                0x20002f44                global_time
+                0x20002f48                timer_flag
+ *fill*         0x20002f49        0x3 
+ COMMON         0x20002f4c        0x8 _build/baro.o
+                0x20002f4c                D2
+                0x20002f50                D1
+ COMMON         0x20002f54        0x4 /home/yuup92/TU_Delft/Embedded_sys_lab/software_package/gcc-arm-none-eabi/bin/../lib/gcc/arm-none-eabi/5.4.1/../../../../arm-none-eabi/lib/armv6-m/libc_nano.a(lib_a-reent.o)
+                0x20002f54                errno
+                0x20002f58                . = ALIGN (0x4)
+                0x20002f58                __bss_end__ = .
 
-.heap           0x20002d00      0x800
-                0x20002d00                __end__ = .
-                0x20002d00                end = __end__
+.heap           0x20002f58      0x800
+                0x20002f58                __end__ = .
+                0x20002f58                end = __end__
  *(.heap*)
- .heap          0x20002d00      0x800 _build/gcc_startup_nrf51.o
-                0x20002d00                __HeapBase
-                0x20003500                __HeapLimit = .
+ .heap          0x20002f58      0x800 _build/gcc_startup_nrf51.o
+                0x20002f58                __HeapBase
+                0x20003758                __HeapLimit = .
 
-.stack_dummy    0x20002d00      0x800
+.stack_dummy    0x20002f58      0x800
  *(.stack*)
- .stack         0x20002d00      0x800 _build/gcc_startup_nrf51.o
+ .stack         0x20002f58      0x800 _build/gcc_startup_nrf51.o
                 0x20004000                __StackTop = (ORIGIN (RAM) + LENGTH (RAM))
                 0x20003800                __StackLimit = (__StackTop - SIZEOF (.stack_dummy))
                 0x20004000                PROVIDE (__stack, __StackTop)
