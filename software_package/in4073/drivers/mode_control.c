@@ -9,7 +9,7 @@
 
 /*------------------------------------------------------------------
  * TODO List:
- *
+ *add key maps for controller coefficients, in pc-terminal
  *
  *
  *------------------------------------------------------------------
@@ -43,7 +43,7 @@ void calibrationMode(void)
 
 void manualMode(void)
 {
-	//printf("ManualMode\n");
+	printf("ManualMode\n");
 	setting_packet_values_manual_mode();
 	calculateMotorRPM();
 	update_motors();	
@@ -70,7 +70,28 @@ void safeMode(void)
 
 void yawMode(void)
 {
+	printf("YAW MODE\n");
+		if (check_sensor_int_flag()) 
+		{
+			get_dmp_data();
+			
+		
+		}
 	calculate_yaw_control();
+	calculateMotorRPM();
+	update_motors();
+}
+
+void fullMode(void)
+{
+	printf("full MODE\n");
+		if (check_sensor_int_flag()) 
+		{
+			get_dmp_data();
+		}
+	calculate_roll_control();
+	calculateMotorRPM();
+	update_motors();
 }
 
 void panicMode(void)
@@ -122,6 +143,11 @@ void switchMode(int mod)
 		case 4:
 			current_mode_function = &yawMode;
 			break;
+
+		case 5:
+			current_mode_function = &fullMode;
+			break;
+
 		case 9:
 			current_mode_function = &escapeMode;
 			break;
