@@ -67,7 +67,7 @@ void setting_packet_values_manual_mode()
 void calculate_yaw_control()
 {
 			int32_t yaw_error;
-			int32_t kp_yaw = 5;
+			//int32_t kp_yaw = 5;
            // int32_t yaw_offset = 10; 
 		
 			lift = (int32_t) -1 * (values_Packet.lift -127)*256;// pos lift -> neg z
@@ -89,8 +89,8 @@ void calculate_roll_control()
 	int32_t  roll_error;// pitch_error;
 //	int32_t kp_yaw = 5;
     //int32_t yaw_offset = 10; 
-	int32_t kp1_roll = 0;   
-	int32_t kp2_roll = -3;
+//	int32_t kp1_roll = 0;   
+//	int32_t kp2_roll = -3;
 //	int32_t kp1_pitch = 2;
 //	int32_t kp2_pitch = 10;
 	
@@ -101,11 +101,11 @@ void calculate_roll_control()
 	roll_error = ((int32_t)values_Packet.roll*256 -(int32_t) phi);
 	roll = kp1_roll*roll_error - kp2_roll*sp;
 
-	//pitch_error = ((int32_t)values_Packet.pitch*256 -(int32_t) theta); 
-	//pitch = kp1_pitch*pitch_error - kp2_pitch*sq;
+	pitch_error = ((int32_t)values_Packet.pitch*256 -(int32_t) theta); 
+	pitch = kp1_pitch*pitch_error - kp2_pitch*sq;
 
-	//yaw_error =   (int32_t)(values_Packet.yaw*256) ; //add offset here
-	//yaw =  kp_yaw*(yaw_error - sr);
+	yaw_error =   (int32_t)(values_Packet.yaw*256) ; //add offset here
+	yaw =  kp_yaw*(yaw_error - sr);
 
 }
 
