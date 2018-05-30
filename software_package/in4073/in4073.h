@@ -51,6 +51,7 @@ bool mode_change_acknowledged;
 uint8_t mode;
 int panicFlag;
 bool demo_done;
+int batteryFlag;
 
 void check_data_type(void);
 

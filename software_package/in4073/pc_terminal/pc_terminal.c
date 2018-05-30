@@ -21,7 +21,7 @@
  */
 
 #define HEADER 0b11010000
-//#define JOYSTICK_CONNECTED 1
+#define JOYSTICK_CONNECTED 1
 //#define JOYSTICK_DEBUG 2
 #define CRC16_DNP	0x3D65
 #define HEADER 0b11010000
@@ -30,6 +30,7 @@
 
 uint8_t mode = 0;
 int panicFlag =0;
+int connectionFlag =1;
 struct packet{
 	uint8_t header;
 	uint8_t dataType;
@@ -212,6 +213,52 @@ int 	rs232_getchar()
 	return c;
 }
 
+//TODO By Saumil
+//  Map keyboard inputs to values
+int keyboardToValue(char c) {
+ switch(c)
+ {
+	 case 27:
+	 	mode = 9;
+		break;
+	 case '0' :
+	 	mode = 0;
+	 break;
+	 case '1' :
+	 	if(mode!=0)
+		{
+	 	mode = 1;
+	 	printf("%s\n", "Going into panic mode");
+	 	panicFlag = 1;
+		}
+	 break;
+	 case '2' :
+	 	mode = 2;
+	 break;
+	 case '3' :
+	 	mode = 3;
+	 	break;
+	 case '4' :
+	 	mode = 4;
+	 	break;
+	case '5' :
+	 	mode = 5;
+	 	break;
+	case '6' :
+	 	mode = 6;
+	 	break;
+	 case 'a' :
+	 ;
+	 break;
+	 case 'z' :
+	 ;
+	 break;
+	 case 'q' :
+	 ;
+	 break;
+	 case 'w' :
+	 ;
+	 break;
 
 
 
@@ -541,6 +588,15 @@ void check_incoming_char(void)
 
 }
 
+void connectionCheck()
+{
+	int result;
+	const char *filename = "/dev/ttyUSB0";
+	result = access (filename, F_OK);
+	if(result != 0)	
+		connectionFlag=0;
+}
+
 void lower_tuning_value(int8_t d) {
 		setHeader();
 		send_packet.dataType 	= (int8_t) d;	
@@ -690,7 +746,6 @@ int keyboardToValue(char c) {
 	break;
  }
 } 
-
 /*----------------------------------------------------------------
  * main -- execute terminal
  *----------------------------------------------------------------
@@ -740,6 +795,7 @@ int main(int argc, char **argv)
 	 */
 	for (;;)
 	{	
+		connectionCheck();
 		check_incoming_char();
 
 		if(panicFlag) {
@@ -789,11 +845,18 @@ int main(int argc, char **argv)
 			printf("%d ",button[i]);
 		}
 		#endif
-
+		// Fire Button Safety Check - Saumil
 		if (button[0])
-			break;
-			
-
+		{
+			if(mode!=0) {mode=1; panicFlag=1;}
+			else break;
+		}
+		// Connection Check - Saumil	
+		if(!connectionFlag)
+		{	
+			if(mode!=0) {printf("\nNo Connection! Panic Mode\n"); mode=1; panicFlag=1;}
+			else{ printf("\nNo Connection! Aborting ...\n"); break;}
+		}
 	}
 	term_exitio();
 	rs232_close();

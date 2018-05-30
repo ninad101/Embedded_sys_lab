@@ -16,8 +16,8 @@
 #include <stdint.h>
 #include <unistd.h>
 
+int batteryFlag=1;
 int32_t 	lift, roll, pitch, yaw;
-
 
 void printMotorValues(void)
 {
@@ -44,10 +44,7 @@ void update_motors(void)
 //to do : check if there is any need when no battery is connected
 void batteryMonitor()
 {
-  	if (bat_volt < 10.85){//low voltage
-  	panicMode();
- 	 printf("low battery - panic mode enabled\n");
-  	} 
+  	if (bat_volt < 10.85) batteryFlag=0; 
 }
 
 void setting_packet_values_manual_mode()
