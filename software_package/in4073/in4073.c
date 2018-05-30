@@ -18,16 +18,13 @@
 #include <string.h>
 #include "logData.h"
 
-uint8_t mode=0;
+//#define BATTERYCHECK 1
+uint8_t mode=0; 
 /*------------------------------------------------------------------
  * process_key -- process command keys
  *------------------------------------------------------------------
  */
 
-void usbRemoved(){
-
-
-}
 void process_key(uint8_t c)
 {
 
@@ -116,6 +113,15 @@ int main(void)
 				switchMode(mode);
 			}
 		}
+		// Battery Check - Saumil
+		#ifdef BATTERYCHECK
+		batteryMonitor();
+		if(!batteryFlag)
+		{
+			if(mode!=0) {printf("\nLow Battery! Panic Mode\n"); mode=1; panicFlag=1;}
+			else {printf("\nLow Battery! Aborting ...\n"); demo_done=true;}
+		}
+		#endif
 		if(panicFlag) panicMode();
 		
 		current_mode_function();

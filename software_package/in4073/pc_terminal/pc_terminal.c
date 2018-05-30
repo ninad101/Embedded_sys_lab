@@ -21,7 +21,7 @@
  */
 
 #define HEADER 0b11010000
-//#define JOYSTICK_CONNECTED 1
+#define JOYSTICK_CONNECTED 1
 //#define JOYSTICK_DEBUG 2
 #define CRC16_DNP	0x3D65
 #define HEADER 0b11010000
@@ -30,6 +30,7 @@
 
 uint8_t mode = 0;
 int panicFlag =0;
+int connectionFlag =1;
 struct packet{
 	uint8_t header;
 	uint8_t dataType;
@@ -123,7 +124,7 @@ int	term_getchar()
 #include <stdlib.h>
 #include "joystick.h"
 #include <errno.h>
-#define JS_DEV	"/dev/input/js0"
+#define JS_DEV	"/dev/input/js1"
 
 int	axis[6];
 int	button[12];
@@ -211,7 +212,7 @@ int 	rs232_getchar()
 	return c;
 }
 
-//TODO 
+//TODO By Saumil
 //  Map keyboard inputs to values
 int keyboardToValue(char c) {
  switch(c)
@@ -223,9 +224,12 @@ int keyboardToValue(char c) {
 	 	mode = 0;
 	 break;
 	 case '1' :
+	 	if(mode!=0)
+		{
 	 	mode = 1;
 	 	printf("%s\n", "Going into panic mode");
 	 	panicFlag = 1;
+		}
 	 break;
 	 case '2' :
 	 	mode = 2;
@@ -578,6 +582,15 @@ void check_incoming_char(void)
 
 }
 
+void connectionCheck()
+{
+	int result;
+	const char *filename = "/dev/ttyUSB0";
+	result = access (filename, F_OK);
+	if(result != 0)	
+		connectionFlag=0;
+}
+
 /*----------------------------------------------------------------
  * main -- execute terminal
  *----------------------------------------------------------------
@@ -626,6 +639,7 @@ int main(int argc, char **argv)
 	 */
 	for (;;)
 	{	
+		connectionCheck();
 		check_incoming_char();
 
 		if(panicFlag) {
@@ -675,11 +689,18 @@ int main(int argc, char **argv)
 			printf("%d ",button[i]);
 		}
 		#endif
-
+		// Fire Button Safety Check - Saumil
 		if (button[0])
-			break;
-			
-
+		{
+			if(mode!=0) {mode=1; panicFlag=1;}
+			else break;
+		}
+		// Connection Check - Saumil	
+		if(!connectionFlag)
+		{	
+			if(mode!=0) {printf("\nNo Connection! Panic Mode\n"); mode=1; panicFlag=1;}
+			else{ printf("\nNo Connection! Aborting ...\n"); break;}
+		}
 	}
 	term_exitio();
 	rs232_close();
