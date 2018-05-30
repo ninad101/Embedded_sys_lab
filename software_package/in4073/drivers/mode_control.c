@@ -9,7 +9,7 @@
 
 /*------------------------------------------------------------------
  * TODO List:
- *
+ *add key maps for controller coefficients, in pc-terminal
  *
  *
  *------------------------------------------------------------------
@@ -26,24 +26,22 @@ void calibrationMode(void)
 
 	printf("%s %d ","sp:", sp );
 	printf("%s %d ","sq:", sq );
-	printf("%s %d","sr:", sr );
+	printf("%s %d\n","sr:", sr );
 
 	if(fill_calibration_buffer()) {
 		calibrate_offset_acceleration();
 		mode = 0;
 
 		mode_change_acknowledged = false;
-
 		//set_acknowledge_flag();
 		send_mode_change();
-		switchMode(0);
 	}
 	//printf("%s %d\n","sp:", sp );
 }
 
 void manualMode(void)
 {
-	//printf("ManualMode\n");
+	printf("ManualMode\n");
 	setting_packet_values_manual_mode();
 	calculateMotorRPM();
 	update_motors();	
@@ -70,7 +68,28 @@ void safeMode(void)
 
 void yawMode(void)
 {
+	printf("YAW MODE\n");
+		if (check_sensor_int_flag()) 
+		{
+			get_dmp_data();
+			
+		
+		}
 	calculate_yaw_control();
+	calculateMotorRPM();
+	update_motors();
+}
+
+void fullMode(void)
+{
+	printf("full MODE\n");
+		if (check_sensor_int_flag()) 
+		{
+			get_dmp_data();
+		}
+	calculate_roll_control();
+	calculateMotorRPM();
+	update_motors();
 }
 
 void panicMode(void)
@@ -79,7 +98,7 @@ void panicMode(void)
 	ae[0]=200; ae[1]=200; ae[2]=200; ae[3]=200;
 	update_motors();
 	int b = 0;
-	for(int i=0;i<15;i++) printf(".\t");//{b = i;} //
+	for(int i=0;i<20000;i++) printf("wait\t");//{b = i;} //
 
 	b = b+b;
 
@@ -122,6 +141,11 @@ void switchMode(int mod)
 		case 4:
 			current_mode_function = &yawMode;
 			break;
+
+		case 5:
+			current_mode_function = &fullMode;
+			break;
+
 		case 9:
 			current_mode_function = &escapeMode;
 			break;

@@ -53,20 +53,27 @@ int panicFlag;
 bool demo_done;
 int batteryFlag;
 
+void check_data_type(void);
+
+
 // Control
 int16_t motor[4],ae[4];
+int32_t kp_yaw, kp1_roll, kp2_roll, kp1_pitch, kp2_pitch;
+int32_t pitch_error, yaw_error, roll_error;
 void update_motors(void);
 void panicMode(void);
 void escapeMode(void);
 void safeMode(void);
 void setting_packet_values_manual_mode(void);
 void calculate_yaw_control(void);
+void calculate_roll_control(void);
 void calculateMotorRPM(void);
 void run_filters_and_control(void);
 int connectionCheck(void);
 
 // Calibration
-#define CALIBRATION_BUFFER_SIZE 50
+#define CALIBRATION_BUFFER_SIZE 100
+#define MPU_1G 16384
 int saxValues[CALIBRATION_BUFFER_SIZE], sayValues[CALIBRATION_BUFFER_SIZE], sazValues[CALIBRATION_BUFFER_SIZE]; 
 int buffer_fill_index;
 int offset_sax, offset_say, offset_saz;
@@ -83,6 +90,7 @@ void manualMode(void);
 void calibrationMode(void);
 void switchMode(int);
 void yawMode(void);
+void fullMode(void);
 
 // Timers
 #define TIMER_PERIOD	50 //50ms=20Hz (MAX 23bit, 4.6h)
@@ -135,7 +143,6 @@ bool i2c_write(uint8_t slave_addr, uint8_t reg_addr, uint8_t length, uint8_t con
 bool i2c_read(uint8_t slave_addr, uint8_t reg_addr, uint8_t length, uint8_t *data);
 
 // MPU wrapper
-int16_t kp_yaw;
 int16_t phi, theta, psi;
 int16_t sp, sq, sr;
 int16_t sax, say, saz;

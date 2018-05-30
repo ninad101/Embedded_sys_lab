@@ -59,10 +59,10 @@ void process_key(uint8_t c)
 			if (ae[3] < 0) ae[3] = 0;
 			break;
 		case 'u':
-			kp_yaw += 5;	
+			//kp_yaw += 5;	
 			break;
 		case 'j':
-			kp_yaw -= 5;	
+			//kp_yaw -= 5;	
 			break;
 		case 27:
 			demo_done = true;
@@ -134,30 +134,6 @@ int main(void)
 			read_baro();
 			
 			//batteryMonitor();
-
-			// switch(mode)
-			// {
-			// 	case 0: 
-			// 		safeMode();
-			// 		break;
-			// 	case 1:
-			// 		panicMode();
-			// 		break;
-			// 	case 2:
-			// 		manualMode();
-			// 		calculateMotorRPM();
-			// 		update_motors();
-			// 		break;
-			// 	case 4:
-			// 		yawMode();
-			// 		calculateMotorRPM();
-			// 		update_motors();	
-			// 		break;
-			// 	case 9:
-			// 		escapeMode();
-			// 		break;
-					
-			// }
 			
 			//logData();
 			//readLoggedData();
