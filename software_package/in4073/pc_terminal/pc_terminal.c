@@ -215,6 +215,7 @@ int 	rs232_getchar()
 
 //TODO By Saumil
 //  Map keyboard inputs to values
+/*
 int keyboardToValue(char c) {
  switch(c)
  {
@@ -259,6 +260,9 @@ int keyboardToValue(char c) {
 	 case 'w' :
 	 ;
 	 break;
+ }
+}
+*/
 
 
 
@@ -629,9 +633,12 @@ int keyboardToValue(char c) {
 	 	mode = 0;
 	 break;
 	 case '1' :
+	 	if(mode!=0)
+		{
 	 	mode = 1;
 	 	printf("%s\n", "Going into panic mode");
 	 	panicFlag = 1;
+		}
 	 break;
 	 case '2' :
 	 	mode = 2;
