@@ -92,8 +92,7 @@ void readPacket(void);
 bool check_for_header(uint8_t);
 
 //filtering
-void filterFunction(); //Function that does filtering for roll, pitch and yaw
-
+void filterFunction(float curpsi, float m_phi, float m_theta); //Function that does filtering for roll, pitch and yaw
 
 // TWI
 #define TWI_SCL	4
