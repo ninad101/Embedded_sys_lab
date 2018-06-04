@@ -58,7 +58,7 @@ void check_data_type(void);
 // Control
 int16_t motor[4],ae[4];
 int32_t kp_yaw, kp1_roll, kp2_roll, kp1_pitch, kp2_pitch;
-int32_t pitch_error, yaw_error, roll_error;
+int32_t pitch_error, yaw_error, roll_error, lift_error;
 void update_motors(void);
 void panicMode(void);
 void escapeMode(void);
@@ -66,6 +66,7 @@ void safeMode(void);
 void setting_packet_values_manual_mode(void);
 void calculate_yaw_control(void);
 void calculate_roll_control(void);
+void heightControl(void);
 void calculateMotorRPM(void);
 void run_filters_and_control(void);
 int connectionCheck(void);
@@ -90,6 +91,7 @@ void calibrationMode(void);
 void switchMode(int);
 void yawMode(void);
 void fullMode(void);
+void heightMode(void);
 
 // Timers
 #define TIMER_PERIOD	50 //50ms=20Hz (MAX 23bit, 4.6h)

@@ -92,6 +92,17 @@ void fullMode(void)
 	update_motors();
 }
 
+void heightMode(void)
+
+{
+	printf("heightMode\n");
+	read_baro();
+	heightControl();
+	calculateMotorRPM();
+	update_motors();
+
+}
+
 void panicMode(void)
 {	
 	//printf("PANIC MODE\n");
@@ -145,6 +156,10 @@ void switchMode(int mod)
 		case 5:
 			current_mode_function = &fullMode;
 			break;
+
+		case 7 : 
+			current_mode_function = &heightMode;
+			break;	
 
 		case 9:
 			current_mode_function = &escapeMode;

@@ -30,7 +30,7 @@ void update_motors(void)
 	motor[1] = ae[1];
 	motor[2] = ae[2];
 	motor[3] = ae[3];
-	//printMotorValues();
+	printMotorValues();
 }
      
 /*--------------------------------------------------------------------------
@@ -49,7 +49,7 @@ void batteryMonitor()
  	 printf("low battery - panic mode enabled\n");
   	} 
 }
-
+//***********************MANUAL-MODE*************************//
 void setting_packet_values_manual_mode()
 {
 			lift = (int32_t) -1 * (values_Packet.lift -127)*256;
@@ -69,7 +69,7 @@ void calculate_yaw_control()
 			//int32_t yaw_error;
 			//int32_t kp_yaw = 5;
            // int32_t yaw_offset = 10; 
-		
+			if (kp_yaw < 1)	kp_yaw = 1;
 			lift = (int32_t) -1 * (values_Packet.lift -127)*256;// pos lift -> neg z
 			//printf("lift : %ld \n",lift);
 			roll = (int32_t)values_Packet.roll*256;
@@ -96,25 +96,57 @@ void calculate_roll_control()
 	
 
 
+	if (kp_yaw < 1)	kp_yaw = 1;
+	if (kp1_roll< 1) kp1_roll = 1;
+	if (kp2_roll < 1) kp2_roll = 1;
+	if (kp1_pitch < 1) kp1_pitch = 1;
+	if (kp2_pitch < 1) kp2_pitch = 1;
+
 	lift = (int32_t) -1 * (values_Packet.lift -127)*256;
 	
-	roll_error = ((int32_t)values_Packet.roll*256 -(int32_t) phi);
+	roll_error = ((int32_t)values_Packet.roll*256 - (int32_t) phi);
 	roll = kp1_roll*roll_error - kp2_roll*sp;
 
-	pitch_error = ((int32_t)values_Packet.pitch*256 -(int32_t) theta); 
+	pitch_error = ((int32_t)values_Packet.pitch*256 - (int32_t) theta); 
 	pitch = kp1_pitch*pitch_error - kp2_pitch*sq;
 
-	yaw_error =   (int32_t)(values_Packet.yaw*256) ; //add offset here
-	yaw =  kp_yaw*(yaw_error - sr);
+	yaw_error =   (int32_t)(values_Packet.yaw*256) - sr ; //add offset here
+	yaw =  kp_yaw*yaw_error;
 
 }
 
 
-//***********************MANUAL-MODE*************************//
+void heightControl()
+{
+
+        float preassure_sealevel = 1013.25;
+		float altitude;
+		float press = (float) pressure;
+		float temp = (float) temperature;
+		int32_t height ;
+		
+		
+		altitude =((pow((preassure_sealevel/press),1/5.257) - 1) * (temp + 273.15))/0.0065;
+
+
+		height = (int32_t) altitude;
+
+		printf("height : %ld\n ", height);	
+		lift_error =  (int32_t)-1*(values_Packet.lift -127)*256 + height/2000;
+		
+		lift = kp_yaw*lift_error;
+		roll = (int32_t)values_Packet.roll*256;
+		pitch = (int32_t)values_Packet.pitch*256;
+		yaw   = (int32_t)values_Packet.yaw*256;
+}
+
+
+
+
+//***********************ROTOR-CONTROL*************************//
 /*Manual Mode : Written by Ninad. Modified by Saumil(Fixed Lift, and Motor cappings.) */
 void calculateMotorRPM()
 {	
-	//int32_t 	lift, roll, pitch, yaw;
 	int32_t 	w0, w1, w2, w3; //rpm
 
 	int32_t b = 1;
