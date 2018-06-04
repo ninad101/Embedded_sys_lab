@@ -67,6 +67,7 @@ void safeMode(void);
 void setting_packet_values_manual_mode(void);
 void calculate_yaw_control(void);
 void calculate_roll_control(void);
+void raw_control(void);
 void calculateMotorRPM(void);
 void run_filters_and_control(void);
 int connectionCheck(void);
@@ -91,6 +92,7 @@ void calibrationMode(void);
 void switchMode(int);
 void yawMode(void);
 void fullMode(void);
+void rawMode(void);
 
 // Timers
 #define TIMER_PERIOD	50 //50ms=20Hz (MAX 23bit, 4.6h)
@@ -152,6 +154,14 @@ void get_dmp_data(void);
 void get_raw_sensor_data(void);
 bool check_sensor_int_flag(void);
 void clear_sensor_int_flag(void);
+
+//filter
+int16_t sr_0;
+int16_t sp_0;
+int16_t sq_0;
+int16_t sphi;
+int16_t stheta;
+void filterFunction(void);
 
 // Barometer
 int32_t pressure;

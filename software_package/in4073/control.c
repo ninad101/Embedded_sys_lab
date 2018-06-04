@@ -30,7 +30,7 @@ void update_motors(void)
 	motor[1] = ae[1];
 	motor[2] = ae[2];
 	motor[3] = ae[3];
-	//printMotorValues();
+	printMotorValues();
 }
      
 /*--------------------------------------------------------------------------
@@ -91,6 +91,11 @@ void calculate_roll_control()
 //	int32_t kp1_pitch = 2;
 //	int32_t kp2_pitch = 10;
 	
+	if(kp_yaw<1) kp_yaw=1;
+	if(kp1_pitch<1) kp1_pitch=1;
+	if(kp2_pitch<1) kp2_pitch=1;
+	if(kp2_roll<1) kp2_roll=1;
+	if(kp1_roll<1) kp1_roll=1;	
 
 
 	lift = (int32_t) -1 * (values_Packet.lift -127)*256;
@@ -106,7 +111,24 @@ void calculate_roll_control()
 
 }
 
+void raw_control()
+{
+ 
+			lift = (int32_t) -1 * (values_Packet.lift -127)*256;// pos lift -> neg z
+			//printf("lift : %ld \n",lift);
+			roll_error = ((int32_t)values_Packet.roll*256 -(int32_t) sphi);
+			roll = kp1_roll*roll_error - kp2_roll*sp_0;
+			//printf("roll : %ld \n",roll);
+			pitch_error = ((int32_t)values_Packet.pitch*256 -(int32_t) stheta); 
+			pitch = kp1_pitch*pitch_error - kp2_pitch*sq_0;
+			//printf("pitch : %ld \n",pitch);
+			yaw_error =(int32_t)(values_Packet.yaw*256) ;//add offset here
+		    printf("sr : %d \n",sr_0);
+			yaw =  kp_yaw*(yaw_error - sr_0);// setpoint is angular rate
+			//printf("yaw : %ld \n",yaw);
 
+
+}
 //***********************MANUAL-MODE*************************//
 /*Manual Mode : Written by Ninad. Modified by Saumil(Fixed Lift, and Motor cappings.) */
 void calculateMotorRPM()
@@ -203,4 +225,4 @@ void run_filters_and_control()
 
 	// ae[0] = xxx, ae[1] = yyy etc etc
 	update_motors();
-}	
+}

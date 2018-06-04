@@ -80,6 +80,28 @@ void yawMode(void)
 	update_motors();
 }
 
+void rawMode(void)
+{
+	printf("RAW MODE\n");
+	imu_init(false,100);
+	// if (check_sensor_int_flag()) 
+	// { get_dmp_data();
+	// }
+	// else{
+
+	// 	get_raw_sensor_data();		
+		
+	// }
+	get_raw_sensor_data();
+	//printf("before filter: %4d \n", sr);	
+	filterFunction();
+	// printf("filter: %4f", sr_0);
+    
+	raw_control();
+	calculateMotorRPM();
+	update_motors();
+}
+
 void fullMode(void)
 {
 	printf("full MODE\n");
@@ -144,6 +166,10 @@ void switchMode(int mod)
 
 		case 5:
 			current_mode_function = &fullMode;
+			break;
+		
+		case 6:
+			current_mode_function = &rawMode;
 			break;
 
 		case 9:

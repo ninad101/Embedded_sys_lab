@@ -142,10 +142,10 @@ int main(void)
 			clear_timer_flag();
 		}
 
-		if (check_sensor_int_flag()) 
-		{
-			get_dmp_data();
-		}
+		//if (check_sensor_int_flag()) 
+		//{
+		//get_raw_sensor_data();		
+		//}
 	}	
 
 	printf("\n\t Goodbye \n\n");
