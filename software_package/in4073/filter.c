@@ -53,8 +53,7 @@ void filterFunction()
 
     //variables
     int16_t a[2];
-    int16_t b[2]; 
-    int8_t i;
+    int16_t b[2];
     float_t p2phi=0;
     float_t s2theta=0;
     int16_t c1;
@@ -74,6 +73,7 @@ void filterFunction()
     x[0]=sr; 
     int16_t x0=float2fix2(x[0]);   
     int16_t x1=float2fix2(x[1]); 
+    int16_t y0=float2fix2(y[0]);
     int16_t y1=float2fix2(y[1]);
     y0 = fixsub2( fixadd2( fixmul2(x0,a[0]), fixmul2(x1,a[1])), fixmul2(y1,b[1]));
     y0 = fixdiv2(y0,b[0]);
@@ -107,16 +107,16 @@ void filterFunction()
     //-------------UNUSED CODE-----------------    
 
     printf("after filter sr: %4d \n", sr_0);
-    // printf("after filter sp: %4d \n", sp_0);
-    // printf("after filter sq: %4d \n", sq_0);
-    // printf("after filter sphi: %4d \n", sphi);    
-    // printf("after filter stheta: %4d \n", stheta);        
+    printf("after filter sp: %4d \n", sp_0);
+    printf("after filter sq: %4d \n", sq_0);
+    printf("after filter sphi: %4d \n", sphi);    
+    printf("after filter stheta: %4d \n", stheta);        
 
     //return sp_0 and sq_0
 
     //float sr_old[12];
     //float a[5];
-    // float b[5];
+    // float b[5];  
     // float x[12];
     //int8_t i;
     //float new_sr[12];
