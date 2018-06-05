@@ -68,25 +68,19 @@ void filterFunction()
     b[0]=float2fix2(1);
     b[1]=float2fix2(0.103425);
 
-    //update x and y history
-    for(i=1;i>0;i--)
-    {
-        x[i]=x[i-1];
-        y[i]=y[i-1];
-    }
-
-    printf("before filter sr: %4d \n",sr);
+    //printf("before filter sr: %4d \n",sr);
 
     //Filtering Process
     x[0]=sr; 
     int16_t x0=float2fix2(x[0]);   
-    int16_t x1=float2fix2(x[1]);
-    int16_t y0=float2fix2(y[0]);   
+    int16_t x1=float2fix2(x[1]); 
     int16_t y1=float2fix2(y[1]);
     y0 = fixsub2( fixadd2( fixmul2(x0,a[0]), fixmul2(x1,a[1])), fixmul2(y1,b[1]));
     y0 = fixdiv2(y0,b[0]);
     y[0] = fix2float2(y0);
-    sr_0 = y[0];    
+    sr_0 = y[0];
+    y[1]=y[0];
+    x[1]=x[0];  
 
 
     //Kalman Filtering for Roll and Pitch
