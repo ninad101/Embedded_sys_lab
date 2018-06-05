@@ -73,7 +73,9 @@ void filterFunction()
     {
         x[i]=x[i-1];
         y[i]=y[i-1];
-    }    
+    }
+
+    printf("before filter sr: %4d \n",sr);
 
     //Filtering Process
     x[0]=sr; 
@@ -83,11 +85,12 @@ void filterFunction()
     int16_t y1=float2fix2(y[1]);
     y0 = fixsub2( fixadd2( fixmul2(x0,a[0]), fixmul2(x1,a[1])), fixmul2(y1,b[1]));
     y0 = fixdiv2(y0,b[0]);
-    sr_0 = fix2float2(y0);
+    y[0] = fix2float2(y0);
+    sr_0 = y[0];    
 
 
     //Kalman Filtering for Roll and Pitch
-    p2phi=1.5; //give some value
+    p2phi=1.5;
     s2theta=1.2;
     c1=1000;
     c2=10;
@@ -109,7 +112,7 @@ void filterFunction()
     
     //-------------UNUSED CODE-----------------    
 
-    //printf("after filter sr: %4d \n", sr_0);
+    printf("after filter sr: %4d \n", sr_0);
     // printf("after filter sp: %4d \n", sp_0);
     // printf("after filter sq: %4d \n", sq_0);
     // printf("after filter sphi: %4d \n", sphi);    
@@ -151,7 +154,7 @@ void filterFunction()
     // }
         
     
-    //-------------------fixed point implementation - type 1
+    //ixed point implementation - type 1
 
     // int32_t float2fix(float x1)
     // {
