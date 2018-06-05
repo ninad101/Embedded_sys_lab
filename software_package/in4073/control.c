@@ -123,7 +123,7 @@ void raw_control()
 			pitch = kp1_pitch*pitch_error - kp2_pitch*sq_0;
 			//printf("pitch : %ld \n",pitch);
 			yaw_error =(int32_t)(values_Packet.yaw*256) ;//add offset here
-		    printf("sr : %d \n",sr_0);
+		    //printf("sr : %d \n",sr_0);
 			yaw =  kp_yaw*(yaw_error - sr_0);// setpoint is angular rate
 			//printf("yaw : %ld \n",yaw);
 
