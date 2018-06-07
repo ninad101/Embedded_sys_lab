@@ -16,6 +16,17 @@
 #include <stdint.h>
 #include <unistd.h>
 
+// for P
+#define RATE_SHIFT_YAW 2            // yaw rate reading divider                   2047 bit    =   2000 deg/s
+#define RATE_GAIN_SHIFT_YAW 0       // yaw gain divider                           does not need divider
+// for P1
+#define ANGLE_SHIFT 4               // roll and pitch attitude reading divider    1023 bit    =   90 deg
+#define ANGLE_GAIN_SHIFT 3          // roll and pitch gain divider                give 1/8 step for gain multiplication
+// for P2
+#define RATE_SHIFT 4                // roll and pitch rate reading divider        2047 bit    =   2000 deg/s        
+#define RATE_GAIN_SHIFT 1           // roll and pitch gain divider                give 1/2 step for gain multiplication
+
+
 int32_t 	lift, roll, pitch, yaw;
 
 
@@ -46,13 +57,12 @@ void batteryMonitor()
 {
   	if (bat_volt < 10.85){//low voltage
   	panicMode();
- 	 printf("low battery - panic mode enabled\n");
   	} 
 }
 //***********************MANUAL-MODE*************************//
 void setting_packet_values_manual_mode()
 {
-			lift = (int32_t) -1 * (values_Packet.lift -127)*256;
+			lift =  (int32_t)-1 * (values_Packet.lift -127)*256;
 			roll = (int32_t)(values_Packet.roll)*256;
 			pitch = (int32_t)(values_Packet.pitch)*256;
 			yaw = (int32_t)(values_Packet.yaw)*256;
@@ -60,80 +70,43 @@ void setting_packet_values_manual_mode()
 }
 
 
-//**********************YAW-CONTROL***********************//
+/**********************YAW-CONTROL**********************
 
-//written by : ninad
-//get a yaw offset of int16_t from caliberation mode
+--written by : ninad
+*/
 void calculate_yaw_control()
 {
-			//int32_t yaw_error;
-			//int32_t kp_yaw = 5;
-           // int32_t yaw_offset = 10; 
 			if (kp_yaw < 1)	kp_yaw = 1;
 			lift = (int32_t) -1 * (values_Packet.lift -127)*256;// pos lift -> neg z
-			//printf("lift : %ld \n",lift);
 			roll = (int32_t)values_Packet.roll*256;
-			//printf("roll : %ld \n",roll);
 			pitch = (int32_t)values_Packet.pitch*256;
-			//printf("pitch : %ld \n",pitch);
-			yaw_error =(int32_t)(values_Packet.yaw*256) ;//add offset here
-		   // printf("sr : %d \n",sr);
-			yaw =  kp_yaw*(yaw_error - sr);// setpoint is angular rate
-	//printf("yaw : %ld \n",yaw);
+			yaw_error =(((int32_t)values_Packet.yaw*256)>>RATE_SHIFT_YAW) + ((sr - cr)>>RATE_SHIFT_YAW) ;//add offset here
+			yaw =  (kp_yaw*yaw_error)>>RATE_GAIN_SHIFT_YAW;// setpoint is angular rate
 }
 
 //**********************FULL-CONTROL********************//
 //written by : Ninad
 void calculate_roll_control()
-{	//add roll and pitch offsets from calibration mode
-	//int32_t  roll_error;// pitch_error;
-//	int32_t kp_yaw = 5;
-    //int32_t yaw_offset = 10; 
-//	int32_t kp1_roll = 0;   
-//	int32_t kp2_roll = -3;
-//	int32_t kp1_pitch = 2;
-//	int32_t kp2_pitch = 10;
-	
-
-
+{	
 	if (kp_yaw < 1)	kp_yaw = 1;
 	if (kp1_roll< 1) kp1_roll = 1;
 	if (kp2_roll < 1) kp2_roll = 1;
 	if (kp1_pitch < 1) kp1_pitch = 1;
 	if (kp2_pitch < 1) kp2_pitch = 1;
 
-	lift = (int32_t) -1 * (values_Packet.lift -127)*256;
-	
-	roll_error = ((int32_t)values_Packet.roll*256 - (int32_t) phi);
-	roll = kp1_roll*roll_error - kp2_roll*sp;
-
-	pitch_error = ((int32_t)values_Packet.pitch*256 - (int32_t) theta); 
-	pitch = kp1_pitch*pitch_error - kp2_pitch*sq;
-
-	yaw_error =   (int32_t)(values_Packet.yaw*256) - sr ; //add offset here
-	yaw =  kp_yaw*yaw_error;
-
+	lift = (int32_t)-1 * (values_Packet.lift -127)*256;
+	roll_error = (((int32_t)values_Packet.roll*256) -  ((phi - cphi)>>ANGLE_SHIFT));
+	roll = ((kp1_roll*roll_error)>>ANGLE_GAIN_SHIFT) - (kp2_roll*((sp-cq)>>RATE_SHIFT)>>RATE_GAIN_SHIFT);
+	pitch_error = (((int32_t)values_Packet.pitch*256) -  ((theta-ctheta)>>ANGLE_SHIFT)); 
+	pitch = ((kp1_pitch*pitch_error)>>ANGLE_GAIN_SHIFT) - (kp2_pitch*((sq-cq)>>RATE_SHIFT)>>RATE_GAIN_SHIFT);
+	yaw_error =   (((int32_t)values_Packet.yaw*256)>>RATE_SHIFT_YAW) + ((sr-cr)>>RATE_SHIFT_YAW) ; //add offset here
+	yaw =  (kp_yaw*yaw_error)>>RATE_GAIN_SHIFT_YAW;
 }
 
 
 void heightControl()
-{
-
-        float preassure_sealevel = 1013.25;
-		float altitude;
-		float press = (float) pressure;
-		float temp = (float) temperature;
-		int32_t height ;
-		
-		
-		altitude =((pow((preassure_sealevel/press),1/5.257) - 1) * (temp + 273.15))/0.0065;
-
-
-		height = (int32_t) altitude;
-
-		printf("height : %ld\n ", height);	
-		lift_error =  (int32_t)-1*(values_Packet.lift -127)*256 + height/2000;
-		
+{	
+		lift_error =  (int32_t)-1*(values_Packet.lift -127)*256 ;
 		lift = kp_yaw*lift_error;
 		roll = (int32_t)values_Packet.roll*256;
 		pitch = (int32_t)values_Packet.pitch*256;

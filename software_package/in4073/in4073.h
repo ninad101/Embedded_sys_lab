@@ -72,13 +72,16 @@ void run_filters_and_control(void);
 int connectionCheck(void);
 
 // Calibration
-#define CALIBRATION_BUFFER_SIZE 100
-#define MPU_1G 16384
-int saxValues[CALIBRATION_BUFFER_SIZE], sayValues[CALIBRATION_BUFFER_SIZE], sazValues[CALIBRATION_BUFFER_SIZE]; 
-int buffer_fill_index;
-int offset_sax, offset_say, offset_saz;
-bool fill_calibration_buffer(void);
-void calibrate_offset_acceleration(void);
+//#define CALIBRATION_BUFFER_SIZE 100
+//#define MPU_1G 16384
+//int saxValues[CALIBRATION_BUFFER_SIZE], sayValues[CALIBRATION_BUFFER_SIZE], sazValues[CALIBRATION_BUFFER_SIZE]; 
+//int buffer_fill_index;
+//int offset_sax, offset_say, offset_saz;
+//bool fill_calibration_buffer(void);
+int32_t cphi, ctheta, cpsi;         ///< Calibration values of phi, theta, psi
+int32_t cp, cq, cr;                ///< Calibration valies of p, q and r
+int32_t csax, csay;     
+void calibration(void);
 
 // Mode
 uint8_t prevMode;

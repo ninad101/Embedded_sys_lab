@@ -19,7 +19,7 @@
 
 //Written by Yuup
 void calibrationMode(void)
-{
+{/*
 	printf("%s %d ","phi:", phi );
 	printf("%s %d ","theta:", theta );
 	printf("%s %d","psi:", psi );
@@ -37,11 +37,20 @@ void calibrationMode(void)
 		send_mode_change();
 	}
 	//printf("%s %d\n","sp:", sp );
+*/
+mode = 0;
+void calibration();
+//printf("%s %d %d %d\n", "Offesets are: ", csax, csax, cphi );
+
+mode_change_acknowledged = false;
+send_mode_change();
+
+
 }
 
 void manualMode(void)
 {
-	printf("ManualMode\n");
+	//printf("ManualMode\n");
 	setting_packet_values_manual_mode();
 	calculateMotorRPM();
 	update_motors();	
@@ -58,7 +67,6 @@ void escapeMode(void)
 void safeMode(void)
 {	
 	panicFlag=0;
-	//printf("SAFE MODE\n");
 	ae[0] = 0;
 	ae[1] = 0;
 	ae[2] = 0;
@@ -68,7 +76,7 @@ void safeMode(void)
 
 void yawMode(void)
 {
-	printf("YAW MODE\n");
+//	printf("YAW MODE\n");
 		if (check_sensor_int_flag()) 
 		{
 			get_dmp_data();
@@ -82,7 +90,7 @@ void yawMode(void)
 
 void fullMode(void)
 {
-	printf("full MODE\n");
+//	printf("full MODE\n");
 		if (check_sensor_int_flag()) 
 		{
 			get_dmp_data();
@@ -95,7 +103,7 @@ void fullMode(void)
 void heightMode(void)
 
 {
-	printf("heightMode\n");
+//	printf("heightMode\n");
 	read_baro();
 	heightControl();
 	calculateMotorRPM();
@@ -109,7 +117,7 @@ void panicMode(void)
 	ae[0]=200; ae[1]=200; ae[2]=200; ae[3]=200;
 	update_motors();
 	int b = 0;
-	for(int i=0;i<20000;i++) printf("wait\t");//{b = i;} //
+	for(int i=0;i<20000;i++) //printf("wait\t");//{b = i;} //
 
 	b = b+b;
 
@@ -130,7 +138,7 @@ void panicMode(void)
 
 void switchMode(int mod)
 {
-	printf("%s%d\n","Wanting to switch mode to: ", mod );
+//	printf("%s%d\n","Wanting to switch mode to: ", mod );
 
 	switch(mod)
 	{
@@ -146,7 +154,7 @@ void switchMode(int mod)
 			break;
 		case 3:
 			prevAcknowledgeMode = 3;
-			buffer_fill_index = 0;
+		//	buffer_fill_index = 0;
 			current_mode_function = &calibrationMode;
 			break;
 		case 4:
