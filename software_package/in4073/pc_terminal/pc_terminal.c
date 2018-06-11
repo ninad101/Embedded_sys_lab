@@ -655,6 +655,8 @@ int keyboardToValue(char c) {
 		if(mode==0)
 		mode=9;
 		break;
+	case '7' :
+		mode = 7;	 
  	//changes kp_yaw++
 	case 'u' :
 		specialdataType = true;

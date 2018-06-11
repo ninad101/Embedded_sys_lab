@@ -141,32 +141,32 @@ void check_data_type(void)
 		case 10:
 			if((int8_t)values_Packet.pitch < 40) {
 				kp_yaw++;
-				//printf("%s%d Pit:%d\n", "kp_yaw++: ", kp_yaw, (int8_t) values_Packet.pitch);
+				//printf("%s%ld Pit:%d\n", "kp_yaw++: ", kp_yaw, (int8_t) values_Packet.pitch);
 			} else {
 				kp_yaw--;
-				//printf("%s%d Pit:%d\n", "kp_yaw--: ", kp_yaw, (int8_t) values_Packet.pitch);
+				//printf("%s%ld Pit:%d\n", "kp_yaw--: ", kp_yaw, (int8_t) values_Packet.pitch);
 			}
 			break;
 		case 20:
 			if((int8_t)values_Packet.pitch < 40) {
 				kp1_pitch++;
 				kp1_roll++;
-				//printf("%s%d Pit:%d\n", "kp1_roll++: ",(int)kp1_roll, (int8_t) values_Packet.pitch);
+				//printf("%s%ld Pit:%d\n", "kp1_roll++: ",(int)kp1_roll, (int8_t) values_Packet.pitch);
 			} else {
 				kp1_pitch--;
 				kp1_roll--;
-				//printf("%s%d Pit:%d\n", "kp1_roll--: ",(int) kp1_roll, (int8_t) values_Packet.pitch);
+				//printf("%s%ld Pit:%d\n", "kp1_roll--: ",(int) kp1_roll, (int8_t) values_Packet.pitch);
 			}
 			break;
 		case 30:
 			if((int8_t)values_Packet.pitch < 40) {
 				kp2_pitch++;
 				kp2_roll++;
-				//printf("%s%d Pit:%d\n", "kp2_roll++: ",(int) kp2_roll, (int8_t) values_Packet.pitch);
+				//printf("%s%ld Pit:%d\n", "kp2_roll++: ",(int) kp2_roll, (int8_t) values_Packet.pitch);
 			} else {
 				kp2_pitch--;
 				kp2_roll--;
-				//printf("%s%d Pit:%d\n", "kp2_roll--: ",(int)kp2_roll, (int8_t) values_Packet.pitch);
+				//printf("%s%ld Pit:%d\n", "kp2_roll--: ",(int)kp2_roll, (int8_t) values_Packet.pitch);
 			}
 			break;
 		case 40:
@@ -337,8 +337,13 @@ uint8_t readPacket()
 		}
 	}
 
+<<<<<<< HEAD
 	//printPacket();
 	//printf("%s%d\n", "p_c:", rx_queue.count);
+=======
+//	printPacket();
+
+>>>>>>> master
 	return mode;
 }
 

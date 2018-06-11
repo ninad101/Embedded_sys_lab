@@ -87,10 +87,34 @@ void logData(void); //function to call where all data is logged. Call this in in
 void readLoggedData(void); //read data from the flash
 void logReset(void); //resets the addresses to write & read in flash and erases the flash chip
 
+
+bool raw_status;
+bool init_raw;
+int rawFlag ;
+
+//filter
+
+
+int16_t estimated_p;
+int16_t estimated_q;
+int16_t estimated_theta;
+int16_t estimated_phi;
+
+
+int16_t r_butter;
+
+
+
+
+//void kalman(void);
+
+void filter_function(void);
+
+
 // Control
 int16_t motor[4],ae[4];
 int32_t kp_yaw, kp1_roll, kp2_roll, kp1_pitch, kp2_pitch;
-int32_t pitch_error, yaw_error, roll_error;
+int32_t pitch_error, yaw_error, roll_error, lift_error;
 void update_motors(void);
 void panicMode(void);
 void escapeMode(void);
@@ -98,18 +122,23 @@ void safeMode(void);
 void setting_packet_values_manual_mode(void);
 void calculate_yaw_control(void);
 void calculate_roll_control(void);
+void heightControl(void);
+void rawControl(void);
 void calculateMotorRPM(void);
 void run_filters_and_control(void);
 int connectionCheck(void);
 
 // Calibration
-#define CALIBRATION_BUFFER_SIZE 100
-#define MPU_1G 16384
-int saxValues[CALIBRATION_BUFFER_SIZE], sayValues[CALIBRATION_BUFFER_SIZE], sazValues[CALIBRATION_BUFFER_SIZE]; 
-int buffer_fill_index;
-int offset_sax, offset_say, offset_saz;
-bool fill_calibration_buffer(void);
-void calibrate_offset_acceleration(void);
+//#define CALIBRATION_BUFFER_SIZE 100
+//#define MPU_1G 16384
+//int saxValues[CALIBRATION_BUFFER_SIZE], sayValues[CALIBRATION_BUFFER_SIZE], sazValues[CALIBRATION_BUFFER_SIZE]; 
+//int buffer_fill_index;
+//int offset_sax, offset_say, offset_saz;
+//bool fill_calibration_buffer(void);
+int32_t cphi, ctheta, cpsi, cpressure;         ///< Calibration values of phi, theta, psi
+int32_t cp, cq, cr;                ///< Calibration valies of p, q and r
+int32_t csax, csay;     
+void calibration(void);
 
 // Mode
 uint8_t prevMode;
@@ -122,6 +151,7 @@ void calibrationMode(void);
 void switchMode(int);
 void yawMode(void);
 void fullMode(void);
+void heightMode(void);
 
 // Timers
 #define TIMER_PERIOD	50 //50ms=20Hz (MAX 23bit, 4.6h)
