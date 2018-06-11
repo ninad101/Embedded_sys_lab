@@ -16,7 +16,6 @@
 #include <stdbool.h>
 #include <pthread.h>
 #include "pc_queue.c"
-
 /*------------------------------------------------------------
  * Global Variables
  *------------------------------------------------------------
@@ -546,6 +545,7 @@ uint8_t map_char_to_uint8_t(char v)
 	return res;
 }
 
+
 bool header_found;
 
 void check_incoming_char(void)
@@ -562,7 +562,7 @@ void check_incoming_char(void)
 		if(header_found)
 		{
 			mode = NULL;
-			mode = (uint8_t) map_char_to_uint8_t(c);
+			mode = (uint8_t) c-48;
 			//printf("mode found: %d\n", (uint8_t) mode);
 			tcflush(fd_RS232, TCIOFLUSH); /* flush I/O buffer */
 		}
@@ -613,7 +613,12 @@ int keyboardToValue(char c) {
  switch(c)
  {
 	 case 27:
-	 	mode = 9;
+	 	if(mode!=0){
+	 		mode = 1;
+		 	panicFlag=1;
+		}
+		else
+		exit(0);
 		break;
 	 case '0' :
 	 	mode = 0;
@@ -627,20 +632,29 @@ int keyboardToValue(char c) {
 		}
 	 break;
 	 case '2' :
+	 	if(mode==0)
 	 	mode = 2;
 	 break;
 	 case '3' :
+	 	if(mode==0)
 	 	mode = 3;
 	 	break;
 	 case '4' :
+	 	if(mode==0)
 	 	mode = 4;
 	 	break;
 	case '5' :
+		if(mode==0)
 	 	mode = 5;
 	 	break;
 	case '6' :
+		if(mode==0)
 	 	mode = 6;
 	 	break;
+	case 'x' :
+		if(mode==0)
+		mode=9;
+		break;
  	//changes kp_yaw++
 	case 'u' :
 		specialdataType = true;
@@ -744,7 +758,7 @@ int keyboardToValue(char c) {
  *----------------------------------------------------------------
  */
 int main(int argc, char **argv)
-{
+{	
 	int 		fd;
 	header_found = false;
 	specialdataType = false;

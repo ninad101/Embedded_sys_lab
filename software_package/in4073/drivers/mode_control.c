@@ -41,17 +41,21 @@ void calibrationMode(void)
 
 void manualMode(void)
 {
-
 	setting_packet_values_manual_mode();
 	calculateMotorRPM();
 	update_motors();	
 }
 
-void escapeMode(void)
+void loggingMode(void)
 {
-	panicMode();
-	demo_done = true;
-	//exit(0);
+	while(readAddress != writeAddress)
+	readLoggedData();
+	logReset();
+	mode = 0;	
+	mode_change_acknowledged = false;
+		//set_acknowledge_flag();
+	send_mode_change();
+
 }
 
 //Written By Saumil
@@ -150,7 +154,7 @@ void switchMode(int mod)
 			break;
 
 		case 9:
-			current_mode_function = &escapeMode;
+			current_mode_function = &loggingMode;
 			break;
 		//default:
 		//11	current_mode_function = &safeMode;
