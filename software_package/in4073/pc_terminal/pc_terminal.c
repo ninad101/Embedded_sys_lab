@@ -14,6 +14,8 @@
 #include <inttypes.h>
 #include <time.h>
 #include <stdbool.h>
+#include <pthread.h>
+#include "pc_queue.c"
 
 /*------------------------------------------------------------
  * Global Variables
@@ -21,10 +23,11 @@
  */
 
 #define HEADER 0b11010000
-#define JOYSTICK_CONNECTED 1
+//#define JOYSTICK_CONNECTED 1
 //#define JOYSTICK_DEBUG 2
 #define CRC16_DNP	0x3D65
 #define HEADER 0b11010000
+#define JS_DEV	"/dev/input/js0"
 
 
 
@@ -47,6 +50,23 @@ struct mode_packet {
 	uint8_t mode;
 	char ender;
 } mode_change_packet;
+
+#define PC_PACKET_SIZE 10
+struct send_pc_packet{
+	uint8_t header;
+	uint8_t dataType;
+	uint8_t val1_1;
+	uint8_t val1_2;
+	uint8_t val2_1;
+	uint8_t val2_2;
+	uint8_t val3_1;
+	uint8_t val3_2;
+	uint8_t val4_1;
+	uint8_t val4_2;
+} pc_packet;
+queue rx_queue;
+
+int16_t motor[4];
 
 /*------------------------------------------------------------
  * console I/O
@@ -125,7 +145,7 @@ int	term_getchar()
 #include <stdlib.h>
 #include "joystick.h"
 #include <errno.h>
-#define JS_DEV	"/dev/input/js1"
+
 
 int	axis[6];
 int	button[12];
@@ -144,7 +164,6 @@ void rs232_open(void)
    	fd_RS232 = open("/dev/ttyUSB0", O_RDWR | O_NOCTTY);  // Hardcode your serial port here, or request it as an argument at runtime
 
 	assert(fd_RS232>=0);
-
   	result = isatty(fd_RS232);
   	assert(result == 1);
 
@@ -198,6 +217,7 @@ int	rs232_getchar_nb()
 	else
 	{
 		assert(result == 1);
+		enqueue(&rx_queue, c);
 		return (int) c;
 	}
 }
@@ -213,103 +233,6 @@ int 	rs232_getchar()
 	return c;
 }
 
-//TODO By Saumil
-//  Map keyboard inputs to values
-/*
-int keyboardToValue(char c) {
- switch(c)
- {
-	 case 27:
-	 	mode = 9;
-		break;
-	 case '0' :
-	 	mode = 0;
-	 break;
-	 case '1' :
-	 	if(mode!=0)
-		{
-	 	mode = 1;
-	 	printf("%s\n", "Going into panic mode");
-	 	panicFlag = 1;
-		}
-	 break;
-	 case '2' :
-	 	mode = 2;
-	 break;
-	 case '3' :
-	 	mode = 3;
-	 	break;
-	 case '4' :
-	 	mode = 4;
-	 	break;
-	case '5' :
-	 	mode = 5;
-	 	break;
-	case '6' :
-	 	mode = 6;
-	 	break;
-	 case 'a' :
-	 ;
-	 break;
-	 case 'z' :
-	 ;
-	 break;
-	 case 'q' :
-	 ;
-	 break;
-	 case 'w' :
-	 ;
-	 break;
- }
-}
-*/
-
-
-
-
-// Function written by Yuup
-// 5/5/2018
-int rs232_putchar_with_header(uint32_t c)
-{
-
-	char roll, pitch, yaw, lift;
-	roll 	= (c 	   & 0xFF);
-	pitch 	= ((c>>8)  & 0xFF);
-	yaw 	= ((c>>16) & 0xFF);
-	lift	= ((c>>24) & 0xFF);
-
-	char packet[7] = {HEADER, roll, pitch, yaw, lift, 0b00000001, 0b00000001};
-
-	int result;
-
-	do {
-		result = (int) write(fd_RS232, &packet, 7);
-	} while (result == 0);
-
-	assert(result==7);
-	return result;
-
-}
-
-
-unsigned int crc16(unsigned int crcValue, unsigned char newByte) 
-{
-	unsigned char i;
-
-	for (i = 0; i < 8; i++) {
-
-		if (((crcValue & 0x8000) >> 8) ^ (newByte & 0x80)){
-			crcValue = (crcValue << 1)  ^ CRC16_DNP;
-		}else{
-			crcValue = (crcValue << 1);
-		}
-
-		newByte <<= 1;
-	}
-  
-	return crcValue;
-}
-
 // Function written by Yuup
 // 8/5/2018
 int check_mode_selection(char c) {
@@ -322,9 +245,7 @@ int check_mode_selection(char c) {
 
 }
 
-
-
-int 	rs232_putchar(char c)
+int rs232_putchar(char c)
 {
 	int result;
 
@@ -337,8 +258,6 @@ int 	rs232_putchar(char c)
 	assert(result == 1);
 	return result;
 }
-
-
 
 /*------------------------------------------------------------------
  * stolen from internet to see the bits of an int
@@ -510,6 +429,81 @@ void send_Panic_Packet(void)
 
 }
 
+/*------------------------------------------------------------------
+ * readPacket 
+ *------------------------------------------------------------------
+ */
+bool check_for_header(uint8_t h) 
+{
+	bool isHeader = false;
+	uint8_t check = h;
+
+	check = check >> 4;
+	if(check == 0b00001101) {
+		isHeader = true;
+	}
+
+	return isHeader;
+}
+
+
+uint8_t read_incoming_packet(void)
+{
+	//Packet is 8 bytes
+	bool headerFound = false;
+	do {
+		pc_packet.header = dequeue(&rx_queue);
+		//fprintf(stderr, "header: %d count: %d\n", pc_packet.header, rx_queue.count);
+		headerFound = check_for_header( pc_packet.header);
+	} while( !headerFound && (rx_queue.count > 9) );
+
+	if(!headerFound || (rx_queue.count < 9) ) {
+		//fprintf(stderr, "%s\n", "Could not find packet");
+		return mode;
+	}
+
+	pc_packet.dataType = dequeue(&rx_queue);
+	pc_packet.val1_1 = dequeue(&rx_queue);
+	pc_packet.val1_2 = dequeue(&rx_queue);
+	pc_packet.val2_1 = dequeue(&rx_queue);
+	pc_packet.val2_2 = dequeue(&rx_queue);
+	pc_packet.val3_1 = dequeue(&rx_queue);
+	pc_packet.val3_2 = dequeue(&rx_queue);
+	pc_packet.val4_1 = dequeue(&rx_queue);
+	pc_packet.val4_2 = dequeue(&rx_queue);
+
+
+	uint8_t mode_b = (uint8_t) pc_packet.header;
+	//hack hack hack hack [=
+	mode_b = mode_b << 4;
+	mode_b = mode_b >> 4;
+	//fprintf(stderr, "%s%d\n", "current mode: ", pc_packet.header );
+
+	if(pc_packet.dataType == 'm') {
+		motor[0] = (int16_t) (pc_packet.val1_1 << 8) | pc_packet.val1_2;
+		motor[1] = (int16_t) (pc_packet.val2_1 << 8) | pc_packet.val2_2;
+		motor[2] = (int16_t) (pc_packet.val3_1 << 8) | pc_packet.val3_2;	
+		motor[3] = (int16_t) (pc_packet.val4_1 << 8) | pc_packet.val4_2;
+		fprintf(stderr, "MODE: %d   motor[0]: %d motor[1]: %d motor[2]: %d motor[3]: %d\n", mode_b, motor[0], motor[1], motor[2], motor[3]);
+	} else if(pc_packet.dataType == 'p') {
+		mode = mode_b;
+		panicFlag = false;
+		create_Packet();
+		send_Packet();
+		fprintf(stderr, "%s %d\n", "Switching to mode ", mode);
+	} else if(pc_packet.dataType == 'o') {
+		mode = mode_b;
+		panicFlag = true;
+		fprintf(stderr, "%s\n", "In panic mode");
+	} else if (pc_packet.dataType == 'c') {
+		mode = mode_b;
+		fprintf(stderr, "%s\n", "Calibration mode" );
+	}
+
+
+}
+
+
 uint8_t map_char_to_uint8_t(char v)
 {
 	uint8_t res = 0;
@@ -561,22 +555,16 @@ void check_incoming_char(void)
 	int packet_counter = 0;
 	uint8_t newMode;
 	char c;
-
-	//rs232 get char, c - input from the rs232 connection
-
-
+	
 	if ((c = rs232_getchar_nb()) != -1)
 	{
 
 		if(header_found)
 		{
-
 			mode = NULL;
 			mode = (uint8_t) map_char_to_uint8_t(c);
-			printf("mode found: %d\n", (uint8_t) mode);
+			//printf("mode found: %d\n", (uint8_t) mode);
 			tcflush(fd_RS232, TCIOFLUSH); /* flush I/O buffer */
-
-
 		}
 
 		if(c == '#') {
@@ -587,8 +575,6 @@ void check_incoming_char(void)
 
 		term_putchar(c);
 	}
-
-
 
 }
 
@@ -636,7 +622,7 @@ int keyboardToValue(char c) {
 	 	if(mode!=0)
 		{
 	 	mode = 1;
-	 	printf("%s\n", "Going into panic mode");
+	 	//printf("%s\n", "Going into panic mode");
 	 	panicFlag = 1;
 		}
 	 break;
@@ -795,19 +781,21 @@ int main(int argc, char **argv)
 
 	int msec = 0, trigger = 10; /* 10ms */
 	clock_t startTime = clock();
-
+	init_queue(&rx_queue);
 
 	int counter = 0;
 	/* send & receive
 	 */
 	for (;;)
 	{	
+
 		connectionCheck();
-		check_incoming_char();
+		rs232_getchar_nb();
+		//check_incoming_char();
 
 		if(panicFlag) {
 			send_Panic_Packet();
-		} else if(counter > 0){
+		} else if(counter > 12){
 			counter = 0;
 			create_Packet();
 			send_Packet();
@@ -864,6 +852,14 @@ int main(int argc, char **argv)
 			if(mode!=0) {printf("\nNo Connection! Panic Mode\n"); mode=1; panicFlag=1;}
 			else{ printf("\nNo Connection! Aborting ...\n"); break;}
 		}
+
+		if(rx_queue.count >= 10)
+		{
+			//fprintf(stderr, "%s\n", "Going to read packer");
+			read_incoming_packet();
+		}
+		//fprintf(stderr, "%s%d\n", "rx_queue: ", rx_queue.count );
+
 	}
 	term_exitio();
 	rs232_close();
