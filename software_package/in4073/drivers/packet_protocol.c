@@ -337,13 +337,7 @@ uint8_t readPacket()
 		}
 	}
 
-<<<<<<< HEAD
-	//printPacket();
-	//printf("%s%d\n", "p_c:", rx_queue.count);
-=======
-//	printPacket();
 
->>>>>>> master
 	return mode;
 }
 

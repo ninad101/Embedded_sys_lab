@@ -23,14 +23,14 @@ int batteryFlag=1;
 #define RATE_GAIN_SHIFT_PRESS 0
 
 // for P
-#define RATE_SHIFT_YAW 2            // yaw rate reading divider                   2047 bit    =   2000 deg/s
+#define RATE_SHIFT_YAW 0           // yaw rate reading divider                   2047 bit    =   2000 deg/s
 #define RATE_GAIN_SHIFT_YAW 0       // yaw gain divider                           does not need divider
 // for P1
-#define ANGLE_SHIFT 4               // roll and pitch attitude reading divider    1023 bit    =   90 deg
-#define ANGLE_GAIN_SHIFT 3          // roll and pitch gain divider                give 1/8 step for gain multiplication
+#define ANGLE_SHIFT 0            // roll and pitch attitude reading divider    1023 bit    =   90 deg
+#define ANGLE_GAIN_SHIFT 0          // roll and pitch gain divider                give 1/8 step for gain multiplication
 // for P2
-#define RATE_SHIFT 4                // roll and pitch rate reading divider        2047 bit    =   2000 deg/s        
-#define RATE_GAIN_SHIFT 1           // roll and pitch gain divider                give 1/2 step for gain multiplication
+#define RATE_SHIFT 0          // roll and pitch rate reading divider        2047 bit    =   2000 deg/s        
+#define RATE_GAIN_SHIFT 0           // roll and pitch gain divider                give 1/2 step for gain multiplication
 
 
 int32_t 	lift, roll, pitch, yaw;

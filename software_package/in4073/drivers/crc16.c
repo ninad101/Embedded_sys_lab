@@ -10,7 +10,7 @@
  *
  */
 
-//#include "crc16.h"
+#include "pc_terminal/crc16.h"
 #include <stdio.h>
 
 uint16_t crc16_compute(const uint8_t * p_data, uint32_t size, const uint16_t * p_crc)

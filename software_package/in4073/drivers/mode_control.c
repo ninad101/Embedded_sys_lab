@@ -21,15 +21,15 @@
 void calibrationMode(void)
 {
 
-	if(fill_calibration_buffer()) {
-		calibrate_offset_acceleration();
-		mode = 0;
+	// if(fill_calibration_buffer()) {
+	// 	calibrate_offset_acceleration();
+	// 	mode = 0;
 
-		mode_change_acknowledged = false;
-		//set_acknowledge_flag();
-		send_mode_change();
-	}
-	//printf("%s %d\n","sp:", sp );
+	// 	mode_change_acknowledged = false;
+	// 	//set_acknowledge_flag();
+	// 	send_mode_change();
+	// }
+	// //printf("%s %d\n","sp:", sp );
 
 	mode = 0;
 	void calibration();
@@ -173,7 +173,7 @@ void switchMode(int mod)
 			packet_type_char = 'c';
 			rawFlag=0;				
 			prevAcknowledgeMode = 3;
-			buffer_fill_index = 0;
+			//buffer_fill_index = 0;
 			current_mode_function = &calibrationMode;
 			break;
 		case 4:
