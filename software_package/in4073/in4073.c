@@ -16,7 +16,6 @@
 #include "in4073.h"
 #include <stdio.h>
 #include <string.h>
-#include "logData.h"
 
 //#define BATTERYCHECK 1
 uint8_t mode=0; 
@@ -123,6 +122,7 @@ int main(void)
 		}
 		#endif
 		if(panicFlag) panicMode();
+		// logData();
 		
 		current_mode_function();
 
@@ -132,11 +132,8 @@ int main(void)
 
 			adc_request_sample();
 			read_baro();
-			
-			//batteryMonitor();
-			
-			//logData();
-			//readLoggedData();
+						
+			logData();
 			//printInputValues();
 
 			clear_timer_flag();
