@@ -20,7 +20,7 @@
  */
 
 #define HEADER 0b11010000
-// #define JOYSTICK_CONNECTED 1
+ #define JOYSTICK_CONNECTED 1
 //#define JOYSTICK_DEBUG 2
 #define CRC16_DNP	0x3D65
 #define HEADER 0b11010000
@@ -721,12 +721,6 @@ int main(int argc, char **argv)
 	int 		fd;
 	header_found = false;
 	specialdataType = false;
-	FILE *fp;
-	fp=fopen("log.txt","w");
-	if (fp ==NULL)
-	{
-		printf("ERROR opening file to log");
-	}
 
 
 #ifdef JOYSTICK_CONNECTED	
