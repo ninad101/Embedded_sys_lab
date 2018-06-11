@@ -20,7 +20,7 @@
 
 //#define BATTERYCHECK 1
 uint8_t mode=0; 
-//rawFlag =0;
+int rawFlag =0;
 /*------------------------------------------------------------------
  * process_key -- process command keys
  *------------------------------------------------------------------
@@ -171,7 +171,7 @@ int main(void)
 		{	
 			get_dmp_data();
 		} else {
-			imu_init(false, 256);
+			//imu_init(false, 256);
 		}
 
 		if(counter2++%20 == 0) {
