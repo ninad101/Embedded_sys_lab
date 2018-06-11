@@ -19,14 +19,7 @@
 
 //Written by Yuup
 void calibrationMode(void)
-{/*
-	printf("%s %d ","phi:", phi );
-	printf("%s %d ","theta:", theta );
-	printf("%s %d","psi:", psi );
-
-	printf("%s %d ","sp:", sp );
-	printf("%s %d ","sq:", sq );
-	printf("%s %d\n","sr:", sr );
+{
 
 	if(fill_calibration_buffer()) {
 		calibrate_offset_acceleration();
@@ -37,20 +30,19 @@ void calibrationMode(void)
 		send_mode_change();
 	}
 	//printf("%s %d\n","sp:", sp );
-*/
-mode = 0;
-void calibration();
-//printf("%s %d %d %d\n", "Offesets are: ", csax, csax, cphi );
 
-mode_change_acknowledged = false;
-send_mode_change();
+	mode = 0;
+	void calibration();
+	//printf("%s %d %d %d\n", "Offesets are: ", csax, csax, cphi );
+
+	mode_change_acknowledged = false;
+	send_mode_change();
 
 
 }
 
 void manualMode(void)
 {
-	//printf("ManualMode\n");
 	setting_packet_values_manual_mode();
 	calculateMotorRPM();
 	update_motors();	
@@ -85,8 +77,7 @@ void yawMode(void)
 		if (check_sensor_int_flag()) 
 		{
 			get_dmp_data();
-			
-		
+
 		}
 	calculate_yaw_control();
 	calculateMotorRPM();
@@ -142,13 +133,12 @@ void panicMode(void)
 	ae[0]=200; ae[1]=200; ae[2]=200; ae[3]=200;
 	update_motors();
 	int b = 0;
-	for(int i=0;i<20000;i++) ;//printf("wait\t");//{b = i;} //
+
+	//TODO find better way to wait
+	for(int i=0;i<400;i++) send_packet('o');//{b = i;} //
 
 	b = b+b;
-
-	//flushQueue(&rx_queue);
-
-	mode=0;
+	//mode=0;
 	panicFlag = false;
 	mode_change_acknowledged = false;
 
@@ -157,46 +147,43 @@ void panicMode(void)
 	send_mode_change();
 
 
-	switchMode(0);
+	//switchMode(0);
 	safeMode();
 }
 
 void switchMode(int mod)
 {
-//	printf("%s%d\n","Wanting to switch mode to: ", mod );
-
 	switch(mod)
 	{
 		case 0:
-			rawFlag=0;		
+			packet_type_char = 'm';
 			current_mode_function = &safeMode;
 			break;
 		case 1:
+			packet_type_char = 'o';
 			rawFlag=0;		
-		
 			prevAcknowledgeMode = 1;
 			current_mode_function = &panicMode;
 			break;
 		case 2:
-			//if((127-values_Packet.lift)==0 && values_Packet.roll==0 && values_Packet.pitch==0 && values_Packet.yaw==0)
-			rawFlag=0;		
-
+			packet_type_char = 'm';
 			current_mode_function = &manualMode;
 			break;
 		case 3:
-			rawFlag=0;		
-
+			packet_type_char = 'c';
+			rawFlag=0;				
 			prevAcknowledgeMode = 3;
-		//	buffer_fill_index = 0;
+			buffer_fill_index = 0;
 			current_mode_function = &calibrationMode;
 			break;
 		case 4:
+			packet_type_char = 'm';
 			rawFlag=0;		
-
 			current_mode_function = &yawMode;
 			break;
 
 		case 5:
+			packet_type_char = 'm';
 			rawFlag=0;		
 
 			current_mode_function = &fullMode;

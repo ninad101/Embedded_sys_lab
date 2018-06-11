@@ -29,7 +29,12 @@
 #define INT_PIN		5
 
 // Incoming Packet Structure
-#define PACKET_SIZE	8
+#define PACKET_SIZE			8
+#define PACKET_HEADER 		0b11010000
+#define PACKET_HEADER_CHECK 0b00001101
+
+char packet_type_char;
+
 struct packet{
 	uint8_t header;
 	uint8_t dataType;
@@ -39,6 +44,21 @@ struct packet{
 	int8_t lift;
 	uint16_t crc;
 } values_Packet;
+
+#define PC_PACKET_SIZE 10
+struct send_pc_packet{
+	uint8_t header;
+	uint8_t dataType;
+	uint8_t val1_1;
+	uint8_t val1_2;
+	uint8_t val2_1;
+	uint8_t val2_2;
+	uint8_t val3_1;
+	uint8_t val3_2;
+	uint8_t val4_1;
+	uint8_t val4_2;
+} pc_packet;
+
 uint8_t broken_Packet[PACKET_SIZE];
 
 struct mode_packet {
@@ -163,6 +183,7 @@ queue tx_queue;
 uint32_t last_correct_checksum_time;
 void uart_init(void);
 void uart_put(uint8_t);
+int uart_put_packet(int);
 
 // Packet Protocol
 #define PC_PACKET_LENGTH 3
@@ -172,9 +193,11 @@ bool check_for_header(uint8_t);
 void init_send_mode_change(void);
 void set_acknowledge_flag(bool);
 void send_mode_change(void);
-
-
-
+void setHeader(void);
+void setDataType(char);
+void motorValuePacket(void);
+void send_packet(char);
+void set_packet_on_queue(void);
 
 // TWI
 #define TWI_SCL	4

@@ -118,15 +118,28 @@ int main(void)
 
 	switchMode(0);
 
+	uint32_t counter2 = 0;
+
+	packet_type_char = 'm';
+
 	while (!demo_done)
 	{	
 		//This is where incoming data comes from
-		//int rx_count = rx_queue.count;
+		//int rx_count = rx_queue.count
+
+
+
 		if (rx_queue.count > 7) {
 			if(prevMode != readPacket()) {
 				switchMode(mode);
 			}
 		}
+
+		//Flush buffer if a lot of lag...
+		// if(rx_queue.count > 120) {
+		// 	flushQueue(&rx_queue);
+		// }
+
 		// Battery Check - Saumil
 		#ifdef BATTERYCHECK
 		batteryMonitor();
@@ -157,10 +170,15 @@ int main(void)
 		if (check_sensor_int_flag() && !rawFlag) 
 		{	
 			get_dmp_data();
-		}
-		else{
+		} else {
 			imu_init(false, 256);
 		}
+
+		if(counter2++%20 == 0) {
+			//printf("%s\n", "hello!" );
+			send_packet(packet_type_char);			
+		}
+
 	}	
 
 	printf("\n\t Goodbye \n\n");

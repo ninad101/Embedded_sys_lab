@@ -59,7 +59,8 @@ bool check_for_header(uint8_t h)
 	char check = h;
 
 	check = check >> 4;
-	if(check && 0b00001101) {
+	// BUG? ... fuck
+	if(check == PACKET_HEADER_CHECK) {
 		header = true;
 	}
 
@@ -219,12 +220,12 @@ uint8_t setMode(void)
 
 		if(incomingMode == mode) {
 			//printf("%s\n", "Changing mode_change_acknowledged to TRUE" );
-			flushQueue(&rx_queue);
+			//flushQueue(&rx_queue);
 			mode_change_acknowledged = true;
 		} else {
 			//flushQueue(&rx_queue);
 			send_mode_change();
-			printf("%s\n", "Sending mode change");
+			//printf("%s\n", "Sending mode change");
 		}
 	} else {
 		//printf("%s\n","mode_change_acknowledged is TRUE" );
@@ -299,7 +300,11 @@ uint8_t readPacket()
 	do {
 		values_Packet.header = dequeue(&rx_queue);
 		headerFound = check_for_header( values_Packet.header);
-	} while( !headerFound && (rx_queue.count > 0) );
+	} while( !headerFound && (rx_queue.count > 6) );
+
+	if(!headerFound) {
+		return mode;
+	}
 
 	//uint8_t incomingmode = (uint8_t) values_Packet.header & 0b00001111;
 	//printf("%s%d\n","mode that was received: ", incomingmode);
@@ -318,7 +323,7 @@ uint8_t readPacket()
 	char crc2 = dequeue(&rx_queue);
 	values_Packet.crc = (uint16_t) ((crc2<<8) | crc1);
 
-	//printPacket(&values_Packet);
+	//printPacket(&values_Packet);file
 	check_data_type();
 	// A little sloppy... My bad - Yuup
 	if(crc_check()){
@@ -332,8 +337,13 @@ uint8_t readPacket()
 		}
 	}
 
+<<<<<<< HEAD
+	//printPacket();
+	//printf("%s%d\n", "p_c:", rx_queue.count);
+=======
 //	printPacket();
 
+>>>>>>> master
 	return mode;
 }
 
@@ -360,28 +370,124 @@ void set_acknowledge_flag(bool ack_flag)
 
 void send_mode_change(void)
 {
-	mode_change_packet.mode = (uint8_t) mode;
-
-	mode_change_packet.header = '#';
-	mode_change_packet.ender = '$';
-
-	printf("%c%d%c\n",mode_change_packet.header, 
-					mode_change_packet.mode, 
-					mode_change_packet.ender);
+	mode = 0;
 
 	bool acknowledge = false;
 
+	packet_type_char = 'p';
+	flushQueue(&tx_queue);
+	flushQueue(&rx_queue);
 	while(!acknowledge)
 	{
+		mode = 0;
+		send_packet('p');
 		if (rx_queue.count > 7) {
 			if(prevAcknowledgeMode != readPacket()) {
-				switchMode(mode);
 				acknowledge = true;
+				switchMode(mode);
+
 			}
 		}
-		printf("%c%d%c\n",mode_change_packet.header, 
-				mode_change_packet.mode, 
-				mode_change_packet.ender);
 	}
+	flushQueue(&tx_queue);
+	flushQueue(&rx_queue);
+}
+
+/*----------------------------------
+* 
+* Sending Packets back to the pc terminal
+*
+----------------------------------*/
+
+
+void setHeader(void)
+{
+	pc_packet.header = (uint8_t) PACKET_HEADER | mode;
+	//pc_packet.header = (uint8_t) 208;
+}
+
+void motorValuePacket(void)
+{
+	pc_packet.val1_1 = (uint8_t)((motor[0] & 0xFF00) >> 8);
+	pc_packet.val1_2 = (uint8_t)(motor[0] & 0x00FF);
+
+	pc_packet.val2_1 = (uint8_t)((motor[1] & 0xFF00) >> 8);
+	pc_packet.val2_2 = (uint8_t)(motor[1] & 0x00FF);
+
+	pc_packet.val3_1 = (uint8_t)((motor[2] & 0xFF00) >> 8);
+	pc_packet.val3_2 = (uint8_t)(motor[2] & 0x00FF);
+
+	pc_packet.val4_1 = (uint8_t)((motor[3] & 0xFF00) >> 8);
+	pc_packet.val4_2 = (uint8_t)(motor[3] & 0x00FF);
+}
+
+void switch_mode_packet(void)
+{
+	pc_packet.val1_1 = 0;
+	pc_packet.val1_2 = 0;
+
+	pc_packet.val2_1 = 0;
+	pc_packet.val2_2 = 0;
+
+	pc_packet.val3_1 = 0;
+	pc_packet.val3_2 = 0;
+
+	pc_packet.val4_1 = 0;
+	pc_packet.val4_2 = 0;	
+}
+
+void setDataType(char type)
+{
+	pc_packet.dataType = type;
+
+	switch(type)
+	{
+		case 'm':
+			motorValuePacket();
+			break;
+		case 'p':
+			switch_mode_packet();
+			break;
+		case 'o':
+			break;
+
+	}
+}
+
+void set_packet_on_queue(void)
+{
+		// Disable intterrupts
+	NVIC_DisableIRQ(UART0_IRQn);
+
+	enqueue(&tx_queue, pc_packet.header);
+	enqueue(&tx_queue, pc_packet.dataType);
+	
+	enqueue(&tx_queue, pc_packet.val1_1);
+	enqueue(&tx_queue, pc_packet.val1_2);
+	enqueue(&tx_queue, pc_packet.val2_1);
+	enqueue(&tx_queue, pc_packet.val2_2);
+
+	enqueue(&tx_queue, pc_packet.val3_1);
+	enqueue(&tx_queue, pc_packet.val3_2);
+	enqueue(&tx_queue, pc_packet.val4_1);
+	enqueue(&tx_queue, pc_packet.val4_2);
+
+
+	NVIC_EnableIRQ(UART0_IRQn);
+}
+
+// We want to send the motor values
+// we want to see the mode continuously
+// 
+void send_packet(char type)
+{
+	setHeader();
+	setDataType(type);
+	set_packet_on_queue();
+	int i = 0;
+	while(i < 10) {
+		i = uart_put_packet(i);
+	}
+	//send_UART_packet();	
 
 }

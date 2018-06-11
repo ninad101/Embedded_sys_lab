@@ -23,6 +23,20 @@ void uart_put(uint8_t byte)
 	NVIC_EnableIRQ(UART0_IRQn);
 }
 
+int uart_put_packet(int number)
+{
+	// Disable intterrupts
+	NVIC_DisableIRQ(UART0_IRQn);
+
+	if (txd_available) {
+		txd_available = false; 
+		NRF_UART0->TXD = dequeue(&tx_queue);
+		number++;
+	}
+	NVIC_EnableIRQ(UART0_IRQn);
+	return number;	
+}
+
 // Reroute printf
 int _write(int file, const char * p_char, int len)
 {
@@ -33,7 +47,6 @@ int _write(int file, const char * p_char, int len)
 	}
 	return len;
 }
-
 
 void UART0_IRQHandler(void)
 {
