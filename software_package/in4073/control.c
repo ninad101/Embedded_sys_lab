@@ -231,10 +231,10 @@ void calculateMotorRPM()
 	}
 	else
 	{
-	ae[0] = (multiFactor*sqrt(w0));
-	ae[1] = (multiFactor*sqrt(w1));
-	ae[2] = (multiFactor*sqrt(w2));
-	ae[3] = (multiFactor*sqrt(w3));
+	ae[0] = 0;
+	ae[1] = 0;
+	ae[2] = 0;
+	ae[3] = 0;
 	}
 
 
