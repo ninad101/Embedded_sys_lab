@@ -19,7 +19,7 @@
 
 //Written by Yuup
 void calibrationMode(void)
-{
+{/*
 	printf("%s %d ","phi:", phi );
 	printf("%s %d ","theta:", theta );
 	printf("%s %d","psi:", psi );
@@ -37,6 +37,15 @@ void calibrationMode(void)
 		send_mode_change();
 	}
 	//printf("%s %d\n","sp:", sp );
+*/
+mode = 0;
+void calibration();
+//printf("%s %d %d %d\n", "Offesets are: ", csax, csax, cphi );
+
+mode_change_acknowledged = false;
+send_mode_change();
+
+
 }
 
 void manualMode(void)
@@ -63,7 +72,6 @@ void loggingMode(void)
 void safeMode(void)
 {	
 	panicFlag=0;
-	//printf("SAFE MODE\n");
 	ae[0] = 0;
 	ae[1] = 0;
 	ae[2] = 0;
@@ -91,10 +99,41 @@ void fullMode(void)
 		if (check_sensor_int_flag()) 
 		{
 			get_dmp_data();
+
+
 		}
 	calculate_roll_control();
 	calculateMotorRPM();
 	update_motors();
+}
+
+void rawMode(void)
+{
+//	printf("full MODE\n");
+
+		
+
+		// if (check_sensor_int_flag()) 
+		// {
+			get_raw_sensor_data();
+
+			filter_function();
+			
+		// }
+	rawControl();
+	calculateMotorRPM();
+	update_motors();
+}
+
+void heightMode(void)
+
+{
+//	printf("heightMode\n");
+	read_baro();
+	heightControl();
+	calculateMotorRPM();
+	update_motors();
+
 }
 
 void panicMode(void)
@@ -124,36 +163,63 @@ void panicMode(void)
 
 void switchMode(int mod)
 {
-	printf("%s%d\n","Wanting to switch mode to: ", mod );
+//	printf("%s%d\n","Wanting to switch mode to: ", mod );
 
 	switch(mod)
 	{
 		case 0:
+			rawFlag=0;		
 			current_mode_function = &safeMode;
 			break;
 		case 1:
+			rawFlag=0;		
+		
 			prevAcknowledgeMode = 1;
 			current_mode_function = &panicMode;
 			break;
 		case 2:
 			//if((127-values_Packet.lift)==0 && values_Packet.roll==0 && values_Packet.pitch==0 && values_Packet.yaw==0)
+			rawFlag=0;		
+
 			current_mode_function = &manualMode;
 			break;
 		case 3:
+			rawFlag=0;		
+
 			prevAcknowledgeMode = 3;
-			buffer_fill_index = 0;
+		//	buffer_fill_index = 0;
 			current_mode_function = &calibrationMode;
 			break;
 		case 4:
+			rawFlag=0;		
+
 			current_mode_function = &yawMode;
 			break;
 
 		case 5:
+			rawFlag=0;		
+
 			current_mode_function = &fullMode;
 			break;
 
+		case 6:
+			rawFlag=0;		
+
+			rawFlag=1;
+			current_mode_function = &rawMode;
+			break;	
+
+		case 7 : 
+			rawFlag=0;		
+
+			current_mode_function = &heightMode;
+			break;	
+
 		case 9:
+			rawFlag=0;
 			current_mode_function = &loggingMode;
+
+					
 			break;
 		//default:
 		//11	current_mode_function = &safeMode;

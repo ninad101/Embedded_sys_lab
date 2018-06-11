@@ -20,7 +20,7 @@
  */
 
 #define HEADER 0b11010000
- #define JOYSTICK_CONNECTED 1
+#define JOYSTICK_CONNECTED 1
 //#define JOYSTICK_DEBUG 2
 #define CRC16_DNP	0x3D65
 #define HEADER 0b11010000
@@ -614,6 +614,8 @@ int keyboardToValue(char c) {
 		if(mode==0)
 		mode=9;
 		break;
+	case '7' :
+		mode = 7;	 
  	//changes kp_yaw++
 	case 'u' :
 		specialdataType = true;

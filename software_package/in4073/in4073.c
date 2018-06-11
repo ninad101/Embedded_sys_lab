@@ -17,8 +17,10 @@
 #include <stdio.h>
 #include <string.h>
 
+
 //#define BATTERYCHECK 1
 uint8_t mode=0; 
+//rawFlag =0;
 /*------------------------------------------------------------------
  * process_key -- process command keys
  *------------------------------------------------------------------
@@ -86,15 +88,28 @@ void printInputValues(void)
  */
 int main(void)
 {
+	//init_raw = false;
+	
+
 	uart_init();
 	gpio_init();
 	timers_init();
 	adc_init();
 	twi_init();
-	imu_init(true, 100);	
+	if(!rawFlag) imu_init(true, 100);	
 	baro_init();
 	spi_flash_init();
 	ble_init();
+
+ 
+	// butterworth filter variable
+	
+	//int16_t isay = 0;
+	//int16_t isax = 0;
+
+	//*****************************************************************************/
+
+
 
 	uint32_t counter = 0;
 	demo_done = false;
@@ -139,9 +154,12 @@ int main(void)
 			clear_timer_flag();
 		}
 
-		if (check_sensor_int_flag()) 
-		{
+		if (check_sensor_int_flag() && !rawFlag) 
+		{	
 			get_dmp_data();
+		}
+		else{
+			imu_init(false, 256);
 		}
 	}	
 
