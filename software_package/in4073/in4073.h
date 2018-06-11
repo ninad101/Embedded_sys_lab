@@ -55,6 +55,30 @@ bool demo_done;
 void check_data_type(void);
 
 
+
+bool raw_status;
+bool init_raw;
+int rawFlag ;
+
+//filter
+
+
+int16_t estimated_p;
+int16_t estimated_q;
+int16_t estimated_theta;
+int16_t estimated_phi;
+
+
+int16_t r_butter;
+
+
+
+
+//void kalman(void);
+
+void filter_function(void);
+
+
 // Control
 int16_t motor[4],ae[4];
 int32_t kp_yaw, kp1_roll, kp2_roll, kp1_pitch, kp2_pitch;
@@ -67,6 +91,7 @@ void setting_packet_values_manual_mode(void);
 void calculate_yaw_control(void);
 void calculate_roll_control(void);
 void heightControl(void);
+void rawControl(void);
 void calculateMotorRPM(void);
 void run_filters_and_control(void);
 int connectionCheck(void);
@@ -78,7 +103,7 @@ int connectionCheck(void);
 //int buffer_fill_index;
 //int offset_sax, offset_say, offset_saz;
 //bool fill_calibration_buffer(void);
-int32_t cphi, ctheta, cpsi;         ///< Calibration values of phi, theta, psi
+int32_t cphi, ctheta, cpsi, cpressure;         ///< Calibration values of phi, theta, psi
 int32_t cp, cq, cr;                ///< Calibration valies of p, q and r
 int32_t csax, csay;     
 void calibration(void);

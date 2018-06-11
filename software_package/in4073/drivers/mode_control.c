@@ -94,8 +94,28 @@ void fullMode(void)
 		if (check_sensor_int_flag()) 
 		{
 			get_dmp_data();
+
+
 		}
 	calculate_roll_control();
+	calculateMotorRPM();
+	update_motors();
+}
+
+void rawMode(void)
+{
+//	printf("full MODE\n");
+
+		
+
+		// if (check_sensor_int_flag()) 
+		// {
+			get_raw_sensor_data();
+
+			filter_function();
+			
+		// }
+	rawControl();
 	calculateMotorRPM();
 	update_motors();
 }
@@ -143,33 +163,55 @@ void switchMode(int mod)
 	switch(mod)
 	{
 		case 0:
+			rawFlag=0;		
 			current_mode_function = &safeMode;
 			break;
 		case 1:
+			rawFlag=0;		
+		
 			prevAcknowledgeMode = 1;
 			current_mode_function = &panicMode;
 			break;
 		case 2:
+			rawFlag=0;		
+
 			current_mode_function = &manualMode;
 			break;
 		case 3:
+			rawFlag=0;		
+
 			prevAcknowledgeMode = 3;
 		//	buffer_fill_index = 0;
 			current_mode_function = &calibrationMode;
 			break;
 		case 4:
+			rawFlag=0;		
+
 			current_mode_function = &yawMode;
 			break;
 
 		case 5:
+			rawFlag=0;		
+
 			current_mode_function = &fullMode;
 			break;
 
+		case 6:
+			rawFlag=0;		
+
+			rawFlag=1;
+			current_mode_function = &rawMode;
+			break;	
+
 		case 7 : 
+			rawFlag=0;		
+
 			current_mode_function = &heightMode;
 			break;	
 
 		case 9:
+			rawFlag=0;		
+
 			current_mode_function = &escapeMode;
 			break;
 		//default:
