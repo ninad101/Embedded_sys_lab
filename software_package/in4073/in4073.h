@@ -55,6 +55,17 @@ int batteryFlag;
 
 void check_data_type(void);
 
+//logging
+uint32_t writeAddress;
+uint32_t readAddress;
+
+void logValue16(int16_t value); //logs a 2 byte value to address in the flash 
+                                                // by converting ina lower byte and higher byte
+void logValue32(int32_t value); //logs a 4 byte value
+void logValue8(uint8_t value); //logs a byte value
+void logData(void); //function to call where all data is logged. Call this in in4073.c
+void readLoggedData(void); //read data from the flash
+void logReset(void); //resets the addresses to write & read in flash and erases the flash chip
 
 // Control
 int16_t motor[4],ae[4];

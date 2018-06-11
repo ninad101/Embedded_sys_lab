@@ -14,14 +14,13 @@
 #include <inttypes.h>
 #include <time.h>
 #include <stdbool.h>
-
 /*------------------------------------------------------------
  * Global Variables
  *------------------------------------------------------------
  */
 
 #define HEADER 0b11010000
-#define JOYSTICK_CONNECTED 1
+// #define JOYSTICK_CONNECTED 1
 //#define JOYSTICK_DEBUG 2
 #define CRC16_DNP	0x3D65
 #define HEADER 0b11010000
@@ -212,60 +211,6 @@ int 	rs232_getchar()
 
 	return c;
 }
-
-//TODO By Saumil
-//  Map keyboard inputs to values
-/*
-int keyboardToValue(char c) {
- switch(c)
- {
-	 case 27:
-	 	mode = 9;
-		break;
-	 case '0' :
-	 	mode = 0;
-	 break;
-	 case '1' :
-	 	if(mode!=0)
-		{
-	 	mode = 1;
-	 	printf("%s\n", "Going into panic mode");
-	 	panicFlag = 1;
-		}
-	 break;
-	 case '2' :
-	 	mode = 2;
-	 break;
-	 case '3' :
-	 	mode = 3;
-	 	break;
-	 case '4' :
-	 	mode = 4;
-	 	break;
-	case '5' :
-	 	mode = 5;
-	 	break;
-	case '6' :
-	 	mode = 6;
-	 	break;
-	 case 'a' :
-	 ;
-	 break;
-	 case 'z' :
-	 ;
-	 break;
-	 case 'q' :
-	 ;
-	 break;
-	 case 'w' :
-	 ;
-	 break;
- }
-}
-*/
-
-
-
 
 // Function written by Yuup
 // 5/5/2018
@@ -510,47 +455,47 @@ void send_Panic_Packet(void)
 
 }
 
-uint8_t map_char_to_uint8_t(char v)
-{
-	uint8_t res = 0;
+// uint8_t map_char_to_uint8_t(char v)
+// {
+// 	uint8_t res = 0;
 
-	switch(v){
-		case('0'):
-			res = 0;
-			break;
-		case('1'):
-			res = 1;
-			break;
-		case('2'):
-			res = 2;
-			break;
-		case('3'):
-			res = 3;
-			break;
-		case('4'):
-			res = 4;
-			break;
-		case('5'):
-			res = 5;
-			break;
-		case('6'):
-			res = 6;
-			break;
-		case('7'):
-			res = 7;
-			break;
-		case('8'):
-			res = 8;
-			break;
-		case('9'):
-			res = 9;
-			break;
-		default:
-			break;
-	}
+// 	switch(v){
+// 		case('0'):
+// 			res = 0;
+// 			break;
+// 		case('1'):
+// 			res = 1;
+// 			break;
+// 		case('2'):
+// 			res = 2;
+// 			break;
+// 		case('3'):
+// 			res = 3;
+// 			break;
+// 		case('4'):
+// 			res = 4;
+// 			break;
+// 		case('5'):
+// 			res = 5;
+// 			break;
+// 		case('6'):
+// 			res = 6;
+// 			break;
+// 		case('7'):
+// 			res = 7;
+// 			break;
+// 		case('8'):
+// 			res = 8;
+// 			break;
+// 		case('9'):
+// 			res = 9;
+// 			break;
+// 		default:
+// 			break;
+// 	}
 
-	return res;
-}
+// 	return res;
+// }
 
 bool header_found;
 
@@ -572,8 +517,8 @@ void check_incoming_char(void)
 		{
 
 			mode = NULL;
-			mode = (uint8_t) map_char_to_uint8_t(c);
-			printf("mode found: %d\n", (uint8_t) mode);
+			mode = (uint8_t) c-48;
+			//printf("mode found: %d\n", (uint8_t) mode);
 			tcflush(fd_RS232, TCIOFLUSH); /* flush I/O buffer */
 
 
@@ -627,7 +572,12 @@ int keyboardToValue(char c) {
  switch(c)
  {
 	 case 27:
-	 	mode = 9;
+	 	if(mode!=0){
+	 		mode = 1;
+		 	panicFlag=1;
+		}
+		else
+		exit(0);
 		break;
 	 case '0' :
 	 	mode = 0;
@@ -641,20 +591,29 @@ int keyboardToValue(char c) {
 		}
 	 break;
 	 case '2' :
+	 	if(mode==0)
 	 	mode = 2;
 	 break;
 	 case '3' :
+	 	if(mode==0)
 	 	mode = 3;
 	 	break;
 	 case '4' :
+	 	if(mode==0)
 	 	mode = 4;
 	 	break;
 	case '5' :
+		if(mode==0)
 	 	mode = 5;
 	 	break;
 	case '6' :
+		if(mode==0)
 	 	mode = 6;
 	 	break;
+	case 'x' :
+		if(mode==0)
+		mode=9;
+		break;
  	//changes kp_yaw++
 	case 'u' :
 		specialdataType = true;
@@ -758,10 +717,16 @@ int keyboardToValue(char c) {
  *----------------------------------------------------------------
  */
 int main(int argc, char **argv)
-{
+{	
 	int 		fd;
 	header_found = false;
 	specialdataType = false;
+	FILE *fp;
+	fp=fopen("log.txt","w");
+	if (fp ==NULL)
+	{
+		printf("ERROR opening file to log");
+	}
 
 
 #ifdef JOYSTICK_CONNECTED	

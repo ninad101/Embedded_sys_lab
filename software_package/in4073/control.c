@@ -44,7 +44,10 @@ void update_motors(void)
 //to do : check if there is any need when no battery is connected
 void batteryMonitor()
 {
-  	if (bat_volt < 10.85) batteryFlag=0; 
+  	if (bat_volt < 11) {
+		  printf("BATTERY SOON TO BE EMPTY! PREPARE!");
+	  if (bat_volt < 10.5) batteryFlag=0; 
+	  }
 }
 
 void setting_packet_values_manual_mode()
