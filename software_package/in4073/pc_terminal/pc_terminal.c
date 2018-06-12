@@ -607,6 +607,12 @@ void increase_tuning_value(int8_t d) {
 		setCRC();	
 }
 
+long timediff(clock_t t1, clock_t t2) {
+    long elapsed;
+    elapsed = ((double)t2 - t1) / CLOCKS_PER_SEC * 1000;
+    return elapsed;
+}
+
 //TODO 
 //  Map keyboard inputs to values
 int keyboardToValue(char c) {
@@ -797,13 +803,20 @@ int main(int argc, char **argv)
 
 	int msec = 0, trigger = 10; /* 10ms */
 	clock_t startTime = clock();
+	clock_t startLoop, endLoop, messageSendEnd, messageSendStart;
+	long elapsed, elapsedMessage;
+
 	init_queue(&rx_queue);
 
 	int counter = 0;
 	/* send & receive
 	 */
+	messageSendStart = clock();
+
 	for (;;)
 	{	
+		startLoop = clock();
+
 
 		connectionCheck();
 		rs232_getchar_nb();
@@ -815,6 +828,10 @@ int main(int argc, char **argv)
 			counter = 0;
 			create_Packet();
 			send_Packet();
+			messageSentTime = clock();
+			elapsedMessage = timediff(messageSendStart, messageSentTime);
+			fprintf(stderr, "%s%ld\n", "Message sent took: ", elapsedMessage );
+			messageSendStart = clock();
 		}
 		counter++;
 
@@ -875,7 +892,9 @@ int main(int argc, char **argv)
 			read_incoming_packet();
 		}
 		//fprintf(stderr, "%s%d\n", "rx_queue: ", rx_queue.count );
-
+		endLoop = clock();
+		elapsed = timediff(startLoop, endLoop);
+		fprintf(stderr, "%s%ld\n", "elapsed clock cycle: ", elapsed);
 	}
 	term_exitio();
 	rs232_close();
