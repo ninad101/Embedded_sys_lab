@@ -74,11 +74,11 @@ void logData()
         logValue16(sr);
 
        //log Controller Parameters
-       logValue32(kp_yaw);
-       logValue32(kp1_roll);
-       logValue32(kp2_roll);
-       logValue32(kp1_pitch);
-       logValue32(kp2_pitch);
+       logValue32(kp);
+       logValue32(kp1);
+       logValue32(kp2);
+       //ogValue32(kp1_pitch);
+       //logValue32(kp2_pitch);
 
     }
     else

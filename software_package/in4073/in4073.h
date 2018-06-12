@@ -58,6 +58,7 @@ struct send_pc_packet{
 	uint8_t val4_1;
 	uint8_t val4_2;
 } pc_packet;
+bool first_kp_packet;
 
 uint8_t broken_Packet[PACKET_SIZE];
 
@@ -113,6 +114,7 @@ void filter_function(void);
 
 // Control
 int16_t motor[4],ae[4];
+int32_t kp, kp1, kp2;
 int32_t kp_yaw, kp1_roll, kp2_roll, kp1_pitch, kp2_pitch;
 int32_t pitch_error, yaw_error, roll_error, lift_error;
 void update_motors(void);
@@ -189,6 +191,7 @@ int uart_put_packet(int);
 #define PC_PACKET_LENGTH 3
 uint8_t prevAcknowledgeMode;
 uint8_t readPacket(void);
+uint8_t timestamp;
 bool check_for_header(uint8_t);
 void init_send_mode_change(void);
 void set_acknowledge_flag(bool);
@@ -198,6 +201,8 @@ void setDataType(char);
 void motorValuePacket(void);
 void send_packet(char);
 void set_packet_on_queue(void);
+void kp_value_packet(void);
+
 
 // TWI
 #define TWI_SCL	4

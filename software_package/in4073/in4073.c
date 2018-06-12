@@ -114,7 +114,7 @@ int main(void)
 	uint32_t counter = 0;
 	demo_done = false;
 
-	flushQueue(&rx_queue);
+
 
 	switchMode(0);
 
@@ -122,12 +122,13 @@ int main(void)
 
 	packet_type_char = 'm';
 
+	flushQueue(&rx_queue);
+	flushQueue(&tx_queue);
+
 	while (!demo_done)
 	{	
 		//This is where incoming data comes from
 		//int rx_count = rx_queue.count
-
-
 
 		if (rx_queue.count > 7) {
 			if(prevMode != readPacket()) {
@@ -175,7 +176,6 @@ int main(void)
 		}
 
 		if(counter2++%20 == 0) {
-			//printf("%s\n", "hello!" );
 			send_packet(packet_type_char);			
 		}
 

@@ -82,14 +82,14 @@ void setting_packet_values_manual_mode()
 */
 void calculate_yaw_control()
 {
-			if (kp_yaw < 1)	kp_yaw = 1;
+			if (kp < 1)	kp = 1;
 			lift = (int32_t) -1 * (values_Packet.lift -127)*256;// pos lift -> neg z
 			roll = (int32_t)values_Packet.roll*256;
 			pitch = (int32_t)values_Packet.pitch*256;
 			
 			
 			yaw_error =(((int32_t)values_Packet.yaw*256)>>RATE_SHIFT_YAW) + ((sr - cr)>>RATE_SHIFT_YAW) ;//add offset here
-			yaw =  (kp_yaw*yaw_error)>>RATE_GAIN_SHIFT_YAW;// setpoint is angular rate
+			yaw =  (kp*yaw_error)>>RATE_GAIN_SHIFT_YAW;// setpoint is angular rate
 			
 
 }
@@ -98,43 +98,37 @@ void calculate_yaw_control()
 //written by : Ninad
 void calculate_roll_control()
 {	
-	if (kp_yaw < 1)	kp_yaw = 1;
-	if (kp1_roll< 1) kp1_roll = 1;
-	if (kp2_roll < 1) kp2_roll = 0;
-	if (kp1_pitch < 1) kp1_pitch = 1;
-	if (kp2_pitch < 1) kp2_pitch = 0;
+	if (kp < 1)	kp = 1;
+	if (kp1< 1) kp1 = 1;
+	if (kp2 < 1) kp2 = 1;
 
 	lift = (int32_t)-1 * (values_Packet.lift -127)*256;
 	
-	
-        
-	
-	
 	roll_error = (((int32_t)values_Packet.roll*256) -  ((phi - cphi)>>ANGLE_SHIFT));
-	roll = ((kp1_roll*roll_error)>>ANGLE_GAIN_SHIFT) - (kp2_roll*((sp-cq)>>RATE_SHIFT)>>RATE_GAIN_SHIFT);
+	roll = ((kp1*roll_error)>>ANGLE_GAIN_SHIFT) - (kp2*((sp-cq)>>RATE_SHIFT)>>RATE_GAIN_SHIFT);
 	
 	pitch_error = (((int32_t)values_Packet.pitch*256) -  ((theta-ctheta)>>ANGLE_SHIFT)); 
-	pitch = ((kp1_pitch*pitch_error)>>ANGLE_GAIN_SHIFT) - (kp2_pitch*((sq-cq)>>RATE_SHIFT)>>RATE_GAIN_SHIFT);
+	pitch = ((kp1*pitch_error)>>ANGLE_GAIN_SHIFT) - (kp2*((sq-cq)>>RATE_SHIFT)>>RATE_GAIN_SHIFT);
 	
 	yaw_error =  (((int32_t)values_Packet.yaw*256)>>RATE_SHIFT_YAW) + ((sr-cr)>>RATE_SHIFT_YAW) ; //add offset here
-	yaw =  (kp_yaw*yaw_error)>>RATE_GAIN_SHIFT_YAW;
+	yaw =  (kp*yaw_error)>>RATE_GAIN_SHIFT_YAW;
 	
 
 }
 
 void rawControl()
 {
-		lift = (int32_t)-1 * (values_Packet.lift -127)*256;
+	lift = (int32_t)-1 * (values_Packet.lift -127)*256;
 
-		roll_error = (((int32_t)values_Packet.roll*256) - ((estimated_phi - cphi)>>ANGLE_SHIFT));
-		roll = ((roll_error*kp1_roll)>>ANGLE_GAIN_SHIFT) - ((((estimated_p - cp)>>RATE_SHIFT)*kp2_roll)>>RATE_GAIN_SHIFT);
-           
-	    pitch_error = (((int32_t)values_Packet.pitch*256) - ((estimated_theta - ctheta)>>ANGLE_SHIFT));
-		  pitch = ((pitch_error*kp1_pitch)>>ANGLE_GAIN_SHIFT) - ((((estimated_q - cq)>>RATE_SHIFT)*kp2_pitch)>>RATE_GAIN_SHIFT);
-           
-		   
-	      yaw_error =  (((int32_t)values_Packet.yaw*256)>>RATE_SHIFT_YAW) - ((r_butter - cr)>>RATE_SHIFT_YAW);
-		  yaw = ((yaw_error*kp_yaw)>>RATE_GAIN_SHIFT_YAW);
+	roll_error = (((int32_t)values_Packet.roll*256) - ((estimated_phi - cphi)>>ANGLE_SHIFT));
+	roll = ((roll_error*kp1)>>ANGLE_GAIN_SHIFT) - ((((estimated_p - cp)>>RATE_SHIFT)*kp2)>>RATE_GAIN_SHIFT);
+
+	pitch_error = (((int32_t)values_Packet.pitch*256) - ((estimated_theta - ctheta)>>ANGLE_SHIFT));
+	pitch = ((pitch_error*kp1)>>ANGLE_GAIN_SHIFT) - ((((estimated_q - cq)>>RATE_SHIFT)*kp2)>>RATE_GAIN_SHIFT);
+
+
+	yaw_error =  (((int32_t)values_Packet.yaw*256)>>RATE_SHIFT_YAW) - ((r_butter - cr)>>RATE_SHIFT_YAW);
+	yaw = ((yaw_error*kp)>>RATE_GAIN_SHIFT_YAW);
         
 
 }
@@ -142,11 +136,11 @@ void rawControl()
 
 void heightControl()
 {	
-		lift_error =  (((int32_t)-1*(values_Packet.lift -127)*256)>>RATE_SHIFT_PRESS) - ((pressure - cpressure)>>RATE_SHIFT_PRESS) ;
-		lift = kp_yaw*lift_error>>RATE_GAIN_SHIFT_PRESS;
-		roll = (int32_t)values_Packet.roll*256;
-		pitch = (int32_t)values_Packet.pitch*256;
-		yaw   = (int32_t)values_Packet.yaw*256;
+	lift_error =  (((int32_t)-1*(values_Packet.lift -127)*256)>>RATE_SHIFT_PRESS) - ((pressure - cpressure)>>RATE_SHIFT_PRESS) ;
+	lift = kp*lift_error>>RATE_GAIN_SHIFT_PRESS;
+	roll = (int32_t)values_Packet.roll*256;
+	pitch = (int32_t)values_Packet.pitch*256;
+	yaw   = (int32_t)values_Packet.yaw*256;
 }
 
 
