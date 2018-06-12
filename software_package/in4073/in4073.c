@@ -99,7 +99,7 @@ int main(void)
 	if(!rawFlag) imu_init(true, 100);	
 	baro_init();
 	spi_flash_init();
-	ble_init();
+	//ble_init();
 
  
 	// butterworth filter variable
