@@ -873,7 +873,7 @@ int main(int argc, char **argv)
 
 		if(panicFlag) {
 			send_Panic_Packet();
-		} else if(counter > 100){
+		} else if(counter > 50){
 			//fprintf(stderr, "%s%c\n", "Packet_type: ", packet_type_pc );
 			counter = 0;
 			create_Packet();
