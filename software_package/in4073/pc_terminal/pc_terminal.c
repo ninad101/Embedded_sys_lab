@@ -26,9 +26,9 @@
 //#define JOYSTICK_DEBUG 2
 #define CRC16_DNP	0x3D65
 #define HEADER 0b11010000
-#define JS_DEV	"/dev/input/js1"
+#define JS_DEV	"/dev/input/js0"
 
-
+char packet_type_pc;
 
 uint8_t mode = 0;
 int panicFlag =0;
@@ -381,10 +381,38 @@ void printPacket() //struct packet *da
 
 }
 
+
 void create_Packet(void)
 {
+
 	setHeader();
-	setData(axis,6);
+	switch(packet_type_pc){
+		case('n'):
+			setData(axis,6);
+			break;
+		case('u'):
+			lower_tuning_value(10);
+			break;
+		case('j'):
+			increase_tuning_value(10);
+			break;
+		case('i'):
+			lower_tuning_value(20);
+			break;
+		case('k'):
+			increase_tuning_value(20);
+			break;
+		case('o'):
+			lower_tuning_value(30);
+			break;
+		case('l'):
+			increase_tuning_value(30);
+			break;
+		default:
+			setData(axis,6);
+			break;
+	}
+
 	setCRC();
 }
 
@@ -445,6 +473,8 @@ bool check_for_header(uint8_t h)
 	return isHeader;
 }
 
+uint32_t kp, kp1, kp2;
+uint8_t timestamp;
 
 uint8_t read_incoming_packet(void)
 {
@@ -483,7 +513,10 @@ uint8_t read_incoming_packet(void)
 		motor[1] = (int16_t) (pc_packet.val2_1 << 8) | pc_packet.val2_2;
 		motor[2] = (int16_t) (pc_packet.val3_1 << 8) | pc_packet.val3_2;	
 		motor[3] = (int16_t) (pc_packet.val4_1 << 8) | pc_packet.val4_2;
-		fprintf(stderr, "MODE: %d   motor[0]: %d motor[1]: %d motor[2]: %d motor[3]: %d\n", mode_b, motor[0], motor[1], motor[2], motor[3]);
+		if(mode != 5){
+			fprintf(stderr, "MODE: %d   motor[0]: %d motor[1]: %d motor[2]: %d motor[3]: %d\n", mode_b, motor[0], motor[1], motor[2], motor[3]);
+		}
+		
 	} else if(pc_packet.dataType == 'p') {
 		mode = mode_b;
 		panicFlag = false;
@@ -497,6 +530,15 @@ uint8_t read_incoming_packet(void)
 	} else if (pc_packet.dataType == 'c') {
 		mode = mode_b;
 		fprintf(stderr, "%s\n", "Calibration mode" );
+	} else if(pc_packet.dataType == 'k') {
+		timestamp = pc_packet.val2_1;
+		kp  = (uint8_t) pc_packet.val3_1;
+		kp1 = (uint8_t) pc_packet.val3_2;
+		kp2 = (uint8_t) pc_packet.val4_1;
+		uint16_t tx = (uint16_t) (pc_packet.val1_1 << 8) | pc_packet.val1_2;
+		fprintf(stderr, "MODE: %d   motor[0]: %d motor[1]: %d motor[2]: %d motor[3]: %d", mode_b, motor[0], motor[1], motor[2], motor[3]);
+		fprintf(stderr, " kp: %d, kp1: %d, kp2: %d \n", kp, kp1, kp2);
+
 	}
 
 
@@ -666,80 +708,86 @@ int keyboardToValue(char c) {
  	//changes kp_yaw++
 	case 'u' :
 		specialdataType = true;
-		lower_tuning_value(10);
-		send_Packet();
+		packet_type_pc = 'u';
+		//lower_tuning_value(10);
+		//send_Packet();
 		specialdataType = false;
 		send_packet.dataType 	= (int8_t) 0;	
 		break;
  	//changes kp_yaw--
 	case 'j' :
 		specialdataType = true;
-		increase_tuning_value(10);
-		send_Packet();
+		packet_type_pc = 'j';
+		// increase_tuning_value(10);
+		// send_Packet();
 		specialdataType = false;
 		send_packet.dataType 	= (int8_t) 0;
 		break;
 	//changes kp1_roll++
 	case 'i' :
 		specialdataType = true;
-		lower_tuning_value(20);
-		send_Packet();
+		packet_type_pc = 'i';
+		// lower_tuning_value(20);
+		// send_Packet();
 		specialdataType = false;
 		send_packet.dataType 	= (int8_t) 0;	
 		break;
 	//changes kp1_roll--
 	case 'k' :
 		specialdataType = true;
-		increase_tuning_value(20);
-		send_Packet();
+		packet_type_pc = 'k';
+		// increase_tuning_value(20);
+		// send_Packet();
 		specialdataType = false;
 		send_packet.dataType 	= (int8_t) 0;
 		break;
 	//changes kp2_roll++
 	case 'o' :
 		specialdataType = true;
-		lower_tuning_value(30);
-		send_Packet();
+			packet_type_pc = 'o';
+		// lower_tuning_value(30);
+		// send_Packet();
 		specialdataType = false;
 		send_packet.dataType 	= (int8_t) 0;	
 		break;
 	//changes kp2_roll--
 	case 'l' :
 		specialdataType = true;
-		increase_tuning_value(30);
-		send_Packet();
+				packet_type_pc = 'l';
+		// increase_tuning_value(30);
+		// send_Packet();
 		specialdataType = false;
 		send_packet.dataType 	= (int8_t) 0;
 		break;
 	//changes kp1_pitch++
 	case 'y' :
 		specialdataType = true;
-		lower_tuning_value(40);
-		send_Packet();
+		// lower_tuning_value(40);
+		// send_Packet();
 		specialdataType = false;
 		send_packet.dataType 	= (int8_t) 0;	
 		break;
 	//changes kp1_pitch--
 	case 'h' :
 		specialdataType = true;
-		increase_tuning_value(40);
-		send_Packet();
+		// increase_tuning_value(40);
+		// send_Packet();
 		specialdataType = false;
 		send_packet.dataType 	= (int8_t) 0;
 		break;
 	//changes kp2_pitch++
 	case 't' :
 		specialdataType = true;
-		lower_tuning_value(50);
-		send_Packet();
+		// lower_tuning_value(50);
+		// send_Packet();
 		specialdataType = false;
 		send_packet.dataType 	= (int8_t) 0;	
 		break;
 	//changes kp2_pitch--
 	case 'g' :
 		specialdataType = true;
-		increase_tuning_value(50);
-		send_Packet();
+		// increase_tuning_value(50);
+		// send_Packet();
 		specialdataType = false;
 		send_packet.dataType 	= (int8_t) 0;
 		break;
@@ -784,6 +832,7 @@ int main(int argc, char **argv)
 	 */
 	fcntl(fd, F_SETFL, O_NONBLOCK);
 
+	packet_type_pc = 'n';
 
 	char	c;
 	clock_t before = clock();
@@ -824,13 +873,15 @@ int main(int argc, char **argv)
 
 		if(panicFlag) {
 			send_Panic_Packet();
-		} else if(counter > 12){
+		} else if(counter > 100){
+			//fprintf(stderr, "%s%c\n", "Packet_type: ", packet_type_pc );
 			counter = 0;
 			create_Packet();
 			send_Packet();
-			messageSentTime = clock();
-			elapsedMessage = timediff(messageSendStart, messageSentTime);
-			fprintf(stderr, "%s%ld\n", "Message sent took: ", elapsedMessage );
+			packet_type_pc = 'n';
+			messageSendEnd = clock();
+			elapsedMessage = timediff(messageSendStart, messageSendEnd);
+			//fprintf(stderr, "%s%ld\n", "Message sent took: ", elapsedMessage );
 			messageSendStart = clock();
 		}
 		counter++;
@@ -894,7 +945,7 @@ int main(int argc, char **argv)
 		//fprintf(stderr, "%s%d\n", "rx_queue: ", rx_queue.count );
 		endLoop = clock();
 		elapsed = timediff(startLoop, endLoop);
-		fprintf(stderr, "%s%ld\n", "elapsed clock cycle: ", elapsed);
+		//fprintf(stderr, "%s%ld\n", "elapsed clock cycle: ", elapsed);
 	}
 	term_exitio();
 	rs232_close();
