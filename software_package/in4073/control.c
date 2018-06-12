@@ -114,7 +114,7 @@ void calculate_roll_control()
 	roll = ((kp1_roll*roll_error)>>ANGLE_GAIN_SHIFT) - (kp2_roll*((sp-cq)>>RATE_SHIFT)>>RATE_GAIN_SHIFT);
 	
 	pitch_error = (((int32_t)values_Packet.pitch*256) -  ((theta-ctheta)>>ANGLE_SHIFT)); 
-	pitch = ((kp1_pitch*pitch_error)>>ANGLE_GAIN_SHIFT) - (kp2_pitch*((sq-cq)>>RATE_SHIFT)>>RATE_GAIN_SHIFT);
+	pitch = ((kp1_pitch*pitch_error)>>ANGLE_GAIN_SHIFT) + (kp2_pitch*((sq-cq)>>RATE_SHIFT)>>RATE_GAIN_SHIFT);
 	
 	yaw_error =  (((int32_t)values_Packet.yaw*256)>>RATE_SHIFT_YAW) + ((sr-cr)>>RATE_SHIFT_YAW) ; //add offset here
 	yaw =  (kp_yaw*yaw_error)>>RATE_GAIN_SHIFT_YAW;
@@ -162,7 +162,7 @@ void calculateMotorRPM()
 	int32_t d = 1;
 
 	int multiFactor = 6; //To be tested with QR
-	int minMotorValue = 180; //To be determined exactly using QR
+	int minMotorValue = 200; //To be determined exactly using QR
 	int maxMotorValue = 1000;
  
 	//lift = roll = pitch = yaw = 0; // default
