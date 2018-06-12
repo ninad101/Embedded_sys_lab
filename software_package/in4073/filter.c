@@ -3,10 +3,14 @@
 
 #include "in4073.h"
 
+#define MAXLEN 3
+
 static int32_t pb=0;
 static int32_t bq=0;
 static float y[2];
+static float output[MAXLEN];
 static float x[2];
+static float input[MAXLEN];
 static int32_t  ephi; 
 static int32_t temp_estimated_phi;
 static int32_t temp_estimated_theta;
@@ -55,10 +59,19 @@ static int32_t etheta;
 
 void filter_function()
 {
+
+    if(input[0]==0)
+    {
+        for(int i=0;i<MAXLEN;i++)
+        {
+            input[i]=0;
+            output[i]=0;
+        }
+    }
    
     //variables
-    int32_t a[2];
-    int32_t b[2];
+    int32_t a[MAXLEN];
+    int32_t b[MAXLEN];
     //float_t p2phi=0;
     //float_t s2theta=0;
     //int16_t c1;
@@ -71,6 +84,8 @@ void filter_function()
     a[1]=float2fix2(1);
     b[0]=float2fix2(0.7804076597);
     b[1]=float2fix2(1);
+    a[2]=0;
+    b[2]=0;
 
     //printf("before filter sr: %4d \n",sr);
 
@@ -89,8 +104,32 @@ void filter_function()
     r_butter = y[0];
     y[1]=y[0];
     x[1]=x[0]; 
-    
 
+    int16_t fixinput[MAXLEN];
+    int16_t fixoutput[MAXLEN];
+
+    for(int i=0;i<MAXLEN;i++)
+    {
+        fixinput[i]=float2fix2(input[i]);
+        fixoutput[i]=float2fix2(output[i]);
+    }
+
+    fixoutput[0] = fixmul2(a[0],fixinput[0]) + fixmul2(a[1],fixinput[1]) + fixmul2(a[2],fixinput[2]) - fixmul2(b[1],fixoutput[1]) - fixmul2(b[2],fixoutput[2]);
+    fixoutput[0] = fixdiv2(fixoutput[0],b[0]);
+    output[0] = fix2float2(fixoutput[0]);
+    //r_butter = output[0];
+
+    for(int i=1;i<MAXLEN-2;i++)
+    {
+        output[i]= fix2float2(fixmul2(a[0],fixinput[i]) + fixmul2(a[1],fixinput[i+1]) + fixmul2(a[2],fixinput[i+2]) - fixmul2(b[1],fixoutput[i+1]) - fixmul2(b[2],fixoutput[i+2]));
+        output[i]= fix2float2(fixdiv2(float2fix2(output[i]),b[0]));
+    }
+    
+    for(int i=MAXLEN-1;i>0;i--)
+    {
+        output[i]=output[i-1];
+        input[i]=input[i-1];
+    }
 
     //Kalman Filtering for Roll and Pitch :
 
