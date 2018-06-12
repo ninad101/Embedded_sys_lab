@@ -881,7 +881,7 @@ int main(int argc, char **argv)
 			packet_type_pc = 'n';
 			messageSendEnd = clock();
 			elapsedMessage = timediff(messageSendStart, messageSendEnd);
-			//fprintf(stderr, "%s%ld\n", "Message sent took: ", elapsedMessage );
+			fprintf(stderr, "%s%ld\n", "Message sent took: ", elapsedMessage );
 			messageSendStart = clock();
 		}
 		counter++;
