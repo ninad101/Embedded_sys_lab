@@ -140,32 +140,28 @@ void check_data_type(void)
 	{
 		case 10:
 			if((int8_t)values_Packet.pitch < 40) {
-				kp_yaw++;
+				kp++;
 				//printf("%s%ld Pit:%d\n", "kp_yaw++: ", kp_yaw, (int8_t) values_Packet.pitch);
 			} else {
-				kp_yaw--;
+				kp--;
 				//printf("%s%ld Pit:%d\n", "kp_yaw--: ", kp_yaw, (int8_t) values_Packet.pitch);
 			}
 			break;
 		case 20:
 			if((int8_t)values_Packet.pitch < 40) {
-				kp1_pitch++;
-				kp1_roll++;
+				kp1++;
 				//printf("%s%ld Pit:%d\n", "kp1_roll++: ",(int)kp1_roll, (int8_t) values_Packet.pitch);
 			} else {
-				kp1_pitch--;
-				kp1_roll--;
+				kp1--;
 				//printf("%s%ld Pit:%d\n", "kp1_roll--: ",(int) kp1_roll, (int8_t) values_Packet.pitch);
 			}
 			break;
 		case 30:
 			if((int8_t)values_Packet.pitch < 40) {
-				kp2_pitch++;
-				kp2_roll++;
+				kp2++;
 				//printf("%s%ld Pit:%d\n", "kp2_roll++: ",(int) kp2_roll, (int8_t) values_Packet.pitch);
 			} else {
-				kp2_pitch--;
-				kp2_roll--;
+				kp2--;
 				//printf("%s%ld Pit:%d\n", "kp2_roll--: ",(int)kp2_roll, (int8_t) values_Packet.pitch);
 			}
 			break;
@@ -215,20 +211,14 @@ uint8_t setMode(void)
 		//panicFlag = false;
 	}
 	
-	//printf("%s%c%s%d\n","Header received: ", values_Packet.header, " mode: ", incomingMode );
 	if (!mode_change_acknowledged) {
 
 		if(incomingMode == mode) {
-			//printf("%s\n", "Changing mode_change_acknowledged to TRUE" );
-			//flushQueue(&rx_queue);
 			mode_change_acknowledged = true;
 		} else {
-			//flushQueue(&rx_queue);
 			send_mode_change();
-			//printf("%s\n", "Sending mode change");
 		}
 	} else {
-		//printf("%s\n","mode_change_acknowledged is TRUE" );
 
 
 
@@ -400,6 +390,21 @@ void setHeader(void)
 	//pc_packet.header = (uint8_t) 208;
 }
 
+void kp_value_packet(void)
+{
+	pc_packet.val1_1 = ((tx_queue.count & 0xFF00) >> 8) ;
+	pc_packet.val1_2 = ((tx_queue.count & 0x00FF));
+
+	pc_packet.val2_1 = (uint8_t) timestamp;
+	pc_packet.val2_2 = (uint8_t) 0;
+
+	pc_packet.val3_1 = (uint8_t)((kp  & 0x000000FF));
+	pc_packet.val3_2 = (uint8_t)((kp1  & 0x000000FF));
+
+	pc_packet.val4_1 = (uint8_t)((kp2  & 0x000000FF));
+	pc_packet.val4_2 = 0;
+}
+
 void motorValuePacket(void)
 {
 	pc_packet.val1_1 = (uint8_t)((motor[0] & 0xFF00) >> 8);
@@ -413,6 +418,7 @@ void motorValuePacket(void)
 
 	pc_packet.val4_1 = (uint8_t)((motor[3] & 0xFF00) >> 8);
 	pc_packet.val4_2 = (uint8_t)(motor[3] & 0x00FF);
+
 }
 
 void switch_mode_packet(void)
@@ -438,11 +444,18 @@ void setDataType(char type)
 	{
 		case 'm':
 			motorValuePacket();
+			if(mode == 5) {
+				packet_type_char = 'k';
+			}
 			break;
 		case 'p':
 			switch_mode_packet();
 			break;
 		case 'o':
+			break;
+		case 'k':
+			kp_value_packet();
+			packet_type_char = 'm';
 			break;
 
 	}
@@ -450,9 +463,6 @@ void setDataType(char type)
 
 void set_packet_on_queue(void)
 {
-		// Disable intterrupts
-	NVIC_DisableIRQ(UART0_IRQn);
-
 	enqueue(&tx_queue, pc_packet.header);
 	enqueue(&tx_queue, pc_packet.dataType);
 	
@@ -465,23 +475,30 @@ void set_packet_on_queue(void)
 	enqueue(&tx_queue, pc_packet.val3_2);
 	enqueue(&tx_queue, pc_packet.val4_1);
 	enqueue(&tx_queue, pc_packet.val4_2);
-
-
-	NVIC_EnableIRQ(UART0_IRQn);
 }
 
 // We want to send the motor values
 // we want to see the mode continuously
-// 
 void send_packet(char type)
 {
+	// Dirty hack
+	if(tx_queue.count != 0) {
+		flushQueue(&tx_queue);
+		// Disable intterrupts
+	}
+
+	NVIC_DisableIRQ(UART0_IRQn);
 	setHeader();
 	setDataType(type);
 	set_packet_on_queue();
 	int i = 0;
+
 	while(i < 10) {
 		i = uart_put_packet(i);
+		timestamp++;
 	}
 	//send_UART_packet();	
+
+	NVIC_EnableIRQ(UART0_IRQn);
 
 }

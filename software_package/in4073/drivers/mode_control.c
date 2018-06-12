@@ -183,7 +183,8 @@ void switchMode(int mod)
 			break;
 
 		case 5:
-			packet_type_char = 'm';
+			packet_type_char = 'k';
+			timestamp = 0;
 			rawFlag=0;		
 
 			current_mode_function = &fullMode;
