@@ -23,7 +23,7 @@ int batteryFlag=1;
 #define RATE_GAIN_SHIFT_PRESS 0
 
 // for P
-#define RATE_SHIFT_YAW 0           // yaw rate reading divider                   2047 bit    =   2000 deg/s
+#define RATE_SHIFT_YAW 0          // yaw rate reading divider                   2047 bit    =   2000 deg/s
 #define RATE_GAIN_SHIFT_YAW 0       // yaw gain divider                           does not need divider
 // for P1
 #define ANGLE_SHIFT 0            // roll and pitch attitude reading divider    1023 bit    =   90 deg
@@ -100,9 +100,9 @@ void calculate_roll_control()
 {	
 	if (kp_yaw < 1)	kp_yaw = 1;
 	if (kp1_roll< 1) kp1_roll = 1;
-	if (kp2_roll < 1) kp2_roll = 1;
+	if (kp2_roll < 1) kp2_roll = 0;
 	if (kp1_pitch < 1) kp1_pitch = 1;
-	if (kp2_pitch < 1) kp2_pitch = 1;
+	if (kp2_pitch < 1) kp2_pitch = 0;
 
 	lift = (int32_t)-1 * (values_Packet.lift -127)*256;
 	
@@ -161,7 +161,7 @@ void calculateMotorRPM()
 	int32_t b = 1;
 	int32_t d = 1;
 
-	int multiFactor = 4; //To be tested with QR
+	int multiFactor = 6; //To be tested with QR
 	int minMotorValue = 180; //To be determined exactly using QR
 	int maxMotorValue = 1000;
  
