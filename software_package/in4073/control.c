@@ -161,7 +161,7 @@ void calculateMotorRPM()
 	int32_t b = 1;
 	int32_t d = 1;
 
-	int multiFactor = 4; //To be tested with QR
+	int multiFactor = 6; //To be tested with QR
 	int minMotorValue = 180; //To be determined exactly using QR
 	int maxMotorValue = 1000;
  

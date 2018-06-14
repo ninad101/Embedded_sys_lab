@@ -69,6 +69,7 @@ struct mode_packet {
 bool mode_change_acknowledged;
 
 uint8_t mode;
+uint8_t disconnectFlag;
 int panicFlag;
 bool demo_done;
 int batteryFlag;
@@ -126,7 +127,7 @@ void heightControl(void);
 void rawControl(void);
 void calculateMotorRPM(void);
 void run_filters_and_control(void);
-int connectionCheck(void);
+// int connectionCheck(void);
 
 // Calibration
 //#define CALIBRATION_BUFFER_SIZE 100
