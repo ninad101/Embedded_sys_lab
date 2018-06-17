@@ -74,11 +74,10 @@ void safeMode(void)
 void yawMode(void)
 {
 	//printf("YAW MODE\n");
-		if (check_sensor_int_flag()) 
-		{
-			get_dmp_data();
-
-		}
+	if (check_sensor_int_flag()) 
+	{
+		get_dmp_data();
+	}
 	calculate_yaw_control();
 	calculateMotorRPM();
 	update_motors();
@@ -87,12 +86,10 @@ void yawMode(void)
 void fullMode(void)
 {
 	//printf("full MODE\n");
-		if (check_sensor_int_flag()) 
-		{
-			get_dmp_data();
-
-
-		}
+	if (check_sensor_int_flag()) 
+	{
+		get_dmp_data();
+	}
 	calculate_roll_control();
 	calculateMotorRPM();
 	update_motors();

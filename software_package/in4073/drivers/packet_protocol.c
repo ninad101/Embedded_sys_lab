@@ -488,6 +488,7 @@ void send_packet(char type)
 	}
 
 	NVIC_DisableIRQ(UART0_IRQn);
+	
 	setHeader();
 	setDataType(type);
 	set_packet_on_queue();

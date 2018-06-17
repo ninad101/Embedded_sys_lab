@@ -16,6 +16,7 @@
 #include <stdbool.h>
 #include <pthread.h>
 #include "pc_queue.c"
+#include <sys/time.h>
 /*------------------------------------------------------------
  * Global Variables
  *------------------------------------------------------------
@@ -649,9 +650,9 @@ void increase_tuning_value(int8_t d) {
 		setCRC();	
 }
 
-long timediff(clock_t t1, clock_t t2) {
+double timediff(clock_t t1, clock_t t2) {
     long elapsed;
-    elapsed = ((double)t2 - t1) / CLOCKS_PER_SEC * 1000;
+    elapsed = ((double)t2 - t1) / CLOCKS_PER_SEC * 1000 ;
     return elapsed;
 }
 
@@ -853,11 +854,12 @@ int main(int argc, char **argv)
 	int msec = 0, trigger = 10; /* 10ms */
 	clock_t startTime = clock();
 	clock_t startLoop, endLoop, messageSendEnd, messageSendStart;
-	long elapsed, elapsedMessage;
+	double elapsed, elapsedMessage;
 
 	init_queue(&rx_queue);
 
 	int counter = 0;
+	int timecounter2 = 0;
 	/* send & receive
 	 */
 	messageSendStart = clock();
@@ -873,16 +875,21 @@ int main(int argc, char **argv)
 
 		if(panicFlag) {
 			send_Panic_Packet();
-		} else if(counter > 50){
+		} else if(counter > 500){
 			//fprintf(stderr, "%s%c\n", "Packet_type: ", packet_type_pc );
 			counter = 0;
+			// timecounter2++;
+			if(timecounter2++ > 100){
+				messageSendEnd = clock();
+				elapsedMessage = timediff(messageSendStart, messageSendEnd);
+				fprintf(stderr, "%s%f\n", "Message sent took: ", elapsedMessage );
+				messageSendStart = clock();
+				timecounter2 = 0;
+			}
 			create_Packet();
 			send_Packet();
 			packet_type_pc = 'n';
-			messageSendEnd = clock();
-			elapsedMessage = timediff(messageSendStart, messageSendEnd);
-			fprintf(stderr, "%s%ld\n", "Message sent took: ", elapsedMessage );
-			messageSendStart = clock();
+
 		}
 		counter++;
 
