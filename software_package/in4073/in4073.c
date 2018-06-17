@@ -21,6 +21,8 @@
 //#define BATTERYCHECK 1
 uint8_t mode=0; 
 int rawFlag =0;
+uint8_t disconnectFlag=0;
+//rawFlag =0;
 /*------------------------------------------------------------------
  * process_key -- process command keys
  *------------------------------------------------------------------
@@ -112,6 +114,7 @@ int main(void)
 
 
 	uint32_t counter = 0;
+	// uint32_t noPacket =0;
 	demo_done = false;
 
 
@@ -131,11 +134,21 @@ int main(void)
 		//int rx_count = rx_queue.count
 
 		if (rx_queue.count > 7) {
-			if(prevMode != readPacket()) {
+			if(prevMode != readPacket()) {	
 				switchMode(mode);
 			}
+			//noPacket=0;
 		}
+		// else
+		// {
+		// 	noPacket +=1;
+		// }
 
+		// if(noPacket == 10)
+		// {
+		// 	if(mode!=0) {disconnectFlag=1; mode=1; panicFlag=1;}
+		// 	else {demo_done=true;}
+		// }
 		//Flush buffer if a lot of lag...
 		// if(rx_queue.count > 120) {
 		// 	flushQueue(&rx_queue);

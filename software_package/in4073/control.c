@@ -18,6 +18,8 @@
 
 
 int batteryFlag=1;
+//pitch adjust
+#define lift_shift 1
 //for height control
 #define RATE_SHIFT_PRESS 0
 #define RATE_GAIN_SHIFT_PRESS 0
@@ -102,13 +104,13 @@ void calculate_roll_control()
 	if (kp1< 1) kp1 = 1;
 	if (kp2 < 1) kp2 = 1;
 
-	lift = (int32_t)-1 * (values_Packet.lift -127)*256;
+	lift = (((int32_t)-1 * (values_Packet.lift -127)*256)>>lift_shift);
 	
 	roll_error = (((int32_t)values_Packet.roll*256) -  ((phi - cphi)>>ANGLE_SHIFT));
 	roll = ((kp1*roll_error)>>ANGLE_GAIN_SHIFT) - (kp2*((sp-cq)>>RATE_SHIFT)>>RATE_GAIN_SHIFT);
 	
 	pitch_error = (((int32_t)values_Packet.pitch*256) -  ((theta-ctheta)>>ANGLE_SHIFT)); 
-	pitch = ((kp1*pitch_error)>>ANGLE_GAIN_SHIFT) - (kp2*((sq-cq)>>RATE_SHIFT)>>RATE_GAIN_SHIFT);
+	pitch = ((kp1*pitch_error)>>ANGLE_GAIN_SHIFT) + (kp2*((sq-cq)>>RATE_SHIFT)>>RATE_GAIN_SHIFT);
 	
 	yaw_error =  (((int32_t)values_Packet.yaw*256)>>RATE_SHIFT_YAW) + ((sr-cr)>>RATE_SHIFT_YAW) ; //add offset here
 	yaw =  (kp*yaw_error)>>RATE_GAIN_SHIFT_YAW;
@@ -156,7 +158,7 @@ void calculateMotorRPM()
 	int32_t d = 1;
 
 	int multiFactor = 6; //To be tested with QR
-	int minMotorValue = 180; //To be determined exactly using QR
+	int minMotorValue = 200; //To be determined exactly using QR
 	int maxMotorValue = 1000;
  
 	//lift = roll = pitch = yaw = 0; // default
