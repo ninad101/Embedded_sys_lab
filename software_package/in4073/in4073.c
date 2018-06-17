@@ -28,52 +28,52 @@ uint8_t disconnectFlag=0;
  *------------------------------------------------------------------
  */
 
-void process_key(uint8_t c)
-{
+// void process_key(uint8_t c)
+// {
 
-	switch (c)
-	{
-		case 'q':
-			ae[0] += 10;
-			break;
-		case 'a':
-			ae[0] -= 10;
-			if (ae[0] < 0) ae[0] = 0;
-			break;
-		case 'w':
-			ae[1] += 10;
-			break;
-		case 's':
-			ae[1] -= 10;
-			if (ae[1] < 0) ae[1] = 0;
-			break;
-		case 'e':
-			ae[2] += 10;
-			break;
-		case 'd':
-			ae[2] -= 10;
-			if (ae[2] < 0) ae[2] = 0;
-			break;
-		case 'r':
-			ae[3] += 10;
-			break;
-		case 'f':
-			ae[3] -= 10;
-			if (ae[3] < 0) ae[3] = 0;
-			break;
-		case 'u':
-			//kp_yaw += 5;	
-			break;
-		case 'j':
-			//kp_yaw -= 5;	
-			break;
-		case 27:
-			demo_done = true;
-			break;
-		default:
-			nrf_gpio_pin_toggle(RED);
-	}
-}
+// 	switch (c)
+// 	{
+// 		case 'q':
+// 			ae[0] += 10;
+// 			break;
+// 		case 'a':
+// 			ae[0] -= 10;
+// 			if (ae[0] < 0) ae[0] = 0;
+// 			break;
+// 		case 'w':
+// 			ae[1] += 10;
+// 			break;
+// 		case 's':
+// 			ae[1] -= 10;
+// 			if (ae[1] < 0) ae[1] = 0;
+// 			break;
+// 		case 'e':
+// 			ae[2] += 10;
+// 			break;
+// 		case 'd':
+// 			ae[2] -= 10;
+// 			if (ae[2] < 0) ae[2] = 0;
+// 			break;
+// 		case 'r':
+// 			ae[3] += 10;
+// 			break;
+// 		case 'f':
+// 			ae[3] -= 10;
+// 			if (ae[3] < 0) ae[3] = 0;
+// 			break;
+// 		case 'u':
+// 			//kp_yaw += 5;	
+// 			break;
+// 		case 'j':
+// 			//kp_yaw -= 5;	
+// 			break;
+// 		case 27:
+// 			demo_done = true;
+// 			break;
+// 		default:
+// 			nrf_gpio_pin_toggle(RED);
+// 	}
+// }
 
 void printInputValues(void)
 {
@@ -114,7 +114,7 @@ int main(void)
 
 
 	uint32_t counter = 0;
-	// uint32_t noPacket =0;
+	uint32_t noPacket =0;
 	demo_done = false;
 
 
@@ -137,18 +137,18 @@ int main(void)
 			if(prevMode != readPacket()) {	
 				switchMode(mode);
 			}
-			//noPacket=0;
+			noPacket=0;
 		}
-		// else
-		// {
-		// 	noPacket +=1;
-		// }
+		else
+		{
+		 	noPacket +=1;
+		}
 
-		// if(noPacket == 10)
-		// {
-		// 	if(mode!=0) {disconnectFlag=1; mode=1; panicFlag=1;}
-		// 	else {demo_done=true;}
-		// }
+		if(noPacket == 30)
+		{
+			if(mode!=0) {disconnectFlag=1; mode=1; panicFlag=1;}
+			else {demo_done=true;}
+		}
 		//Flush buffer if a lot of lag...
 		// if(rx_queue.count > 120) {
 		// 	flushQueue(&rx_queue);
