@@ -32,7 +32,8 @@ char packet_type_pc;
 
 uint8_t mode = 0;
 int panicFlag =0;
-int connectionFlag =1;
+uint8_t visitedRawMode =0;
+// int connectionFlag =1;
 struct packet{
 	uint8_t header;
 	uint8_t dataType;
@@ -145,8 +146,9 @@ int	term_getchar()
 #include "joystick.h"
 #include <errno.h>
 
-
-int	axis[6];
+int axis[6];
+int	jsaxis[6];
+int kbaxis[6];
 int	button[12];
 
 int serial_device = 0;
@@ -244,6 +246,19 @@ int check_mode_selection(char c) {
 
 }
 
+// Safety Feature - Saumil
+int check_js_neutral(int *value, int index){
+	if(*value !=0) return 0;
+	value++;
+	if(*value !=0) return 0;
+	value++;
+	if(*value !=0) return 0;
+	value++;
+	if((*value -32767) !=0) return 0;
+	
+	return 1;
+}
+
 int rs232_putchar(char c)
 {
 	int result;
@@ -323,13 +338,13 @@ void setData(int *value,int size)
 		send_packet.dataType = (int8_t) 10; // Yaw tuning
 	} else {
 		send_packet.dataType = (int8_t) 0;
-		send_packet.roll 	= (int8_t) *value;
+		send_packet.roll 	= (int8_t) (*value/256);
 		value++;
-		send_packet.pitch = (int8_t) *value;
+		send_packet.pitch = (int8_t) (*value/256);
 		value++;
-		send_packet.yaw   = (int8_t) *value;
+		send_packet.yaw   = (int8_t) (*value/256);
 		value++;
-		send_packet.lift  = (int8_t) *value;
+		send_packet.lift  = (int8_t) (*value/256);
 	}
 
 
@@ -545,47 +560,7 @@ uint8_t read_incoming_packet(void)
 }
 
 
-uint8_t map_char_to_uint8_t(char v)
-{
-	uint8_t res = 0;
-
-	switch(v){
-		case('0'):
-			res = 0;
-			break;
-		case('1'):
-			res = 1;
-			break;
-		case('2'):
-			res = 2;
-			break;
-		case('3'):
-			res = 3;
-			break;
-		case('4'):
-			res = 4;
-			break;
-		case('5'):
-			res = 5;
-			break;
-		case('6'):
-			res = 6;
-			break;
-		case('7'):
-			res = 7;
-			break;
-		case('8'):
-			res = 8;
-			break;
-		case('9'):
-			res = 9;
-			break;
-		default:
-			break;
-	}
-
-	return res;
-}
+// No need for map_char_ ... function
 
 
 bool header_found;
@@ -620,14 +595,14 @@ void check_incoming_char(void)
 
 }
 
-void connectionCheck()
-{
-	int result;
-	const char *filename = "/dev/ttyUSB0";
-	result = access (filename, F_OK);
-	if(result != 0)	
-		connectionFlag=0;
-}
+// void connectionCheck()
+// {
+// 	int result;
+// 	const char *filename = "/dev/ttyUSB0";
+// 	result = access (filename, F_OK);
+// 	if(result != 0)	
+// 		connectionFlag=0;
+// }
 
 void lower_tuning_value(int8_t d) {
 		setHeader();
@@ -655,7 +630,7 @@ long timediff(clock_t t1, clock_t t2) {
     return elapsed;
 }
 
-//TODO 
+//TODO  
 //  Map keyboard inputs to values
 int keyboardToValue(char c) {
  switch(c)
@@ -670,6 +645,7 @@ int keyboardToValue(char c) {
 		break;
 	 case '0' :
 	 	mode = 0;
+		visitedRawMode =0;
 	 break;
 	 case '1' :
 	 	if(mode!=0)
@@ -680,23 +656,26 @@ int keyboardToValue(char c) {
 		}
 	 break;
 	 case '2' :
-	 	if(mode==0)
+	 	if(mode==0 && check_js_neutral(jsaxis,4)) 
 	 	mode = 2;
 	 break;
 	 case '3' :
-	 	if(mode==0)
+	 	if(mode==0 && check_js_neutral(jsaxis,4))
+		{
+		visitedRawMode =1;
 	 	mode = 3;
+		}
 	 	break;
 	 case '4' :
-	 	if(mode==0)
+	 	if(mode==0 && check_js_neutral(jsaxis,4)) 
 	 	mode = 4;
 	 	break;
 	case '5' :
-		if(mode==0)
+		if(mode==0 && visitedRawMode && check_js_neutral(jsaxis,4))
 	 	mode = 5;
 	 	break;
 	case '6' :
-		if(mode==0)
+		if(mode==0 && check_js_neutral(jsaxis,4))
 	 	mode = 6;
 	 	break;
 	case 'x' :
@@ -791,21 +770,33 @@ int keyboardToValue(char c) {
 		specialdataType = false;
 		send_packet.dataType 	= (int8_t) 0;
 		break;
+	case 'A' :
+		kbaxis[1] -= 300;
+		break;
+	case 'B' :
+		kbaxis[1] += 300;
+		break;
+	case 'C' :
+		kbaxis[0] -= 300;		
+		break;
+	case 'D' :
+		kbaxis[0] += 300;
+		break;
 	 case 'a' :
-	 ;
-	 break;
+		kbaxis[3] -= 300;
+		break;
 	 case 'z' :
-	 ;
-	 break;
+		kbaxis[3] += 300;
+		break;
 	 case 'q' :
-	 ;
-	 break;
+		kbaxis[2] -= 300;
+	 	break;
 	 case 'w' :
-	 ;
-	 break;
+		kbaxis[2] += 300;
+		break;
 
 	default :
-	;
+		;
 	break;
  }
 } 
@@ -867,7 +858,7 @@ int main(int argc, char **argv)
 		startLoop = clock();
 
 
-		connectionCheck();
+		// connectionCheck();
 		rs232_getchar_nb();
 		//check_incoming_char();
 
@@ -887,8 +878,21 @@ int main(int argc, char **argv)
 		counter++;
 
 		//input from Keyboard
-		char keyboardInput = term_getchar_nb();
-		keyboardToValue(keyboardInput);
+			char keyboardInput = term_getchar_nb();
+			char nextInput;
+			char arrowInput;
+			if(keyboardInput == 27)
+			{	
+				if(nextInput=term_getchar_nb() != -1)
+				{
+				arrowInput=term_getchar_nb();
+				keyboardToValue(arrowInput);	
+				}
+				else
+					keyboardToValue(27);
+			}
+			else
+				keyboardToValue(keyboardInput);
 
 		//from JS.c 
 		#ifdef JOYSTICK_CONNECTED
@@ -903,7 +907,7 @@ int main(int argc, char **argv)
 					button[js.number] = js.value;
 					break;
 				case JS_EVENT_AXIS:
-					axis[js.number] = js.value/256;
+					jsaxis[js.number] = js.value;
 					break;
 			}
 		}
@@ -913,11 +917,21 @@ int main(int argc, char **argv)
 			exit (1);
 		}
 		#endif
+		//combining Keyboard and JS inputs
+		for(int i=0;i<4;i++)
+		{
+			if(jsaxis[i]+kbaxis[i] > 32767)
+				axis[i] = 32767;
+			else if(jsaxis[i]+kbaxis[i] < -32767)
+				axis[i] = -32767;
+			else 
+				axis[i]= jsaxis[i]+kbaxis[i];
+		}
 
 		#ifdef JOYSTICK_DEBUG
 		printf("\n");
 		for (int i = 0; i < 6; i++) {
-			printf("%6d ",axis[i]);
+			printf("%6d ",jsaxis[i]);
 		}
 		printf(" |  ");
 		for (int i = 0; i < 12; i++) {
@@ -931,11 +945,11 @@ int main(int argc, char **argv)
 			else break;
 		}
 		// Connection Check - Saumil	
-		if(!connectionFlag)
-		{	
-			if(mode!=0) {printf("\nNo Connection! Panic Mode\n"); mode=1; panicFlag=1;}
-			else{ printf("\nNo Connection! Aborting ...\n"); break;}
-		}
+		// if(!connectionFlag)
+		// {	
+		// 	if(mode!=0) {printf("\nNo Connection! Panic Mode\n"); mode=1; panicFlag=1;}
+		// 	else{ printf("\nNo Connection! Aborting ...\n"); break;}
+		// }
 
 		if(rx_queue.count >= 10)
 		{

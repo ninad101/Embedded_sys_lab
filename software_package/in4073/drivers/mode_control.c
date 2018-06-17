@@ -143,9 +143,10 @@ void panicMode(void)
 	mode_change_acknowledged = false;
 
 	//set_acknowledge_flag();
-	
+	if(!disconnectFlag)
 	send_mode_change();
-
+	else 
+	switchMode(0);
 
 	//switchMode(0);
 	safeMode();
