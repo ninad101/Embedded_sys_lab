@@ -45,10 +45,16 @@ struct packet{
 	uint16_t crc;
 } values_Packet;
 
-#define PC_PACKET_SIZE 10
+#define PC_PACKET_SIZE 16
 struct send_pc_packet{
 	uint8_t header;
 	uint8_t dataType;
+	uint8_t timestamp_1;
+	uint8_t timestamp_2;
+	uint8_t timestamp_3;
+	uint8_t timestamp_4;
+	uint8_t voltage_1;
+	uint8_t voltage_2;
 	uint8_t val1_1;
 	uint8_t val1_2;
 	uint8_t val2_1;
@@ -192,7 +198,7 @@ int uart_put_packet(int);
 #define PC_PACKET_LENGTH 3
 uint8_t prevAcknowledgeMode;
 uint8_t readPacket(void);
-uint8_t timestamp;
+uint32_t timestamp;
 bool check_for_header(uint8_t);
 void init_send_mode_change(void);
 void set_acknowledge_flag(bool);

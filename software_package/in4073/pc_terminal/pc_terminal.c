@@ -23,7 +23,7 @@
  */
 
 #define HEADER 0b11010000
-//#define JOYSTICK_CONNECTED 1
+#define JOYSTICK_CONNECTED 1
 //#define JOYSTICK_DEBUG 2
 #define CRC16_DNP	0x3D65
 #define HEADER 0b11010000
@@ -52,10 +52,16 @@ struct mode_packet {
 	char ender;
 } mode_change_packet;
 
-#define PC_PACKET_SIZE 10
+#define PC_PACKET_SIZE 16
 struct send_pc_packet{
 	uint8_t header;
 	uint8_t dataType;
+	uint8_t timestamp_1;
+	uint8_t timestamp_2;
+	uint8_t timestamp_3;
+	uint8_t timestamp_4;
+	uint8_t voltage_1;
+	uint8_t voltage_2;
 	uint8_t val1_1;
 	uint8_t val1_2;
 	uint8_t val2_1;
@@ -490,7 +496,8 @@ bool check_for_header(uint8_t h)
 }
 
 uint32_t kp, kp1, kp2;
-uint8_t timestamp;
+uint32_t timestamp_board;
+uint16_t voltage;
 
 uint8_t read_incoming_packet(void)
 {
@@ -508,6 +515,17 @@ uint8_t read_incoming_packet(void)
 	}
 
 	pc_packet.dataType = dequeue(&rx_queue);
+
+
+	pc_packet.timestamp_1 = dequeue(&rx_queue);
+	pc_packet.timestamp_2 = dequeue(&rx_queue);
+	pc_packet.timestamp_3 = dequeue(&rx_queue);
+	pc_packet.timestamp_4 = dequeue(&rx_queue);
+
+	pc_packet.voltage_1 = dequeue(&rx_queue);
+	pc_packet.voltage_2 = dequeue(&rx_queue);
+
+
 	pc_packet.val1_1 = dequeue(&rx_queue);
 	pc_packet.val1_2 = dequeue(&rx_queue);
 	pc_packet.val2_1 = dequeue(&rx_queue);
@@ -516,6 +534,13 @@ uint8_t read_incoming_packet(void)
 	pc_packet.val3_2 = dequeue(&rx_queue);
 	pc_packet.val4_1 = dequeue(&rx_queue);
 	pc_packet.val4_2 = dequeue(&rx_queue);
+
+	timestamp_board = (uint32_t) (pc_packet.timestamp_1 << 24) 
+								| (pc_packet.timestamp_2 << 16) 
+								| (pc_packet.timestamp_3 << 8)
+								| (pc_packet.timestamp_4);
+
+	voltage = (uint16_t) (pc_packet.voltage_1 << 8) | pc_packet.voltage_2;
 
 
 	uint8_t mode_b = (uint8_t) pc_packet.header;
@@ -530,7 +555,7 @@ uint8_t read_incoming_packet(void)
 		motor[2] = (int16_t) (pc_packet.val3_1 << 8) | pc_packet.val3_2;	
 		motor[3] = (int16_t) (pc_packet.val4_1 << 8) | pc_packet.val4_2;
 		if(mode != 5){
-			fprintf(stderr, "MODE: %d   motor[0]: %d motor[1]: %d motor[2]: %d motor[3]: %d\n", mode_b, motor[0], motor[1], motor[2], motor[3]);
+			fprintf(stderr, "%d | VOLTAGE: %d MODE: %d motor[0]: %d motor[1]: %d motor[2]: %d motor[3]: %d\n", timestamp_board, voltage, mode_b, motor[0], motor[1], motor[2], motor[3]);
 		}
 		
 	} else if(pc_packet.dataType == 'p') {
@@ -547,12 +572,11 @@ uint8_t read_incoming_packet(void)
 		mode = mode_b;
 		fprintf(stderr, "%s\n", "Calibration mode" );
 	} else if(pc_packet.dataType == 'k') {
-		timestamp = pc_packet.val2_1;
 		kp  = (uint8_t) pc_packet.val3_1;
 		kp1 = (uint8_t) pc_packet.val3_2;
 		kp2 = (uint8_t) pc_packet.val4_1;
 		uint16_t tx = (uint16_t) (pc_packet.val1_1 << 8) | pc_packet.val1_2;
-		fprintf(stderr, "MODE: %d   motor[0]: %d motor[1]: %d motor[2]: %d motor[3]: %d", mode_b, motor[0], motor[1], motor[2], motor[3]);
+		fprintf(stderr, "%d | VOLTAGE: %d MODE: %d   motor[0]: %d motor[1]: %d motor[2]: %d motor[3]: %d", timestamp_board, voltage, mode_b, motor[0], motor[1], motor[2], motor[3]);
 		fprintf(stderr, " kp: %d, kp1: %d, kp2: %d \n", kp, kp1, kp2);
 
 	}
@@ -850,56 +874,43 @@ int main(int argc, char **argv)
 	init_queue(&rx_queue);
 
 	int counter = 0;
-	int timecounter2 = 0;
 	/* send & receive
 	 */
 	messageSendStart = clock();
+	startLoop = clock();
 
 	for (;;)
 	{	
-		startLoop = clock();
 
 
 		// connectionCheck();
 		rs232_getchar_nb();
-		//check_incoming_char();
 
 		if(panicFlag) {
 			send_Panic_Packet();
-		} else if(counter > 500){
-			//fprintf(stderr, "%s%c\n", "Packet_type: ", packet_type_pc );
-			counter = 0;
-			// timecounter2++;
-			if(timecounter2++ > 100){
-				messageSendEnd = clock();
-				elapsedMessage = timediff(messageSendStart, messageSendEnd);
-				fprintf(stderr, "%s%f\n", "Message sent took: ", elapsedMessage );
-				messageSendStart = clock();
-				timecounter2 = 0;
-			}
+		} else if(timediff(messageSendStart, clock()) > 30){
 			create_Packet();
 			send_Packet();
 			packet_type_pc = 'n';
-
+			messageSendStart = clock();
 		}
-		counter++;
 
 		//input from Keyboard
-			char keyboardInput = term_getchar_nb();
-			char nextInput;
-			char arrowInput;
-			if(keyboardInput == 27)
-			{	
-				if(nextInput=term_getchar_nb() != -1)
-				{
-				arrowInput=term_getchar_nb();
-				keyboardToValue(arrowInput);	
-				}
-				else
-					keyboardToValue(27);
+		char keyboardInput = term_getchar_nb();
+		char nextInput;
+		char arrowInput;
+		if(keyboardInput == 27)
+		{	
+			if(nextInput=term_getchar_nb() != -1)
+			{
+			arrowInput=term_getchar_nb();
+			keyboardToValue(arrowInput);	
 			}
 			else
-				keyboardToValue(keyboardInput);
+				keyboardToValue(27);
+		}
+		else
+			keyboardToValue(keyboardInput);
 
 		//from JS.c 
 		#ifdef JOYSTICK_CONNECTED
@@ -958,15 +969,21 @@ int main(int argc, char **argv)
 		// 	else{ printf("\nNo Connection! Aborting ...\n"); break;}
 		// }
 
-		if(rx_queue.count >= 10)
+		if(rx_queue.count >= PC_PACKET_SIZE)
 		{
 			//fprintf(stderr, "%s\n", "Going to read packer");
 			read_incoming_packet();
 		}
 		//fprintf(stderr, "%s%d\n", "rx_queue: ", rx_queue.count );
-		endLoop = clock();
-		elapsed = timediff(startLoop, endLoop);
-		//fprintf(stderr, "%s%ld\n", "elapsed clock cycle: ", elapsed);
+
+		if(counter++ > 10000) {
+			endLoop = clock();
+			elapsed = timediff(startLoop, endLoop);
+			fprintf(stderr, "%s%f\n", "elapsed clock cycle: ", elapsed);
+			counter = 0;
+			startLoop = clock();
+		}
+
 	}
 	term_exitio();
 	rs232_close();

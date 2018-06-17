@@ -128,6 +128,8 @@ int main(void)
 	flushQueue(&rx_queue);
 	flushQueue(&tx_queue);
 
+	timestamp = get_time_us();
+
 	while (!demo_done)
 	{	
 		//This is where incoming data comes from

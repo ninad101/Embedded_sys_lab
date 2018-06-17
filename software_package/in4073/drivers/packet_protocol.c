@@ -398,10 +398,10 @@ void kp_value_packet(void)
 	pc_packet.val2_1 = (uint8_t) timestamp;
 	pc_packet.val2_2 = (uint8_t) 0;
 
-	pc_packet.val3_1 = (uint8_t)((kp  & 0x000000FF));
-	pc_packet.val3_2 = (uint8_t)((kp1  & 0x000000FF));
+	pc_packet.val3_1 = (uint8_t)((kp & 0x000000FF));
+	pc_packet.val3_2 = (uint8_t)((kp1 & 0x000000FF));
 
-	pc_packet.val4_1 = (uint8_t)((kp2  & 0x000000FF));
+	pc_packet.val4_1 = (uint8_t)((kp2 & 0x000000FF));
 	pc_packet.val4_2 = 0;
 }
 
@@ -436,9 +436,30 @@ void switch_mode_packet(void)
 	pc_packet.val4_2 = 0;	
 }
 
+void setTimeStamp(void)
+{
+	timestamp = get_time_us();
+
+	pc_packet.timestamp_1 = (uint8_t) ((timestamp & 0xFF000000) >> 24);
+ 	pc_packet.timestamp_2 = (uint8_t) ((timestamp & 0x00FF0000) >> 16);
+ 	pc_packet.timestamp_3 = (uint8_t) ((timestamp & 0x0000FF00) >> 8);
+ 	pc_packet.timestamp_4 = (uint8_t) (timestamp & 0x000000FF);
+}
+
+void setVoltage(void)
+{
+	uint16_t vol = 0;
+
+	pc_packet.voltage_1 = (uint8_t)((vol & 0xFF00) >> 8);
+	pc_packet.voltage_2 = (uint8_t)(vol & 0x00FF);
+
+}
+
 void setDataType(char type)
 {
 	pc_packet.dataType = type;
+	setTimeStamp();
+	setVoltage();
 
 	switch(type)
 	{
@@ -465,6 +486,14 @@ void set_packet_on_queue(void)
 {
 	enqueue(&tx_queue, pc_packet.header);
 	enqueue(&tx_queue, pc_packet.dataType);
+
+	enqueue(&tx_queue, pc_packet.timestamp_1);
+	enqueue(&tx_queue, pc_packet.timestamp_2);
+	enqueue(&tx_queue, pc_packet.timestamp_3);
+	enqueue(&tx_queue, pc_packet.timestamp_4);
+
+	enqueue(&tx_queue, pc_packet.voltage_1);
+	enqueue(&tx_queue, pc_packet.voltage_2);
 	
 	enqueue(&tx_queue, pc_packet.val1_1);
 	enqueue(&tx_queue, pc_packet.val1_2);
@@ -494,7 +523,7 @@ void send_packet(char type)
 	set_packet_on_queue();
 	int i = 0;
 
-	while(i < 10) {
+	while(i < PC_PACKET_SIZE) {
 		i = uart_put_packet(i);
 		timestamp++;
 	}
