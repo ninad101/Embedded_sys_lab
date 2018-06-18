@@ -175,7 +175,7 @@ int main(void)
 			adc_request_sample();
 			read_baro();
 						
-			logData();
+			logData(); // Change the frequency of logging
 			//printInputValues();
 
 			clear_timer_flag();

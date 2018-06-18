@@ -22,11 +22,11 @@
  */
 
 #define HEADER 0b11010000
-//#define JOYSTICK_CONNECTED 1
+#define JOYSTICK_CONNECTED 1
 //#define JOYSTICK_DEBUG 2
 #define CRC16_DNP	0x3D65
 #define HEADER 0b11010000
-#define JS_DEV	"/dev/input/js0"
+#define JS_DEV	"/dev/input/js1"
 
 char packet_type_pc;
 
@@ -595,14 +595,6 @@ void check_incoming_char(void)
 
 }
 
-// void connectionCheck()
-// {
-// 	int result;
-// 	const char *filename = "/dev/ttyUSB0";
-// 	result = access (filename, F_OK);
-// 	if(result != 0)	
-// 		connectionFlag=0;
-// }
 
 void lower_tuning_value(int8_t d) {
 		setHeader();
@@ -809,6 +801,12 @@ int main(int argc, char **argv)
 	int 		fd;
 	header_found = false;
 	specialdataType = false;
+	FILE *fp;
+	fp=fopen("telemetry.csv","w");
+	if (fp ==NULL)
+	{
+		printf("ERROR opening file");
+	}
 
 
 #ifdef JOYSTICK_CONNECTED	
@@ -849,6 +847,7 @@ int main(int argc, char **argv)
 	init_queue(&rx_queue);
 
 	int counter = 0;
+	int countCycle =0;
 	/* send & receive
 	 */
 	messageSendStart = clock();
@@ -858,7 +857,6 @@ int main(int argc, char **argv)
 		startLoop = clock();
 
 
-		// connectionCheck();
 		rs232_getchar_nb();
 		//check_incoming_char();
 
@@ -944,17 +942,17 @@ int main(int argc, char **argv)
 			if(mode!=0) {mode=1; panicFlag=1;}
 			else break;
 		}
-		// Connection Check - Saumil	
-		// if(!connectionFlag)
-		// {	
-		// 	if(mode!=0) {printf("\nNo Connection! Panic Mode\n"); mode=1; panicFlag=1;}
-		// 	else{ printf("\nNo Connection! Aborting ...\n"); break;}
-		// }
-
+		countCycle ++;
 		if(rx_queue.count >= 10)
 		{
 			//fprintf(stderr, "%s\n", "Going to read packer");
 			read_incoming_packet();
+			if(countCycle > 400)
+			{
+			countCycle =0;
+			//fprintf(fp,"%d,%d,%d,%d,%d,%d,%d\n",timestamp_board,voltage,mode,motor[0],motor[1],motor[2],motor[3]);
+			// fclose(fp);
+			}
 		}
 		//fprintf(stderr, "%s%d\n", "rx_queue: ", rx_queue.count );
 		endLoop = clock();
