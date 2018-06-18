@@ -846,8 +846,12 @@ int main(int argc, char **argv)
 	int 		fd;
 	header_found = false;
 	specialdataType = false;
-
-
+	FILE *fp;
+	fp=fopen("telemetry.csv","w");
+	if (fp ==NULL)
+	{
+		printf("ERROR opening file");
+	}
 #ifdef JOYSTICK_CONNECTED	
 	struct js_event js;
 	
@@ -886,6 +890,7 @@ int main(int argc, char **argv)
 	init_queue(&rx_queue);
 
 	int counter = 0;
+	int countCycle =0;
 	/* send & receive
 	 */
 	messageSendStart = clock();
@@ -980,11 +985,17 @@ int main(int argc, char **argv)
 		// 	if(mode!=0) {printf("\nNo Connection! Panic Mode\n"); mode=1; panicFlag=1;}
 		// 	else{ printf("\nNo Connection! Aborting ...\n"); break;}
 		// }
-
+		countCycle ++;
 		if(rx_queue.count >= PC_PACKET_SIZE)
 		{
 			//fprintf(stderr, "%s\n", "Going to read packer");
 			read_incoming_packet();
+			if(countCycle > 100)
+			{
+			countCycle =0;
+			fprintf(fp,"%d,%d,%d,%d,%d,%d,%d\n",timestamp_board/1000000,voltage,mode,motor[0],motor[1],motor[2],motor[3]);
+			// fclose(fp);
+			}
 		}
 		//fprintf(stderr, "%s%d\n", "rx_queue: ", rx_queue.count );
 
