@@ -117,18 +117,15 @@ int main(void)
 	// uint32_t noPacket =0;
 	demo_done = false;
 
-
-
 	switchMode(0);
 
-	uint32_t counter2 = 0;
-
-	packet_type_char = 'm';
+	packet_type_char = 'v';
 
 	flushQueue(&rx_queue);
 	flushQueue(&tx_queue);
 
 	timestamp = get_time_us();
+	uint32_t start_Message_time = get_time_us();
 
 	while (!demo_done)
 	{	
@@ -190,8 +187,13 @@ int main(void)
 			//imu_init(false, 256);
 		}
 
-		if(counter2++%20 == 0) {
-			send_packet(packet_type_char);			
+		uint32_t diff_t = get_time_us() - start_Message_time;
+
+		if(diff_t > 660) {
+			//flushQueue(&tx_queue);
+			send_packet(packet_type_char);
+			start_Message_time = get_time_us();
+
 		}
 
 	}	

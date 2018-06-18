@@ -23,7 +23,7 @@
  */
 
 #define HEADER 0b11010000
-//#define JOYSTICK_CONNECTED 1
+#define JOYSTICK_CONNECTED 1
 //#define JOYSTICK_DEBUG 2
 #define CRC16_DNP	0x3D65
 #define HEADER 0b11010000
@@ -517,15 +517,6 @@ uint8_t read_incoming_packet(void)
 	pc_packet.dataType = dequeue(&rx_queue);
 
 
-	pc_packet.timestamp_1 = dequeue(&rx_queue);
-	pc_packet.timestamp_2 = dequeue(&rx_queue);
-	pc_packet.timestamp_3 = dequeue(&rx_queue);
-	pc_packet.timestamp_4 = dequeue(&rx_queue);
-
-	pc_packet.voltage_1 = dequeue(&rx_queue);
-	pc_packet.voltage_2 = dequeue(&rx_queue);
-
-
 	pc_packet.val1_1 = dequeue(&rx_queue);
 	pc_packet.val1_2 = dequeue(&rx_queue);
 	pc_packet.val2_1 = dequeue(&rx_queue);
@@ -534,13 +525,6 @@ uint8_t read_incoming_packet(void)
 	pc_packet.val3_2 = dequeue(&rx_queue);
 	pc_packet.val4_1 = dequeue(&rx_queue);
 	pc_packet.val4_2 = dequeue(&rx_queue);
-
-	timestamp_board = (uint32_t) (pc_packet.timestamp_1 << 24) 
-								| (pc_packet.timestamp_2 << 16) 
-								| (pc_packet.timestamp_3 << 8)
-								| (pc_packet.timestamp_4);
-
-	voltage = (uint16_t) (pc_packet.voltage_1 << 8) | pc_packet.voltage_2;
 
 
 	uint8_t mode_b = (uint8_t) pc_packet.header;
@@ -558,6 +542,16 @@ uint8_t read_incoming_packet(void)
 			fprintf(stderr, "%d | VOLTAGE: %d MODE: %d motor[0]: %d motor[1]: %d motor[2]: %d motor[3]: %d\n", timestamp_board, voltage, mode_b, motor[0], motor[1], motor[2], motor[3]);
 		}
 		
+	} else if(pc_packet.dataType == 'v') {
+
+
+		timestamp_board = (uint32_t) (pc_packet.val1_1 << 24) 
+									| (pc_packet.val1_2 << 16) 
+									| (pc_packet.val2_1 << 8)
+									| (pc_packet.val2_2);
+
+		voltage = (uint16_t) (pc_packet.val3_1 << 8) | pc_packet.val3_2;
+
 	} else if(pc_packet.dataType == 'p') {
 		mode = mode_b;
 		panicFlag = false;
@@ -671,6 +665,9 @@ int keyboardToValue(char c) {
 	 case '0' :
 	 	mode = 0;
 		visitedRawMode =0;
+		create_Packet();
+		send_Packet();
+		packet_type_pc = 'n';
 	 break;
 	 case '1' :
 	 	if(mode!=0)
@@ -681,27 +678,42 @@ int keyboardToValue(char c) {
 		}
 	 break;
 	 case '2' :
-	 	if(mode==0 && check_js_neutral(jsaxis,4)) 
+	 	//if(mode==0 && check_js_neutral(jsaxis,4)) 
 	 	mode = 2;
+	 	create_Packet();
+		send_Packet();
+		packet_type_pc = 'n';
 	 break;
 	 case '3' :
 	 	if(mode==0 && check_js_neutral(jsaxis,4))
 		{
 		visitedRawMode =1;
 	 	mode = 3;
+	 			create_Packet();
+		send_Packet();
+		packet_type_pc = 'n';
 		}
 	 	break;
 	 case '4' :
-	 	if(mode==0 && check_js_neutral(jsaxis,4)) 
+	 	//if(mode==0 && check_js_neutral(jsaxis,4)) 
 	 	mode = 4;
+	 			create_Packet();
+		send_Packet();
+		packet_type_pc = 'n';
 	 	break;
 	case '5' :
-		if(mode==0 && visitedRawMode && check_js_neutral(jsaxis,4))
+		//if(mode==0 && visitedRawMode && check_js_neutral(jsaxis,4))
 	 	mode = 5;
+	 			create_Packet();
+		send_Packet();
+		packet_type_pc = 'n';
 	 	break;
 	case '6' :
-		if(mode==0 && check_js_neutral(jsaxis,4))
+		//if(mode==0 && check_js_neutral(jsaxis,4))
 	 	mode = 6;
+	 			create_Packet();
+		send_Packet();
+		packet_type_pc = 'n';	
 	 	break;
 	case 'x' :
 		if(mode==0)
@@ -888,7 +900,7 @@ int main(int argc, char **argv)
 
 		if(panicFlag) {
 			send_Panic_Packet();
-		} else if(timediff(messageSendStart, clock()) > 30){
+		} else if(timediff(messageSendStart, clock()) > 2){
 			create_Packet();
 			send_Packet();
 			packet_type_pc = 'n';
@@ -919,7 +931,7 @@ int main(int argc, char **argv)
 
 			/* register data
 			*/
-			fprintf(stderr,".");
+			//fprintf(stderr,".");
 			switch(js.type & ~JS_EVENT_INIT) {
 				case JS_EVENT_BUTTON:
 					button[js.number] = js.value;

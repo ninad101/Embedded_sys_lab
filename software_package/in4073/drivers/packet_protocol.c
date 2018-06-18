@@ -236,7 +236,7 @@ uint8_t setMode(void)
  */
 bool find_next_packet()
 {
-	printf("Packet broken, looking for next");
+	//printf("Packet broken, looking for next");
 	fillBroken_Packet();
 	find_header_in_broken_Packet();
 	if(check_Broken_Packet()) {
@@ -384,11 +384,6 @@ void send_mode_change(void)
 ----------------------------------*/
 
 
-void setHeader(void)
-{
-	pc_packet.header = (uint8_t) PACKET_HEADER | mode;
-	//pc_packet.header = (uint8_t) 208;
-}
 
 void kp_value_packet(void)
 {
@@ -421,6 +416,24 @@ void motorValuePacket(void)
 
 }
 
+void voltageValuePacket(void)
+{
+	timestamp = get_time_us();
+
+	pc_packet.val1_1 = (uint8_t) ((timestamp & 0xFF000000) >> 24);
+ 	pc_packet.val1_2 = (uint8_t) ((timestamp & 0x00FF0000) >> 16);
+ 	pc_packet.val2_1 = (uint8_t) ((timestamp & 0x0000FF00) >> 8);
+ 	pc_packet.val2_2 = (uint8_t) (timestamp & 0x000000FF);	
+
+	uint16_t vol = 0;
+
+	pc_packet.val3_1 = (uint8_t)((vol & 0xFF00) >> 8);
+	pc_packet.val3_2 = (uint8_t)(vol & 0x00FF);
+
+	pc_packet.val4_1 = 0;
+	pc_packet.val4_2 = 0;
+}
+
 void switch_mode_packet(void)
 {
 	pc_packet.val1_1 = 0;
@@ -436,30 +449,9 @@ void switch_mode_packet(void)
 	pc_packet.val4_2 = 0;	
 }
 
-void setTimeStamp(void)
-{
-	timestamp = get_time_us();
-
-	pc_packet.timestamp_1 = (uint8_t) ((timestamp & 0xFF000000) >> 24);
- 	pc_packet.timestamp_2 = (uint8_t) ((timestamp & 0x00FF0000) >> 16);
- 	pc_packet.timestamp_3 = (uint8_t) ((timestamp & 0x0000FF00) >> 8);
- 	pc_packet.timestamp_4 = (uint8_t) (timestamp & 0x000000FF);
-}
-
-void setVoltage(void)
-{
-	uint16_t vol = 0;
-
-	pc_packet.voltage_1 = (uint8_t)((vol & 0xFF00) >> 8);
-	pc_packet.voltage_2 = (uint8_t)(vol & 0x00FF);
-
-}
 
 void setDataType(char type)
 {
-	pc_packet.dataType = type;
-	setTimeStamp();
-	setVoltage();
 
 	switch(type)
 	{
@@ -467,7 +459,13 @@ void setDataType(char type)
 			motorValuePacket();
 			if(mode == 5) {
 				packet_type_char = 'k';
+			} else {
+				packet_type_char = 'v';
 			}
+			break;
+		case 'v':
+			voltageValuePacket();
+			packet_type_char = 'm';
 			break;
 		case 'p':
 			switch_mode_packet();
@@ -476,25 +474,17 @@ void setDataType(char type)
 			break;
 		case 'k':
 			kp_value_packet();
-			packet_type_char = 'm';
+			packet_type_char = 'v';
 			break;
-
 	}
 }
+
 
 void set_packet_on_queue(void)
 {
 	enqueue(&tx_queue, pc_packet.header);
 	enqueue(&tx_queue, pc_packet.dataType);
 
-	enqueue(&tx_queue, pc_packet.timestamp_1);
-	enqueue(&tx_queue, pc_packet.timestamp_2);
-	enqueue(&tx_queue, pc_packet.timestamp_3);
-	enqueue(&tx_queue, pc_packet.timestamp_4);
-
-	enqueue(&tx_queue, pc_packet.voltage_1);
-	enqueue(&tx_queue, pc_packet.voltage_2);
-	
 	enqueue(&tx_queue, pc_packet.val1_1);
 	enqueue(&tx_queue, pc_packet.val1_2);
 	enqueue(&tx_queue, pc_packet.val2_1);
@@ -504,6 +494,12 @@ void set_packet_on_queue(void)
 	enqueue(&tx_queue, pc_packet.val3_2);
 	enqueue(&tx_queue, pc_packet.val4_1);
 	enqueue(&tx_queue, pc_packet.val4_2);
+}
+
+void setHeader(char type)
+{
+	pc_packet.header = (uint8_t) PACKET_HEADER | mode;
+	pc_packet.dataType = type;
 }
 
 // We want to send the motor values
@@ -518,16 +514,13 @@ void send_packet(char type)
 
 	NVIC_DisableIRQ(UART0_IRQn);
 	
-	setHeader();
+	setHeader(type);
 	setDataType(type);
 	set_packet_on_queue();
 	int i = 0;
-
 	while(i < PC_PACKET_SIZE) {
 		i = uart_put_packet(i);
-		timestamp++;
 	}
-	//send_UART_packet();	
 
 	NVIC_EnableIRQ(UART0_IRQn);
 

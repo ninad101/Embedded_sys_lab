@@ -46,15 +46,16 @@ void calibrate_offset_acceleration(void)
 
 //written by Ninad : TO Do : calibrate pressure for height control
 
+#define buffer_size 200
 void calibration(void)
 {
     uint8_t i;
-    static int16_t cal_phi[16], cal_theta[16], cal_sax[16], cal_say[16], cal_sp[16], cal_sq[16], cal_sr[16];
+    static int16_t cal_phi[buffer_size], cal_theta[buffer_size], cal_sax[buffer_size], cal_say[buffer_size], cal_sp[buffer_size], cal_sq[buffer_size], cal_sr[buffer_size];
     int32_t sum_phi=0, sum_theta=0, sum_sax=0, sum_say=0, sum_sp=0, sum_sq=0, sum_sr = 0;
-    static int32_t cal_pressure[16];
+    static int32_t cal_pressure[buffer_size];
 	int32_t sum_pressure=0;
     //shift the value by one;
-    for (i=0;i<15;i++)
+    for (i=0;i<buffer_size-1;i++)
     {
         cal_phi[i] = cal_phi[i+1];
         cal_theta[i] = cal_theta[i+1];
@@ -68,17 +69,17 @@ void calibration(void)
     }
 
     //pushing new value;
-    cal_phi[15] = phi; cal_theta[15] = theta; cal_sax[15] = sax; cal_say[15] = say; cal_sp[15] = sp; cal_sq[15] = sq; cal_sr[15]=sr;
-    cal_pressure[15] = pressure;
+    cal_phi[buffer_size-1] = phi; cal_theta[buffer_size-1] = theta; cal_sax[buffer_size-1] = sax; cal_say[buffer_size-1] = say; cal_sp[buffer_size-1] = sp; cal_sq[buffer_size-1] = sq; cal_sr[buffer_size-1]=sr;
+    cal_pressure[buffer_size-1] = pressure;
     //summing the input data
-    for (i=0;i<16;i++)
+    for (i=0;i<buffer_size;i++)
     {
         sum_phi += cal_phi[i]; sum_theta += cal_theta[i]; sum_sax += cal_sax[i]; sum_say += cal_say[i]; sum_sp += cal_sp[i]; sum_sq += cal_sq[i]; sum_sr += cal_sr[i];
 		sum_pressure += cal_pressure[i];
 	}
 
     //averaging data
-    cphi = sum_phi>>4; ctheta = sum_theta>>4; csax = sum_sax>>4; csay = sum_say>>4; cp = sum_sp>>4; cq = sum_sq>>4; cr = sum_sr>>4;
-    cpressure = sum_pressure>>4;
+    cphi = sum_phi/buffer_size; ctheta = sum_theta/buffer_size; csax = sum_sax/buffer_size; csay = sum_say/buffer_size; cp = sum_sp/buffer_size; cq = sum_sq/buffer_size; cr = sum_sr/buffer_size;
+    cpressure = sum_pressure/buffer_size;
 }
 /*------------------------------------------------------------*/

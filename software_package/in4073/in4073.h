@@ -45,16 +45,10 @@ struct packet{
 	uint16_t crc;
 } values_Packet;
 
-#define PC_PACKET_SIZE 16
+#define PC_PACKET_SIZE 10
 struct send_pc_packet{
 	uint8_t header;
 	uint8_t dataType;
-	uint8_t timestamp_1;
-	uint8_t timestamp_2;
-	uint8_t timestamp_3;
-	uint8_t timestamp_4;
-	uint8_t voltage_1;
-	uint8_t voltage_2;
 	uint8_t val1_1;
 	uint8_t val1_2;
 	uint8_t val2_1;
@@ -110,9 +104,6 @@ int16_t estimated_phi;
 
 
 int16_t r_butter;
-
-
-
 
 //void kalman(void);
 
@@ -203,7 +194,7 @@ bool check_for_header(uint8_t);
 void init_send_mode_change(void);
 void set_acknowledge_flag(bool);
 void send_mode_change(void);
-void setHeader(void);
+void setHeader(char);
 void setDataType(char);
 void motorValuePacket(void);
 void send_packet(char);

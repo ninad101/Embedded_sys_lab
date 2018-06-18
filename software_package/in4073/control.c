@@ -39,7 +39,7 @@ int32_t 	lift, roll, pitch, yaw;
 
 void printMotorValues(void)
 {
-	printf("motor[%d]: %d, motor[%d]: %d, motor[%d]: %d, motor[%d]: %d\n",0,motor[0],1,motor[1],2,motor[2],3,motor[3]);
+	//printf("motor[%d]: %d, motor[%d]: %d, motor[%d]: %d, motor[%d]: %d\n",0,motor[0],1,motor[1],2,motor[2],3,motor[3]);
 }
 
 void update_motors(void) 
@@ -48,7 +48,6 @@ void update_motors(void)
 	motor[1] = ae[1];
 	motor[2] = ae[2];
 	motor[3] = ae[3];
-	printMotorValues();
 }
      
 /*--------------------------------------------------------------------------
@@ -106,13 +105,13 @@ void calculate_roll_control()
 
 	lift = (((int32_t)-1 * (values_Packet.lift -127)*256)>>lift_shift);
 	
-	roll_error = (((int32_t)values_Packet.roll*256) -  ((phi - cphi)>>ANGLE_SHIFT));
+	roll_error = ((((int32_t)values_Packet.roll*256)/4) -  ((phi - cphi)>>ANGLE_SHIFT));
 	roll = ((kp1*roll_error)>>ANGLE_GAIN_SHIFT) - (kp2*((sp-cq)>>RATE_SHIFT)>>RATE_GAIN_SHIFT);
 	
-	pitch_error = (((int32_t)values_Packet.pitch*256) -  ((theta-ctheta)>>ANGLE_SHIFT)); 
+	pitch_error = ((((int32_t)values_Packet.pitch*256)/4) -  ((theta-ctheta)>>ANGLE_SHIFT)); 
 	pitch = ((kp1*pitch_error)>>ANGLE_GAIN_SHIFT) + (kp2*((sq-cq)>>RATE_SHIFT)>>RATE_GAIN_SHIFT);
 	
-	yaw_error =  (((int32_t)values_Packet.yaw*256)>>RATE_SHIFT_YAW) + ((sr-cr)>>RATE_SHIFT_YAW) ; //add offset here
+	yaw_error =  (((int32_t)values_Packet.yaw*256)/4) + ((sr-cr)>>RATE_SHIFT_YAW) ; //add offset here
 	yaw =  (kp*yaw_error)>>RATE_GAIN_SHIFT_YAW;
 	
 
@@ -122,19 +121,18 @@ void rawControl()
 {
 	lift = (int32_t)-1 * (values_Packet.lift -127)*256;
 
-	roll_error = (((int32_t)values_Packet.roll*256) - ((estimated_phi - cphi)>>ANGLE_SHIFT));
+	roll_error = ((((int32_t)values_Packet.roll*256)/4) - ((estimated_phi - cphi)>>ANGLE_SHIFT));
 	roll = ((roll_error*kp1)>>ANGLE_GAIN_SHIFT) - ((((estimated_p - cp)>>RATE_SHIFT)*kp2)>>RATE_GAIN_SHIFT);
 
-	pitch_error = (((int32_t)values_Packet.pitch*256) - ((estimated_theta - ctheta)>>ANGLE_SHIFT));
+	pitch_error = ((((int32_t)values_Packet.pitch*256)/4) - ((estimated_theta - ctheta)>>ANGLE_SHIFT));
 	pitch = ((pitch_error*kp1)>>ANGLE_GAIN_SHIFT) - ((((estimated_q - cq)>>RATE_SHIFT)*kp2)>>RATE_GAIN_SHIFT);
 
 
-	yaw_error =  (((int32_t)values_Packet.yaw*256)>>RATE_SHIFT_YAW) - ((r_butter - cr)>>RATE_SHIFT_YAW);
+	yaw_error =  (((int32_t)values_Packet.yaw*256)/4) - ((r_butter - cr)>>RATE_SHIFT_YAW);
 	yaw = ((yaw_error*kp)>>RATE_GAIN_SHIFT_YAW);
         
 
 }
-
 
 void heightControl()
 {	
