@@ -114,7 +114,7 @@ int main(void)
 
 
 	uint32_t counter = 0;
-	// uint32_t noPacket =0;
+	uint32_t noPacket =0;
 	demo_done = false;
 
 	switchMode(0);
@@ -136,18 +136,18 @@ int main(void)
 			if(prevMode != readPacket()) {	
 				switchMode(mode);
 			}
-			//noPacket=0;
+			noPacket=0;
 		}
-		// else
-		// {
-		// 	noPacket +=1;
-		// }
+		else
+		{
+			noPacket ++;
+		}
 
-		// if(noPacket == 10)
-		// {
-		// 	if(mode!=0) {disconnectFlag=1; mode=1; panicFlag=1;}
-		// 	else {demo_done=true;}
-		// }
+		if(noPacket == 250)
+		{
+			if(mode!=0) {disconnectFlag=1; mode=1; panicFlag=1;}
+			//else {demo_done=true;}
+		}
 		//Flush buffer if a lot of lag...
 		// if(rx_queue.count > 120) {
 		// 	flushQueue(&rx_queue);
@@ -174,7 +174,7 @@ int main(void)
 			adc_request_sample();
 			read_baro();
 						
-			logData();
+			//logData();
 			//printInputValues();
 
 			clear_timer_flag();
